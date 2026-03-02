@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>AI Customer Support Console</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  margin: 0;
+}
+
+.header {
+  background: #111827;
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  height: calc(100vh - 60px);
+}
+
+.sidebar {
+  background: white;
+  border-right: 1px solid #ddd;
+  padding: 20px;
+}
+
+.sidebar h3 {
+  margin-top: 0;
+}
+
+.sidebar button {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  background: #fafafa;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.sidebar button:hover {
+  background: #f0f0f0;
+}
+
+.chat-area {
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-window {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background: #ffffff;
+}
+
+.message {
+  margin-bottom: 15px;
+}
+
+.user {
+  text-align: right;
+}
+
+.bubble {
+  display: inline-block;
+  padding: 10px 14px;
+  border-radius: 12px;
+  max-width: 70%;
+}
+
+.user .bubble {
+  background: #111827;
+  color: white;
+}
+
+.bot .bubble {
+  background: #f1f1f1;
+}
+
+.input-area {
+  display: flex;
+  padding: 15px;
+  border-top: 1px solid #ddd;
+  background: white;
+}
+
+input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+button.send {
+  margin-left: 10px;
+  padding: 10px 15px;
+  background: #111827;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.ai-status {
+  font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div><strong>AI Customer Support Console</strong></div>
+  <div class="ai-status" id="aiStatus">AI Mode: OFF</div>
+</div>
+
+<div class="container">
+  <div class="sidebar">
+    <h3>Quick FAQ</h3>
+    <button onclick="faq('deposit')">Deposit Help</button>
+    <button onclick="faq('withdrawal')">Withdrawal Info</button>
+    <button onclick="faq('bonus')">Bonus Terms</button>
+    <button onclick="faq('login')">Login Issues</button>
+    <hr>
+    <button onclick="enableAI()">Enable AI</button>
+    <button onclick="contactAgent()">Contact Human Agent</button>
+  </div>
+
+  <div class="chat-area">
+    <div class="chat-window" id="chat"></div>
+
+    <div class="input-area">
+      <input id="userInput" placeholder="Type your message..." />
+      <button class="send" onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+const API_URL = "https://YOUR-WORKER-URL/api/chat";
+let aiEnabled = false;
+
+function addMessage(text, type="bot") {
+  const chat = document.getElementById("chat");
+  const msg = document.createElement("div");
+  msg.className = "message " + type;
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  bubble.innerText = text;
+
+  msg.appendChild(bubble);
+  chat.appendChild(msg);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function faq(type) {
+  const answers = {
+    deposit: "To make a deposit, go to Cashier → Deposit → Select method → Confirm.",
+    withdrawal: "Withdrawal processing times depend on your selected method. Verification may be required.",
+    bonus: "Please review the wagering requirements before requesting a withdrawal.",
+    login: "Click 'Forgot Password' and check your email spam folder."
+  };
+
+  addMessage(answers[type]);
+  addMessage("Did this solve your issue? If not, you may enable AI assistance.");
+}
+
+function enableAI() {
+  aiEnabled = true;
+  document.getElementById("aiStatus").innerText = "AI Mode: ON";
+  addMessage("AI assistance enabled. You may now ask your question.");
+}
+
+function contactAgent() {
+  addMessage("Please contact our human support team for sensitive or account-related matters.");
+}
+
+async function sendMessage() {
+  const input = document.getElementById("userInput");
+  const message = input.value.trim();
+  if (!message) return;
+
+  addMessage(message, "user");
+  input.value = "";
+
+  if (!aiEnabled) {
+    addMessage("Please use FAQ or enable AI assistance.");
+    return;
+  }
+
+  const sensitive = /(withdraw|refund|chargeback|blocked|fraud|kyc)/i;
+  if (sensitive.test(message)) {
+    addMessage("For security reasons, this issue must be handled by a human agent.");
+    return;
+  }
+
+  addMessage("Processing...");
+
+  const response = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message })
+  });
+
+  const data = await response.json();
+  addMessage(data.reply || "Unable to answer. Please contact support.");
+}
+
+addMessage("Welcome to Customer Support. Please select a FAQ category or enable AI assistance.");
+
+</script>
+
+</body>
+</html>
