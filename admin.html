@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AI Knowledge Admin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body { font-family: Arial; padding: 40px; background: #f5f7fa; }
+textarea { width: 100%; height: 300px; margin-bottom: 20px; }
+button { padding: 10px 20px; }
+</style>
+</head>
+<body>
+
+<h2>AI Knowledge Management</h2>
+
+<textarea id="knowledge"></textarea>
+<br>
+<button onclick="save()">Save</button>
+
+<script>
+const API = "https://YOUR-WORKER-URL.workers.dev";
+
+async function load() {
+  const res = await fetch(API + "/admin/get");
+  const data = await res.json();
+  document.getElementById("knowledge").value =
+    JSON.stringify(data, null, 2);
+}
+
+async function save() {
+  const content = JSON.parse(document.getElementById("knowledge").value);
+  await fetch(API + "/admin/save", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(content)
+  });
+  alert("Saved successfully!");
+}
+
+load();
+</script>
+
+</body>
+</html>
