@@ -1,44 +1,449 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-<title>AI Knowledge Admin</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-body { font-family: Arial; padding: 40px; background: #f5f7fa; }
-textarea { width: 100%; height: 300px; margin-bottom: 20px; }
-button { padding: 10px 20px; }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Knowledge Admin (iGaming)</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:#f6f7f9; color:#111827; }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 16px; }
+    .topbar {
+      background:#0f172a; color:#fff; border-radius:16px; padding: 14px 16px;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.08);
+    }
+    .title { font-weight: 750; letter-spacing:.2px; }
+    .sub { font-size: 12px; opacity:.85; margin-top: 2px; line-height:1.3; }
+    .pill { font-size:12px; padding: 6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.25); }
+    .grid { display:grid; grid-template-columns: 420px 1fr; gap: 16px; margin-top: 16px; }
+    @media (max-width: 980px){ .grid{ grid-template-columns: 1fr; } }
+    .card { background:#fff; border:1px solid #e6e8ec; border-radius:16px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+    .card h2 { margin:0; font-size: 16px; }
+    .card .hd { padding: 14px; border-bottom:1px solid #eef0f3; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .card .bd { padding: 14px; }
+    .hint { color:#5a6472; font-size: 13px; line-height:1.45; }
+    .row { display:flex; gap:10px; flex-wrap:wrap; }
+    .row > * { flex:1; min-width: 160px; }
+    label { font-size: 12px; color:#374151; display:block; margin-bottom: 6px; }
+    input, textarea, select {
+      width:100%; padding: 10px 12px; border:1px solid #e6e8ec; border-radius: 12px; font-size: 14px; background:#fff;
+    }
+    textarea { min-height: 120px; resize: vertical; }
+    button {
+      cursor:pointer; border-radius: 12px; border:1px solid #e6e8ec; background:#fff; padding: 10px 12px;
+      transition: background .12s ease;
+    }
+    button:hover { background:#fafbfc; }
+    button.primary { background:#111827; color:#fff; border-color:#111827; }
+    button.primary:hover { background:#0b1220; }
+    button.danger { border-color:#f2c5c5; }
+    .list { display:flex; flex-direction:column; gap: 10px; margin-top: 12px; }
+    .item { border:1px solid #eef0f3; border-radius: 14px; padding: 12px; background:#fff; }
+    .item .top { display:flex; justify-content:space-between; gap: 10px; align-items:flex-start; }
+    .item .name { font-weight: 700; }
+    .item .meta { color:#6b7280; font-size: 12px; margin-top: 4px; }
+    .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; padding: 2px 6px; border-radius: 8px; border: 1px solid #e6e8ec; background:#fafbfc; }
+    .small { font-size:12px; color:#6b7280; }
+    .toast { margin-top: 10px; font-size: 13px; color:#374151; }
+    .ok { color: #065f46; }
+    .bad { color: #991b1b; }
+    .divider { height: 1px; background:#eef0f3; margin: 12px 0; }
+  </style>
 </head>
 <body>
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <div class="title">AI Knowledge Admin (iGaming)</div>
+        <div class="sub">
+          Manage FAQ + System Rules without editing HTML. Saves to Cloudflare KV via Worker endpoints:
+          <span class="kbd">/admin/get</span> and <span class="kbd">/admin/save</span>.
+        </div>
+      </div>
+      <div class="pill" id="statusPill">Disconnected</div>
+    </div>
 
-<h2>AI Knowledge Management</h2>
+    <div class="grid">
+      <!-- LEFT: settings + rules -->
+      <section class="card">
+        <div class="hd">
+          <h2>Settings</h2>
+          <div class="row" style="max-width: 360px;">
+            <button id="loadBtn">Load</button>
+            <button class="primary" id="saveBtn">Save</button>
+          </div>
+        </div>
+        <div class="bd">
+          <div class="row">
+            <div>
+              <label>Worker API Base URL</label>
+              <input id="apiBase" />
+              <div class="small" style="margin-top:6px;">
+                Example: <span class="kbd">https://ai-chat-backend.marketing-696.workers.dev</span>
+              </div>
+            </div>
+            <div>
+              <label>Admin Token</label>
+              <input id="adminToken" type="password" />
+              <div class="small" style="margin-top:6px;">
+                This must match your Worker Secret <span class="kbd">ADMIN_TOKEN</span>.
+              </div>
+            </div>
+          </div>
 
-<textarea id="knowledge"></textarea>
-<br>
-<button onclick="save()">Save</button>
+          <div class="divider"></div>
+
+          <h2 style="font-size:14px; margin: 0 0 10px;">System Rules (AI Behavior)</h2>
+          <div class="hint">
+            These rules are injected into the AI system prompt. Keep them short, strict, and policy-driven.
+            (Example: “Never ask for passwords.” “Escalate withdrawals/KYC/fraud.”)
+          </div>
+          <textarea id="rulesBox" placeholder="One rule per line..."></textarea>
+
+          <div class="row" style="margin-top: 10px;">
+            <button id="addLatamRulesBtn">Insert LatAm Defaults</button>
+            <button id="exportBtn">Export JSON</button>
+            <button id="importBtn">Import JSON</button>
+          </div>
+
+          <input id="importFile" type="file" accept="application/json" style="display:none;" />
+
+          <div class="toast" id="toast"></div>
+        </div>
+      </section>
+
+      <!-- RIGHT: FAQ manager -->
+      <section class="card">
+        <div class="hd">
+          <h2>FAQ Manager</h2>
+          <div class="row" style="max-width: 420px;">
+            <input id="search" placeholder="Search FAQ (title/content)..." />
+            <button class="primary" id="newFaqBtn">New FAQ</button>
+          </div>
+        </div>
+        <div class="bd">
+          <div class="row">
+            <div>
+              <label>FAQ ID (unique key)</label>
+              <input id="faqId" placeholder="e.g. deposit_pix_br" />
+            </div>
+            <div>
+              <label>Title</label>
+              <input id="faqTitle" placeholder="e.g. Deposit via PIX (Brazil)" />
+            </div>
+          </div>
+
+          <div style="margin-top: 10px;">
+            <label>Content</label>
+            <textarea id="faqContent" placeholder="Write a short, step-by-step answer..."></textarea>
+            <div class="small" style="margin-top:6px;">
+              Tip: Keep it actionable. Use steps (1/2/3) and avoid account-specific claims.
+            </div>
+          </div>
+
+          <div class="row" style="margin-top: 10px;">
+            <button id="addOrUpdateBtn" class="primary">Add / Update</button>
+            <button id="clearFormBtn">Clear</button>
+            <button id="deleteBtn" class="danger">Delete</button>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="hint">Current FAQ items (click to edit):</div>
+          <div class="list" id="faqList"></div>
+        </div>
+      </section>
+    </div>
+  </div>
 
 <script>
-const API = "https://YOUR-WORKER-URL.workers.dev";
+  // =========================
+  // ✅ EDIT THESE DEFAULTS
+  // =========================
+  const DEFAULT_API_BASE = "https://ai-chat-backend.marketing-696.workers.dev"; // <-- your worker
+  const DEFAULT_ADMIN_TOKEN = ""; // recommended: leave blank, paste manually each time for security
 
-async function load() {
-  const res = await fetch(API + "/admin/get");
-  const data = await res.json();
-  document.getElementById("knowledge").value =
-    JSON.stringify(data, null, 2);
-}
+  // =========================
+  // State
+  // =========================
+  let kb = { rules: [], faq: [] };
+  let selectedFaqId = null;
 
-async function save() {
-  const content = JSON.parse(document.getElementById("knowledge").value);
-  await fetch(API + "/admin/save", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify(content)
-  });
-  alert("Saved successfully!");
-}
+  // Elements
+  const statusPill = document.getElementById("statusPill");
+  const toast = document.getElementById("toast");
+  const apiBaseEl = document.getElementById("apiBase");
+  const adminTokenEl = document.getElementById("adminToken");
+  const rulesBox = document.getElementById("rulesBox");
+  const loadBtn = document.getElementById("loadBtn");
+  const saveBtn = document.getElementById("saveBtn");
 
-load();
+  const searchEl = document.getElementById("search");
+  const newFaqBtn = document.getElementById("newFaqBtn");
+  const faqIdEl = document.getElementById("faqId");
+  const faqTitleEl = document.getElementById("faqTitle");
+  const faqContentEl = document.getElementById("faqContent");
+  const addOrUpdateBtn = document.getElementById("addOrUpdateBtn");
+  const clearFormBtn = document.getElementById("clearFormBtn");
+  const deleteBtn = document.getElementById("deleteBtn");
+
+  const faqListEl = document.getElementById("faqList");
+  const addLatamRulesBtn = document.getElementById("addLatamRulesBtn");
+  const exportBtn = document.getElementById("exportBtn");
+  const importBtn = document.getElementById("importBtn");
+  const importFile = document.getElementById("importFile");
+
+  function setStatus(ok, msg) {
+    statusPill.textContent = msg;
+    statusPill.style.background = ok ? "rgba(34,197,94,.18)" : "rgba(239,68,68,.18)";
+    statusPill.style.borderColor = ok ? "rgba(34,197,94,.35)" : "rgba(239,68,68,.35)";
+  }
+  function setToast(msg, ok=true) {
+    toast.textContent = msg;
+    toast.className = "toast " + (ok ? "ok" : "bad");
+  }
+
+  function getApiBase() {
+    return apiBaseEl.value.trim().replace(/\/+$/, "");
+  }
+  function getAdminToken() {
+    return adminTokenEl.value.trim();
+  }
+
+  // =========================
+  // Load / Save
+  // =========================
+  async function loadKB() {
+    const base = getApiBase();
+    const token = getAdminToken();
+    if (!base) return setToast("Please set Worker API Base URL.", false);
+    if (!token) return setToast("Please input Admin Token (X-Admin-Token).", false);
+
+    setToast("Loading…");
+    try {
+      const res = await fetch(base + "/admin/get", {
+        method: "GET",
+        headers: { "X-Admin-Token": token }
+      });
+      if (!res.ok) throw new Error(await res.text());
+      kb = await res.json();
+
+      rulesBox.value = Array.isArray(kb.rules) ? kb.rules.join("\n") : "";
+      kb.faq = Array.isArray(kb.faq) ? kb.faq : [];
+
+      renderFAQ();
+      clearForm();
+      setStatus(true, "Connected");
+      setToast("Loaded successfully.");
+    } catch (e) {
+      console.error(e);
+      setStatus(false, "Disconnected");
+      setToast("Load failed. Check API Base URL / Admin Token / Worker bindings.", false);
+    }
+  }
+
+  async function saveKB() {
+    const base = getApiBase();
+    const token = getAdminToken();
+    if (!base) return setToast("Please set Worker API Base URL.", false);
+    if (!token) return setToast("Please input Admin Token (X-Admin-Token).", false);
+
+    const rules = rulesBox.value.split("\n").map(s => s.trim()).filter(Boolean);
+
+    const payload = {
+      rules,
+      faq: kb.faq || []
+    };
+
+    setToast("Saving…");
+    try {
+      const res = await fetch(base + "/admin/save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Admin-Token": token
+        },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(await res.text());
+      setStatus(true, "Connected");
+      setToast("Saved successfully.");
+    } catch (e) {
+      console.error(e);
+      setStatus(false, "Disconnected");
+      setToast("Save failed. Check Worker logs and bindings.", false);
+    }
+  }
+
+  loadBtn.onclick = loadKB;
+  saveBtn.onclick = saveKB;
+
+  // =========================
+  // FAQ CRUD
+  // =========================
+  function clearForm() {
+    selectedFaqId = null;
+    faqIdEl.value = "";
+    faqTitleEl.value = "";
+    faqContentEl.value = "";
+    setToast("Ready.");
+  }
+
+  function upsertFAQ() {
+    const id = faqIdEl.value.trim();
+    const title = faqTitleEl.value.trim();
+    const content = faqContentEl.value.trim();
+
+    if (!id || !title || !content) {
+      return setToast("FAQ ID, Title, and Content are required.", false);
+    }
+
+    kb.faq = Array.isArray(kb.faq) ? kb.faq : [];
+
+    const idx = kb.faq.findIndex(x => x.id === id);
+    const item = { id, title, content };
+
+    if (idx >= 0) kb.faq[idx] = item;
+    else kb.faq.unshift(item);
+
+    selectedFaqId = id;
+    renderFAQ();
+    setToast("FAQ added/updated. Click Save to apply in Worker.");
+  }
+
+  function deleteFAQ() {
+    const id = selectedFaqId || faqIdEl.value.trim();
+    if (!id) return setToast("Select an FAQ to delete.", false);
+
+    kb.faq = (kb.faq || []).filter(x => x.id !== id);
+    clearForm();
+    renderFAQ();
+    setToast("FAQ deleted. Click Save to apply in Worker.");
+  }
+
+  function renderFAQ() {
+    const q = (searchEl.value || "").trim().toLowerCase();
+    const list = (kb.faq || []).filter(x => {
+      if (!q) return true;
+      return (x.title || "").toLowerCase().includes(q) || (x.content || "").toLowerCase().includes(q) || (x.id||"").toLowerCase().includes(q);
+    });
+
+    faqListEl.innerHTML = "";
+    if (list.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "small";
+      empty.textContent = "No FAQ items found.";
+      faqListEl.appendChild(empty);
+      return;
+    }
+
+    list.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "item";
+
+      const top = document.createElement("div");
+      top.className = "top";
+
+      const left = document.createElement("div");
+      const name = document.createElement("div");
+      name.className = "name";
+      name.textContent = item.title;
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      meta.textContent = `ID: ${item.id}`;
+      left.appendChild(name);
+      left.appendChild(meta);
+
+      const btn = document.createElement("button");
+      btn.textContent = "Edit";
+      btn.onclick = () => {
+        selectedFaqId = item.id;
+        faqIdEl.value = item.id;
+        faqTitleEl.value = item.title;
+        faqContentEl.value = item.content;
+        setToast("Editing FAQ. Click Add/Update then Save.");
+      };
+
+      top.appendChild(left);
+      top.appendChild(btn);
+
+      const preview = document.createElement("div");
+      preview.className = "small";
+      preview.style.marginTop = "8px";
+      preview.textContent = (item.content || "").slice(0, 140) + ((item.content || "").length > 140 ? "…" : "");
+
+      div.appendChild(top);
+      div.appendChild(preview);
+      faqListEl.appendChild(div);
+    });
+  }
+
+  addOrUpdateBtn.onclick = upsertFAQ;
+  clearFormBtn.onclick = clearForm;
+  deleteBtn.onclick = deleteFAQ;
+  newFaqBtn.onclick = clearForm;
+  searchEl.oninput = renderFAQ;
+
+  // =========================
+  // Rules defaults (LatAm)
+  // =========================
+  addLatamRulesBtn.onclick = () => {
+    const defaults = [
+      "You are a professional iGaming customer support assistant serving Brazil and Mexico.",
+      "Detect the user's language and respond in the same language (Portuguese pt-BR, Spanish es, or English).",
+      "Never request passwords, full ID numbers (CPF), full card numbers, or banking details.",
+      "Never claim access to internal systems or user balances.",
+      "If the user mentions withdrawals, KYC/verification, blocked accounts, fraud, or chargebacks, escalate to a human agent immediately.",
+      "Keep answers concise and actionable. Prefer steps and bullet points.",
+      "If user shows distress/addiction, encourage responsible gaming tools (limits, breaks) and offer help resources.",
+      "Do not provide betting strategies or guarantee winnings."
+    ];
+    rulesBox.value = defaults.join("\n");
+    setToast("Inserted LatAm default rules. Click Save to apply.");
+  };
+
+  // =========================
+  // Export / Import JSON
+  // =========================
+  exportBtn.onclick = () => {
+    const rules = rulesBox.value.split("\n").map(s => s.trim()).filter(Boolean);
+    const payload = { rules, faq: kb.faq || [] };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "knowledge.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    setToast("Exported knowledge.json");
+  };
+
+  importBtn.onclick = () => importFile.click();
+  importFile.onchange = async () => {
+    const file = importFile.files?.[0];
+    if (!file) return;
+    try {
+      const txt = await file.text();
+      const obj = JSON.parse(txt);
+      kb = obj || { rules: [], faq: [] };
+      rulesBox.value = Array.isArray(kb.rules) ? kb.rules.join("\n") : "";
+      kb.faq = Array.isArray(kb.faq) ? kb.faq : [];
+      renderFAQ();
+      clearForm();
+      setToast("Imported JSON. Click Save to apply.");
+    } catch (e) {
+      console.error(e);
+      setToast("Import failed. Invalid JSON file.", false);
+    } finally {
+      importFile.value = "";
+    }
+  };
+
+  // Init defaults
+  apiBaseEl.value = DEFAULT_API_BASE;
+  adminTokenEl.value = DEFAULT_ADMIN_TOKEN;
+  setStatus(false, "Disconnected");
+  setToast("Set API Base + Admin Token, then click Load.");
 </script>
-
 </body>
 </html>
