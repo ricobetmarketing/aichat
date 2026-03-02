@@ -2,20 +2,20 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>AI Customer Support Console</title>
+<title>AI Support Console</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
   margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f5f7fa;
 }
 
 .header {
-  background: #111827;
+  background: #0f172a;
   color: white;
-  padding: 15px 20px;
+  padding: 16px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -23,32 +23,34 @@ body {
 
 .container {
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: 280px 1fr;
   height: calc(100vh - 60px);
 }
 
 .sidebar {
   background: white;
-  border-right: 1px solid #ddd;
+  border-right: 1px solid #e5e7eb;
   padding: 20px;
 }
 
 .sidebar h3 {
   margin-top: 0;
+  font-size: 16px;
+  margin-bottom: 15px;
 }
 
 .sidebar button {
   width: 100%;
-  margin-bottom: 10px;
   padding: 10px;
-  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
   background: #fafafa;
   cursor: pointer;
-  border-radius: 6px;
 }
 
 .sidebar button:hover {
-  background: #f0f0f0;
+  background: #f1f5f9;
 }
 
 .chat-area {
@@ -60,59 +62,60 @@ body {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
-  background: #ffffff;
 }
 
 .message {
   margin-bottom: 15px;
 }
 
-.user {
+.message.user {
   text-align: right;
 }
 
 .bubble {
   display: inline-block;
-  padding: 10px 14px;
-  border-radius: 12px;
+  padding: 12px 16px;
+  border-radius: 14px;
   max-width: 70%;
+  font-size: 14px;
 }
 
 .user .bubble {
-  background: #111827;
+  background: #0f172a;
   color: white;
 }
 
 .bot .bubble {
-  background: #f1f1f1;
+  background: #e2e8f0;
+  color: #111827;
 }
 
 .input-area {
   display: flex;
   padding: 15px;
-  border-top: 1px solid #ddd;
   background: white;
+  border-top: 1px solid #e5e7eb;
 }
 
 input {
   flex: 1;
   padding: 10px;
   border-radius: 6px;
-  border: 1px solid #ccc;
+  border: 1px solid #d1d5db;
 }
 
 button.send {
   margin-left: 10px;
   padding: 10px 15px;
-  background: #111827;
-  color: white;
-  border: none;
   border-radius: 6px;
+  border: none;
+  background: #0f172a;
+  color: white;
   cursor: pointer;
 }
 
-.ai-status {
-  font-size: 14px;
+.status {
+  font-size: 13px;
 }
 </style>
 </head>
@@ -120,36 +123,69 @@ button.send {
 <body>
 
 <div class="header">
-  <div><strong>AI Customer Support Console</strong></div>
-  <div class="ai-status" id="aiStatus">AI Mode: OFF</div>
+  <div><strong>AI Customer Support (Brazil & Mexico)</strong></div>
+  <div class="status" id="status">AI Mode: OFF</div>
 </div>
 
 <div class="container">
+
   <div class="sidebar">
     <h3>Quick FAQ</h3>
-    <button onclick="faq('deposit')">Deposit Help</button>
-    <button onclick="faq('withdrawal')">Withdrawal Info</button>
-    <button onclick="faq('bonus')">Bonus Terms</button>
-    <button onclick="faq('login')">Login Issues</button>
+    <button onclick="showFAQ('deposit')">Deposit</button>
+    <button onclick="showFAQ('withdrawal')">Withdrawal</button>
+    <button onclick="showFAQ('bonus')">Bonus</button>
+    <button onclick="showFAQ('login')">Login</button>
     <hr>
-    <button onclick="enableAI()">Enable AI</button>
-    <button onclick="contactAgent()">Contact Human Agent</button>
+    <button onclick="enableAI()">Enable AI Assistance</button>
+    <button onclick="escalate()">Contact Human Support</button>
   </div>
 
   <div class="chat-area">
     <div class="chat-window" id="chat"></div>
 
     <div class="input-area">
-      <input id="userInput" placeholder="Type your message..." />
+      <input id="input" placeholder="Type your message..." />
       <button class="send" onclick="sendMessage()">Send</button>
     </div>
   </div>
+
 </div>
 
 <script>
 
-const API_URL = "https://ai-chat-backend.marketing-696.workers.dev/";
+const API_URL = "https://YOUR-WORKER-URL.workers.dev";
+
 let aiEnabled = false;
+
+const FAQ = {
+  deposit: `
+Deposit Guide:
+1. Go to Cashier
+2. Select Deposit
+3. Choose payment method (PIX, SPEI, OXXO, Card)
+4. Confirm transaction
+
+Pending deposits usually resolve within minutes.
+`,
+  withdrawal: `
+Withdrawal Guide:
+• Processing time depends on method
+• KYC verification may be required
+• Bonus wagering must be completed
+`,
+  bonus: `
+Bonus Information:
+• Review wagering requirements
+• Check expiry dates
+• Ensure promotion is activated
+`,
+  login: `
+Login Help:
+• Use "Forgot Password"
+• Clear browser cache
+• Ensure correct credentials
+`
+};
 
 function addMessage(text, type="bot") {
   const chat = document.getElementById("chat");
@@ -165,30 +201,23 @@ function addMessage(text, type="bot") {
   chat.scrollTop = chat.scrollHeight;
 }
 
-function faq(type) {
-  const answers = {
-    deposit: "To make a deposit, go to Cashier → Deposit → Select method → Confirm.",
-    withdrawal: "Withdrawal processing times depend on your selected method. Verification may be required.",
-    bonus: "Please review the wagering requirements before requesting a withdrawal.",
-    login: "Click 'Forgot Password' and check your email spam folder."
-  };
-
-  addMessage(answers[type]);
-  addMessage("Did this solve your issue? If not, you may enable AI assistance.");
+function showFAQ(type) {
+  addMessage(FAQ[type]);
+  addMessage("Did this resolve your issue? You may enable AI assistance if needed.");
 }
 
 function enableAI() {
   aiEnabled = true;
-  document.getElementById("aiStatus").innerText = "AI Mode: ON";
-  addMessage("AI assistance enabled. You may now ask your question.");
+  document.getElementById("status").innerText = "AI Mode: ON";
+  addMessage("AI assistance enabled. Please type your question.");
 }
 
-function contactAgent() {
-  addMessage("Please contact our human support team for sensitive or account-related matters.");
+function escalate() {
+  addMessage("For security or account-related issues, please contact our human support team.");
 }
 
 async function sendMessage() {
-  const input = document.getElementById("userInput");
+  const input = document.getElementById("input");
   const message = input.value.trim();
   if (!message) return;
 
@@ -200,9 +229,9 @@ async function sendMessage() {
     return;
   }
 
-  const sensitive = /(withdraw|refund|chargeback|blocked|fraud|kyc)/i;
+  const sensitive = /(withdraw|chargeback|fraud|blocked|kyc)/i;
   if (sensitive.test(message)) {
-    addMessage("For security reasons, this issue must be handled by a human agent.");
+    addMessage("This issue requires human support for security reasons.");
     return;
   }
 
@@ -210,12 +239,12 @@ async function sendMessage() {
 
   const response = await fetch(API_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {"Content-Type": "application/json"},
     body: JSON.stringify({ message })
   });
 
   const data = await response.json();
-  addMessage(data.reply || "Unable to answer. Please contact support.");
+  addMessage(data.reply || "Unable to answer.");
 }
 
 addMessage("Welcome to Customer Support. Please select a FAQ category or enable AI assistance.");
