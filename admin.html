@@ -1,264 +1,167 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AI Knowledge Admin • Turnover-style Console</title>
-  <style>
-    :root{
-      --bg:#f4f6f8;
-      --panel:#ffffff;
-      --border:#e5e7eb;
-      --text:#0f172a;
-      --muted:#64748b;
-      --nav:#0b1220;
-      --nav2:#0f172a;
-      --accent:#16a34a;   /* green */
-      --accent2:#22c55e;
-      --warn:#ef4444;
-      --shadow: 0 10px 20px rgba(2,6,23,.06);
-      --radius: 14px;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
-    a{color:inherit}
-    .app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
-    /* Sidebar */
-    .side{
-      background: linear-gradient(180deg,var(--nav) 0%, #0a1020 100%);
-      color:#e5e7eb;
-      padding:18px 14px;
-      display:flex;flex-direction:column;gap:14px;
-      border-right: 1px solid rgba(255,255,255,.06);
-    }
-    .brand{
-      display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:12px;
-      background: rgba(255,255,255,.04);
-    }
-    .logo{
-      width:34px;height:34px;border-radius:10px;background: rgba(34,197,94,.18);
-      display:grid;place-items:center;font-weight:800;color:#bbf7d0;border:1px solid rgba(34,197,94,.25);
-    }
-    .brand .t1{font-weight:800;letter-spacing:.2px}
-    .brand .t2{font-size:12px;color:rgba(229,231,235,.75);margin-top:2px}
-    .navgrp{margin-top:6px}
-    .navtitle{font-size:12px;color:rgba(229,231,235,.65);padding:8px 10px}
-    .navitem{
-      display:flex;align-items:center;gap:10px;
-      padding:10px 10px;border-radius:12px;color:#e5e7eb;text-decoration:none;
-      border:1px solid transparent;
-    }
-    .navitem:hover{background: rgba(255,255,255,.05)}
-    .navitem.active{
-      background: rgba(34,197,94,.16);
-      border-color: rgba(34,197,94,.25);
-      color:#dcfce7;
-    }
-    .dot{width:8px;height:8px;border-radius:999px;background:rgba(148,163,184,.7)}
-    .navitem.active .dot{background: var(--accent2)}
-    .sidefoot{
-      margin-top:auto;
-      padding:10px;
-      border-radius:12px;
-      background: rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.06);
-      font-size:12px;color:rgba(229,231,235,.75);
-      line-height:1.4;
-    }
-    /* Main */
-    .main{padding:18px}
-    .topbar{
-      display:flex;align-items:center;justify-content:space-between;gap:12px;
-      padding:14px 16px;border-radius: var(--radius);
-      background: var(--panel); border:1px solid var(--border); box-shadow: var(--shadow);
-    }
-    .topbar .h1{font-size:18px;font-weight:900}
-    .topbar .sub{font-size:12px;color:var(--muted);margin-top:2px}
-    .pill{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:8px 10px;border-radius:999px;border:1px solid var(--border);
-      font-size:12px;color:var(--muted);background:#fff;
-    }
-    .pill .led{width:8px;height:8px;border-radius:999px;background:#94a3b8}
-    .pill.ok{border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.08); color:#065f46}
-    .pill.ok .led{background: var(--accent2)}
-    .pill.bad{border-color: rgba(239,68,68,.35); background: rgba(239,68,68,.06); color:#7f1d1d}
-    .pill.bad .led{background: var(--warn)}
-    /* Grid layout */
-    .grid{display:grid;grid-template-columns: 1.15fr .85fr; gap:16px; margin-top:16px}
-    @media (max-width: 1100px){ .app{grid-template-columns:1fr} .side{display:none} .grid{grid-template-columns:1fr} }
-    .card{
-      background: var(--panel);
-      border:1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
-    .cardhd{
-      padding:12px 14px;
-      display:flex;align-items:center;justify-content:space-between;gap:12px;
-      border-bottom:1px solid var(--border);
-      background: linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
-    }
-    .cardhd .title{font-weight:900}
-    .cardhd .desc{font-size:12px;color:var(--muted);margin-top:2px}
-    .cardbd{padding:14px}
-    /* Inputs & buttons */
-    label{display:block;font-size:12px;color:var(--muted);margin: 0 0 6px}
-    input, textarea{
-      width:100%;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid var(--border);
-      background:#fff;
-      font-size:14px;
-      outline:none;
-    }
-    textarea{min-height: 120px; resize: vertical}
-    input:focus, textarea:focus{border-color: rgba(34,197,94,.5); box-shadow: 0 0 0 4px rgba(34,197,94,.12)}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    @media (max-width: 900px){ .row{grid-template-columns:1fr} }
-    .btns{display:flex;gap:10px;flex-wrap:wrap}
-    .btn{
-      padding:10px 12px;border-radius:12px;border:1px solid var(--border);
-      background:#fff;cursor:pointer;font-weight:700;font-size:13px;
-    }
-    .btn:hover{background:#f8fafc}
-    .btn.primary{
-      background: linear-gradient(180deg,var(--accent) 0%, #15803d 100%);
-      border-color: rgba(21,128,61,.4);
-      color:#fff;
-    }
-    .btn.primary:hover{filter:brightness(.98)}
-    .btn.ghost{background: transparent}
-    .btn.danger{border-color: rgba(239,68,68,.4); color:#7f1d1d; background: rgba(239,68,68,.06)}
-    .btn.danger:hover{background: rgba(239,68,68,.1)}
-    .toast{margin-top:10px;font-size:13px;color:var(--muted)}
-    .toast.ok{color:#065f46}
-    .toast.bad{color:#7f1d1d}
-    .hint{font-size:12px;color:var(--muted);line-height:1.45}
-    /* Table */
-    .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .toolbar input{max-width: 420px}
-    table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border:1px solid var(--border);border-radius:14px}
-    thead th{
-      text-align:left;font-size:12px;color:#0b1220;
-      background: #0b1220; color:#fff;
-      padding:10px 12px;
-    }
-    tbody td{padding:10px 12px;border-top:1px solid var(--border);font-size:13px;color:#0f172a;vertical-align:top}
-    tbody tr:hover{background:#f8fafc}
-    .tag{display:inline-block;font-size:11px;padding:3px 8px;border-radius:999px;border:1px solid var(--border);color:var(--muted);background:#fff}
-    .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI Knowledge Admin • Console</title>
+<style>
+  :root{
+    --bg:#f4f6f8; --panel:#fff; --border:#e5e7eb; --text:#0f172a; --muted:#64748b;
+    --nav:#0b1220; --accent:#16a34a; --accent2:#22c55e; --warn:#ef4444;
+    --shadow:0 10px 20px rgba(2,6,23,.06); --r:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+  .app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+  .side{background:linear-gradient(180deg,var(--nav) 0%, #0a1020 100%);color:#e5e7eb;padding:18px 14px;display:flex;flex-direction:column;gap:14px}
+  .brand{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
+  .logo{width:34px;height:34px;border-radius:10px;background:rgba(34,197,94,.18);display:grid;place-items:center;font-weight:900;color:#bbf7d0;border:1px solid rgba(34,197,94,.25)}
+  .t1{font-weight:900}.t2{font-size:12px;color:rgba(229,231,235,.75);margin-top:2px}
+  .navtitle{font-size:12px;color:rgba(229,231,235,.65);padding:8px 10px}
+  .navitem{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;color:#e5e7eb;text-decoration:none;border:1px solid transparent}
+  .navitem:hover{background:rgba(255,255,255,.05)}
+  .navitem.active{background:rgba(34,197,94,.16);border-color:rgba(34,197,94,.25);color:#dcfce7}
+  .dot{width:8px;height:8px;border-radius:999px;background:rgba(148,163,184,.7)}
+  .navitem.active .dot{background:var(--accent2)}
+  .sidefoot{margin-top:auto;padding:10px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);font-size:12px;color:rgba(229,231,235,.78);line-height:1.45}
+  .main{padding:18px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-radius:var(--r);background:var(--panel);border:1px solid var(--border);box-shadow:var(--shadow)}
+  .h1{font-size:18px;font-weight:950}.sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;border:1px solid var(--border);font-size:12px;color:var(--muted);background:#fff}
+  .led{width:8px;height:8px;border-radius:999px;background:#94a3b8}
+  .pill.ok{border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.08);color:#065f46}.pill.ok .led{background:var(--accent2)}
+  .pill.bad{border-color:rgba(239,68,68,.35);background:rgba(239,68,68,.06);color:#7f1d1d}.pill.bad .led{background:var(--warn)}
+  .grid{display:grid;grid-template-columns: 1fr; gap:16px; margin-top:16px}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+  .cardhd{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#fff 0%, #fbfdff 100%)}
+  .title{font-weight:950}.desc{font-size:12px;color:var(--muted);margin-top:2px}
+  .cardbd{padding:14px}
+  label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}
+  input, textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:#fff;font-size:14px;outline:none}
+  textarea{min-height:120px;resize:vertical}
+  input:focus, textarea:focus{border-color:rgba(34,197,94,.5);box-shadow:0 0 0 4px rgba(34,197,94,.12)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:1100px){.app{grid-template-columns:1fr}.side{display:none}.row{grid-template-columns:1fr}}
+  .btns{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:#fff;cursor:pointer;font-weight:800;font-size:13px}
+  .btn:hover{background:#f8fafc}
+  .btn.primary{background:linear-gradient(180deg,var(--accent) 0%, #15803d 100%);border-color:rgba(21,128,61,.4);color:#fff}
+  .btn.danger{border-color:rgba(239,68,68,.4);color:#7f1d1d;background:rgba(239,68,68,.06)}
+  .btn.danger:hover{background:rgba(239,68,68,.1)}
+  .tabs{display:flex;gap:10px;flex-wrap:wrap}
+  .tab{padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:#fff;cursor:pointer;font-weight:900;font-size:13px}
+  .tab.active{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.28);color:#065f46}
+  .toast{margin-top:10px;font-size:13px;color:var(--muted)} .toast.ok{color:#065f46} .toast.bad{color:#7f1d1d}
+  table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  thead th{background:#0b1220;color:#fff;padding:10px 12px;font-size:12px;text-align:left}
+  tbody td{padding:10px 12px;border-top:1px solid var(--border);font-size:13px;vertical-align:top}
+  tbody tr:hover{background:#f8fafc}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+  .hint{font-size:12px;color:var(--muted);line-height:1.45}
+  .split{display:grid;grid-template-columns: 1fr 1fr; gap:12px}
+  @media (max-width:1100px){ .split{grid-template-columns:1fr} }
+</style>
 </head>
 <body>
-  <div class="app">
-    <!-- Sidebar -->
-    <aside class="side">
-      <div class="brand">
-        <div class="logo">AI</div>
-        <div>
-          <div class="t1">Knowledge Console</div>
-          <div class="t2">Brazil • Mexico • iGaming</div>
+<div class="app">
+  <aside class="side">
+    <div class="brand">
+      <div class="logo">AI</div>
+      <div>
+        <div class="t1">Knowledge Console</div>
+        <div class="t2">Brazil • Mexico • iGaming</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="navtitle">Navigation</div>
+      <a class="navitem active" href="#" data-tab="rules"><span class="dot"></span>System Rules</a>
+      <a class="navitem" href="#" data-tab="faq"><span class="dot"></span>FAQ Manager</a>
+      <a class="navitem" href="#" data-tab="test"><span class="dot"></span>Test Console</a>
+      <a class="navitem" href="#" data-tab="logs"><span class="dot"></span>Change Logs</a>
+    </div>
+
+    <div>
+      <div class="navtitle">Shortcuts</div>
+      <a class="navitem" id="openChatLink" target="_blank"><span class="dot"></span>Open Chat Demo</a>
+      <a class="navitem" id="openWorkerLink" target="_blank"><span class="dot"></span>Open Worker</a>
+    </div>
+
+    <div class="sidefoot">
+      <b>Safe by design:</b> withdrawals/KYC/fraud/chargebacks/blocked → escalate to human.<br/>
+      Auth via <span class="mono">X-Admin-Token</span>.
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <div class="h1">AI Knowledge Management</div>
+        <div class="sub">Rules + FAQ stored in KV. Save updates and test instantly.</div>
+      </div>
+      <div class="pill bad" id="statusPill"><span class="led"></span><span id="statusText">Disconnected</span></div>
+    </div>
+
+    <div class="grid">
+      <section class="card">
+        <div class="cardhd">
+          <div>
+            <div class="title">Workspace</div>
+            <div class="desc">Connect to your Worker, then manage knowledge.</div>
+          </div>
+          <div class="btns">
+            <button class="btn" id="loadBtn">Load</button>
+            <button class="btn primary" id="saveBtn">Save</button>
+          </div>
         </div>
-      </div>
-
-      <div class="navgrp">
-        <div class="navtitle">Navigation</div>
-        <a class="navitem active" href="#knowledge"><span class="dot"></span>Knowledge Base</a>
-        <a class="navitem" href="#rules"><span class="dot"></span>System Rules</a>
-        <a class="navitem" href="#faq"><span class="dot"></span>FAQ Manager</a>
-      </div>
-
-      <div class="navgrp">
-        <div class="navtitle">Shortcuts</div>
-        <a class="navitem" id="openChatLink" target="_blank"><span class="dot"></span>Open Chat Demo</a>
-        <a class="navitem" id="openWorkerLink" target="_blank"><span class="dot"></span>Open Worker</a>
-      </div>
-
-      <div class="sidefoot">
-        <b>Tip:</b> Keep rules strict. For withdrawals, KYC, fraud, blocked accounts, always route to a human agent.
-        <div style="margin-top:8px;">
-          Auth via <span class="mono">X-Admin-Token</span>.
-        </div>
-      </div>
-    </aside>
-
-    <!-- Main -->
-    <main class="main">
-      <div class="topbar">
-        <div>
-          <div class="h1">AI Knowledge Management</div>
-          <div class="sub">Edit Rules + FAQ, then <b>Save</b>. Chat replies update instantly (no HTML edits).</div>
-        </div>
-        <div class="pill bad" id="statusPill"><span class="led"></span><span id="statusText">Disconnected</span></div>
-      </div>
-
-      <div class="grid">
-        <!-- Left: Rules & Settings -->
-        <section class="card" id="rules">
-          <div class="cardhd">
+        <div class="cardbd">
+          <div class="row">
             <div>
-              <div class="title">System Rules</div>
-              <div class="desc">Injected into system prompt. One rule per line.</div>
+              <label>Worker API Base URL</label>
+              <input id="apiBase" />
+              <div class="hint" style="margin-top:6px;">Example: <span class="mono">https://ai-chat-backend.marketing-696.workers.dev</span></div>
             </div>
-            <div class="btns">
-              <button class="btn" id="loadBtn">Load</button>
-              <button class="btn primary" id="saveBtn">Save</button>
+            <div>
+              <label>Admin Token</label>
+              <input id="adminToken" type="password" placeholder="ADMIN_TOKEN secret" />
+              <div class="hint" style="margin-top:6px;">Required for /admin/get, /admin/save, /admin/test, /admin/logs</div>
             </div>
           </div>
-          <div class="cardbd">
-            <div class="row">
-              <div>
-                <label>Worker API Base URL</label>
-                <input id="apiBase" placeholder="https://ai-chat-backend.xxx.workers.dev" />
-                <div class="hint" style="margin-top:6px;">Must be your backend worker (the one that calls OpenAI).</div>
-              </div>
-              <div>
-                <label>Admin Token</label>
-                <input id="adminToken" type="password" placeholder="Your ADMIN_TOKEN secret" />
-                <div class="hint" style="margin-top:6px;">Stored in Worker as secret <span class="mono">ADMIN_TOKEN</span>.</div>
-              </div>
-            </div>
 
-            <div style="margin-top:12px;">
-              <label>Rules</label>
-              <textarea id="rulesBox" placeholder="Example:
-Detect user language (pt-BR/es/en) and respond in the same language.
-Never ask for passwords or CPF.
+          <div class="toast" id="toast">Set API Base + token, then click Load.</div>
+        </div>
+      </section>
+
+      <!-- Tabs -->
+      <section class="card">
+        <div class="cardhd">
+          <div class="tabs">
+            <button class="tab active" data-tab="rules">System Rules</button>
+            <button class="tab" data-tab="faq">FAQ Manager</button>
+            <button class="tab" data-tab="test">Test Console</button>
+            <button class="tab" data-tab="logs">Change Logs</button>
+          </div>
+          <div class="btns">
+            <button class="btn" id="latamDefaultsBtn">LatAm Defaults</button>
+            <button class="btn" id="exportBtn">Export JSON</button>
+            <button class="btn" id="importBtn">Import JSON</button>
+            <input id="importFile" type="file" accept="application/json" style="display:none;" />
+          </div>
+        </div>
+
+        <div class="cardbd">
+          <!-- RULES -->
+          <div class="tabpane" id="pane-rules">
+            <label>Rules (one per line)</label>
+            <textarea id="rulesBox" placeholder="Detect user language (pt-BR/es/en) and respond in the same language.
+Never ask for passwords/CPF/card numbers.
 Escalate withdrawals/KYC/fraud/chargebacks/blocked accounts."></textarea>
-              <div class="hint" style="margin-top:8px;">
-                Keep it short & strict. Avoid huge texts (saves cost and reduces hallucinations).
-              </div>
-            </div>
-
-            <div class="btns" style="margin-top:12px;">
-              <button class="btn" id="latamDefaultsBtn">Insert LatAm Defaults</button>
-              <button class="btn" id="exportBtn">Export JSON</button>
-              <button class="btn" id="importBtn">Import JSON</button>
-              <input id="importFile" type="file" accept="application/json" style="display:none;" />
-            </div>
-
-            <div class="toast" id="toast">Set API Base + Admin Token, then click Load.</div>
-          </div>
-        </section>
-
-        <!-- Right: FAQ Manager -->
-        <section class="card" id="faq">
-          <div class="cardhd">
-            <div>
-              <div class="title">FAQ Manager</div>
-              <div class="desc">Create, edit, search, and organize FAQ items.</div>
-            </div>
-            <div class="toolbar">
-              <input id="search" placeholder="Search FAQ (ID / title / content)..." />
-              <button class="btn primary" id="newBtn">New FAQ</button>
-            </div>
+            <div class="hint" style="margin-top:8px;">Short rules reduce cost and improve consistency.</div>
           </div>
 
-          <div class="cardbd">
-            <div class="row">
+          <!-- FAQ -->
+          <div class="tabpane" id="pane-faq" style="display:none;">
+            <div class="split">
               <div>
                 <label>FAQ ID (unique)</label>
                 <input id="faqId" placeholder="deposit_pix_br" />
@@ -268,21 +171,18 @@ Escalate withdrawals/KYC/fraud/chargebacks/blocked accounts."></textarea>
                 <input id="faqTitle" placeholder="Deposit via PIX (Brazil)" />
               </div>
             </div>
-
             <div style="margin-top:12px;">
               <label>Content</label>
               <textarea id="faqContent" placeholder="Write a short, step-by-step answer..."></textarea>
-              <div class="hint" style="margin-top:8px;">Use steps, don’t claim access to account data. Keep it actionable.</div>
             </div>
-
             <div class="btns" style="margin-top:12px;">
               <button class="btn primary" id="upsertBtn">Add / Update</button>
               <button class="btn" id="clearBtn">Clear</button>
               <button class="btn danger" id="deleteBtn">Delete</button>
+              <input id="search" placeholder="Search FAQ..." style="max-width:320px;margin-left:auto" />
             </div>
 
             <div style="margin-top:14px;">
-              <label>FAQ List</label>
               <table>
                 <thead>
                   <tr>
@@ -294,23 +194,66 @@ Escalate withdrawals/KYC/fraud/chargebacks/blocked accounts."></textarea>
                 </thead>
                 <tbody id="faqTbody"></tbody>
               </table>
-              <div class="hint" style="margin-top:10px;">Click <span class="tag">Edit</span> to load an item into the form.</div>
+              <div class="hint" style="margin-top:10px;">Click Edit to load an item into the form.</div>
             </div>
           </div>
-        </section>
-      </div>
-    </main>
-  </div>
+
+          <!-- TEST -->
+          <div class="tabpane" id="pane-test" style="display:none;">
+            <div class="split">
+              <div>
+                <label>Test Message (simulate a user)</label>
+                <textarea id="testMsg" placeholder="Try:
+- Meu depósito via PIX falhou
+- Mi bono no se acreditó
+- Why is my deposit failed?"></textarea>
+                <div class="btns" style="margin-top:12px;">
+                  <button class="btn primary" id="runTestBtn">Run Test</button>
+                  <button class="btn" id="clearTestBtn">Clear</button>
+                </div>
+              </div>
+              <div>
+                <label>AI Reply</label>
+                <textarea id="testReply" readonly placeholder="AI reply will appear here..."></textarea>
+                <div class="hint" style="margin-top:8px;">Uses /admin/test and the same KB injected into system prompt.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- LOGS -->
+          <div class="tabpane" id="pane-logs" style="display:none;">
+            <div class="btns" style="margin-bottom:12px;">
+              <button class="btn" id="refreshLogsBtn">Refresh Logs</button>
+              <input id="actorName" placeholder="Actor name (optional, for save logs)" style="max-width:260px;margin-left:auto" />
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 26%;">Time (UTC)</th>
+                  <th style="width: 20%;">Actor</th>
+                  <th style="width: 18%;">Rules</th>
+                  <th style="width: 18%;">FAQ</th>
+                </tr>
+              </thead>
+              <tbody id="logsTbody"></tbody>
+            </table>
+            <div class="hint" style="margin-top:10px;">Shows last 50 save actions stored in KV key <span class="mono">logs</span>.</div>
+          </div>
+
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
 
 <script>
-  // ✅ Change only if needed
   const API_BASE_DEFAULT = "https://ai-chat-backend.marketing-696.workers.dev";
 
-  // State
+  // state
   let kb = { rules: [], faq: [] };
   let selectedId = null;
 
-  // Elements
+  // elements
   const apiBaseEl = document.getElementById("apiBase");
   const tokenEl = document.getElementById("adminToken");
   const rulesBox = document.getElementById("rulesBox");
@@ -327,19 +270,33 @@ Escalate withdrawals/KYC/fraud/chargebacks/blocked accounts."></textarea>
   const importBtn = document.getElementById("importBtn");
   const importFile = document.getElementById("importFile");
 
-  const searchEl = document.getElementById("search");
-  const newBtn = document.getElementById("newBtn");
+  // FAQ
   const faqIdEl = document.getElementById("faqId");
   const faqTitleEl = document.getElementById("faqTitle");
   const faqContentEl = document.getElementById("faqContent");
   const upsertBtn = document.getElementById("upsertBtn");
   const clearBtn = document.getElementById("clearBtn");
   const deleteBtn = document.getElementById("deleteBtn");
+  const searchEl = document.getElementById("search");
   const faqTbody = document.getElementById("faqTbody");
 
-  // sidebar links
+  // Test
+  const testMsgEl = document.getElementById("testMsg");
+  const testReplyEl = document.getElementById("testReply");
+  const runTestBtn = document.getElementById("runTestBtn");
+  const clearTestBtn = document.getElementById("clearTestBtn");
+
+  // Logs
+  const refreshLogsBtn = document.getElementById("refreshLogsBtn");
+  const logsTbody = document.getElementById("logsTbody");
+  const actorNameEl = document.getElementById("actorName");
+
+  // Links
   const openChatLink = document.getElementById("openChatLink");
   const openWorkerLink = document.getElementById("openWorkerLink");
+
+  function base(){ return apiBaseEl.value.trim().replace(/\/+$/, ""); }
+  function token(){ return tokenEl.value.trim(); }
 
   function setStatus(ok, msg){
     statusText.textContent = msg;
@@ -349,24 +306,29 @@ Escalate withdrawals/KYC/fraud/chargebacks/blocked accounts."></textarea>
     toast.textContent = msg;
     toast.className = "toast " + (ok ? "ok" : "bad");
   }
-  function base(){
-    return apiBaseEl.value.trim().replace(/\/+$/, "");
-  }
-  function token(){
-    return tokenEl.value.trim();
-  }
 
-  function clearForm(){
+  // Tabs
+  const tabBtns = [...document.querySelectorAll(".tab")];
+  const sideTabs = [...document.querySelectorAll(".navitem[data-tab]")];
+  function showTab(tab){
+    tabBtns.forEach(b=>b.classList.toggle("active", b.dataset.tab===tab));
+    sideTabs.forEach(a=>a.classList.toggle("active", a.dataset.tab===tab));
+    ["rules","faq","test","logs"].forEach(t=>{
+      document.getElementById("pane-"+t).style.display = (t===tab) ? "" : "none";
+    });
+  }
+  tabBtns.forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+  sideTabs.forEach(a=>a.onclick=(e)=>{ e.preventDefault(); showTab(a.dataset.tab); });
+
+  // CRUD helpers
+  function clearFaqForm(){
     selectedId = null;
-    faqIdEl.value = "";
-    faqTitleEl.value = "";
-    faqContentEl.value = "";
+    faqIdEl.value = ""; faqTitleEl.value = ""; faqContentEl.value = "";
     setToast("Ready.");
   }
-
-  function renderTable(){
-    const q = (searchEl.value || "").toLowerCase().trim();
-    const list = (kb.faq || []).filter(x=>{
+  function renderFaq(){
+    const q = (searchEl.value||"").toLowerCase().trim();
+    const list = (kb.faq||[]).filter(x=>{
       if(!q) return true;
       return (x.id||"").toLowerCase().includes(q) ||
              (x.title||"").toLowerCase().includes(q) ||
@@ -374,64 +336,83 @@ Escalate withdrawals/KYC/fraud/chargebacks/blocked accounts."></textarea>
     });
 
     faqTbody.innerHTML = "";
-    if(list.length === 0){
-      const tr = document.createElement("tr");
+    if(list.length===0){
+      const tr=document.createElement("tr");
       tr.innerHTML = `<td colspan="4" style="padding:14px;color:#64748b;">No FAQ items found.</td>`;
       faqTbody.appendChild(tr);
       return;
     }
 
     list.forEach(item=>{
-      const preview = (item.content||"").replace(/\s+/g," ").slice(0,140) + ((item.content||"").length>140?"…":"");
-      const tr = document.createElement("tr");
+      const preview=(item.content||"").replace(/\s+/g," ").slice(0,140)+((item.content||"").length>140?"…":"");
+      const tr=document.createElement("tr");
       tr.innerHTML = `
-        <td><b>${escapeHtml(item.title||"")}</b></td>
-        <td class="mono">${escapeHtml(item.id||"")}</td>
-        <td>${escapeHtml(preview)}</td>
-        <td><button class="btn" data-edit="${escapeHtml(item.id)}">Edit</button></td>
+        <td><b>${esc(item.title)}</b></td>
+        <td class="mono">${esc(item.id)}</td>
+        <td>${esc(preview)}</td>
+        <td><button class="btn" data-edit="${esc(item.id)}">Edit</button></td>
       `;
       faqTbody.appendChild(tr);
     });
 
-    // bind edit buttons
     [...faqTbody.querySelectorAll("button[data-edit]")].forEach(btn=>{
-      btn.onclick = ()=>{
-        const id = btn.getAttribute("data-edit");
-        const item = (kb.faq||[]).find(x=>x.id===id);
+      btn.onclick=()=>{
+        const id=btn.getAttribute("data-edit");
+        const item=(kb.faq||[]).find(x=>x.id===id);
         if(!item) return;
-        selectedId = id;
-        faqIdEl.value = item.id;
-        faqTitleEl.value = item.title;
-        faqContentEl.value = item.content;
-        setToast("Editing FAQ. Click Add/Update, then Save.");
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        selectedId=id;
+        faqIdEl.value=item.id; faqTitleEl.value=item.title; faqContentEl.value=item.content;
+        showTab("faq");
+        setToast("Editing FAQ. Click Add/Update then Save.");
       };
     });
   }
 
+  function upsertFaq(){
+    const id=faqIdEl.value.trim();
+    const title=faqTitleEl.value.trim();
+    const content=faqContentEl.value.trim();
+    if(!id||!title||!content) return setToast("FAQ ID, Title, and Content are required.", false);
+
+    kb.faq = Array.isArray(kb.faq) ? kb.faq : [];
+    const idx=kb.faq.findIndex(x=>x.id===id);
+    const item={id,title,content};
+    if(idx>=0) kb.faq[idx]=item; else kb.faq.unshift(item);
+    selectedId=id;
+    renderFaq();
+    setToast("FAQ added/updated. Click Save to apply.");
+  }
+
+  function deleteFaq(){
+    const id=selectedId||faqIdEl.value.trim();
+    if(!id) return setToast("Select an FAQ item first.", false);
+    kb.faq=(kb.faq||[]).filter(x=>x.id!==id);
+    clearFaqForm();
+    renderFaq();
+    setToast("FAQ deleted. Click Save to apply.");
+  }
+
+  // Load/Save KB
   async function loadKB(){
     if(!base()) return setToast("Please set Worker API Base URL.", false);
     if(!token()) return setToast("Please input Admin Token.", false);
 
     setToast("Loading…");
     try{
-      const res = await fetch(base()+"/admin/get", {
-        method:"GET",
-        headers: { "X-Admin-Token": token() }
-      });
+      const res=await fetch(base()+"/admin/get", { method:"GET", headers:{ "X-Admin-Token": token() }});
       if(!res.ok) throw new Error(await res.text());
-      kb = await res.json();
-
-      rulesBox.value = Array.isArray(kb.rules) ? kb.rules.join("\n") : "";
+      kb=await res.json();
+      kb.rules = Array.isArray(kb.rules) ? kb.rules : [];
       kb.faq = Array.isArray(kb.faq) ? kb.faq : [];
+
+      rulesBox.value = kb.rules.join("\n");
+      renderFaq();
+      clearFaqForm();
 
       setStatus(true,"Connected");
       setToast("Loaded successfully.");
-      clearForm();
-      renderTable();
 
       openWorkerLink.href = base();
-      // if your chat demo is index.html in same repo, this opens it
       openChatLink.href = location.href.replace(/admin\.html.*$/i, "index.html");
     }catch(e){
       console.error(e);
@@ -449,15 +430,17 @@ Escalate withdrawals/KYC/fraud/chargebacks/blocked accounts."></textarea>
 
     setToast("Saving…");
     try{
-      const res = await fetch(base()+"/admin/save", {
+      const res=await fetch(base()+"/admin/save", {
         method:"POST",
         headers:{
           "Content-Type":"application/json",
-          "X-Admin-Token": token()
+          "X-Admin-Token": token(),
+          "X-Admin-Actor": (actorNameEl?.value || "").trim() || "admin"
         },
         body: JSON.stringify(payload)
       });
       if(!res.ok) throw new Error(await res.text());
+      kb.rules = rules;
       setStatus(true,"Connected");
       setToast("Saved successfully. AI will use updated knowledge immediately.");
     }catch(e){
@@ -467,29 +450,69 @@ Escalate withdrawals/KYC/fraud/chargebacks/blocked accounts."></textarea>
     }
   }
 
-  function upsertFAQ(){
-    const id = faqIdEl.value.trim();
-    const title = faqTitleEl.value.trim();
-    const content = faqContentEl.value.trim();
-    if(!id || !title || !content) return setToast("FAQ ID, Title, and Content are required.", false);
+  // Admin test
+  async function runTest(){
+    if(!base()) return setToast("Please set Worker API Base URL.", false);
+    if(!token()) return setToast("Please input Admin Token.", false);
 
-    kb.faq = Array.isArray(kb.faq) ? kb.faq : [];
-    const idx = kb.faq.findIndex(x=>x.id===id);
-    const item = { id, title, content };
-    if(idx>=0) kb.faq[idx]=item; else kb.faq.unshift(item);
+    const msg = (testMsgEl.value||"").trim();
+    if(!msg) return setToast("Please enter a test message.", false);
 
-    selectedId = id;
-    renderTable();
-    setToast("FAQ added/updated. Click Save to apply.");
+    testReplyEl.value = "Running…";
+    try{
+      const res=await fetch(base()+"/admin/test", {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+          "X-Admin-Token": token()
+        },
+        body: JSON.stringify({ message: msg })
+      });
+      if(!res.ok) throw new Error(await res.text());
+      const data=await res.json();
+      testReplyEl.value = data.reply || "Unable to answer.";
+      setToast("Test completed.");
+    }catch(e){
+      console.error(e);
+      testReplyEl.value = "Test failed. Check Worker endpoints and OpenAI key.";
+      setToast("Test failed. Check Worker endpoints.", false);
+    }
   }
 
-  function deleteFAQ(){
-    const id = selectedId || faqIdEl.value.trim();
-    if(!id) return setToast("Select an FAQ item first.", false);
-    kb.faq = (kb.faq||[]).filter(x=>x.id!==id);
-    clearForm();
-    renderTable();
-    setToast("FAQ deleted. Click Save to apply.");
+  // Logs
+  async function loadLogs(){
+    if(!base()) return setToast("Please set Worker API Base URL.", false);
+    if(!token()) return setToast("Please input Admin Token.", false);
+
+    try{
+      const res=await fetch(base()+"/admin/logs", { method:"GET", headers:{ "X-Admin-Token": token() }});
+      if(!res.ok) throw new Error(await res.text());
+      const data=await res.json();
+      const logs = Array.isArray(data.logs) ? data.logs : [];
+
+      logsTbody.innerHTML = "";
+      if(logs.length===0){
+        const tr=document.createElement("tr");
+        tr.innerHTML = `<td colspan="4" style="padding:14px;color:#64748b;">No logs yet. Save once to create logs.</td>`;
+        logsTbody.appendChild(tr);
+        return;
+      }
+
+      logs.forEach(l=>{
+        const tr=document.createElement("tr");
+        tr.innerHTML = `
+          <td class="mono">${esc(l.time||"")}</td>
+          <td>${esc(l.actor||"")}</td>
+          <td>${esc(String(l.rulesCount ?? ""))}</td>
+          <td>${esc(String(l.faqCount ?? ""))}</td>
+        `;
+        logsTbody.appendChild(tr);
+      });
+      setToast("Logs loaded.");
+    }catch(e){
+      console.error(e);
+      setToast("Failed to load logs. Ensure /admin/logs exists in Worker.", false);
+    }
   }
 
   // Defaults
@@ -508,61 +531,56 @@ Escalate withdrawals/KYC/fraud/chargebacks/blocked accounts."></textarea>
     setToast("Inserted LatAm default rules. Click Save to apply.");
   };
 
-  // Import/Export
   exportBtn.onclick = ()=>{
     const rules = rulesBox.value.split("\n").map(s=>s.trim()).filter(Boolean);
     const payload = { rules, faq: kb.faq || [] };
-    const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "knowledge.json";
-    a.click();
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob); a.download="knowledge.json"; a.click();
     URL.revokeObjectURL(a.href);
     setToast("Exported knowledge.json");
   };
+
   importBtn.onclick = ()=> importFile.click();
   importFile.onchange = async ()=>{
-    const f = importFile.files?.[0];
-    if(!f) return;
+    const f=importFile.files?.[0]; if(!f) return;
     try{
-      const obj = JSON.parse(await f.text());
+      const obj=JSON.parse(await f.text());
       kb = obj || {rules:[], faq:[]};
-      rulesBox.value = Array.isArray(kb.rules) ? kb.rules.join("\n") : "";
+      kb.rules = Array.isArray(kb.rules) ? kb.rules : [];
       kb.faq = Array.isArray(kb.faq) ? kb.faq : [];
-      clearForm();
-      renderTable();
+      rulesBox.value = kb.rules.join("\n");
+      renderFaq();
+      clearFaqForm();
       setToast("Imported JSON. Click Save to apply.");
     }catch(e){
       console.error(e);
       setToast("Import failed: invalid JSON.", false);
     }finally{
-      importFile.value = "";
+      importFile.value="";
     }
   };
 
-  // Bind events
+  // Bind buttons
   loadBtn.onclick = loadKB;
   saveBtn.onclick = saveKB;
-  upsertBtn.onclick = upsertFAQ;
-  deleteBtn.onclick = deleteFAQ;
-  clearBtn.onclick = clearForm;
-  newBtn.onclick = clearForm;
-  searchEl.oninput = renderTable;
+  upsertBtn.onclick = upsertFaq;
+  deleteBtn.onclick = deleteFaq;
+  clearBtn.onclick = clearFaqForm;
+  searchEl.oninput = renderFaq;
+  runTestBtn.onclick = runTest;
+  clearTestBtn.onclick = ()=>{ testMsgEl.value=""; testReplyEl.value=""; };
+  refreshLogsBtn.onclick = loadLogs;
 
-  // helpers
-  function escapeHtml(str){
-    return String(str)
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
-  }
+  function esc(s){return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");}
 
-  // init
+  // Init
   apiBaseEl.value = API_BASE_DEFAULT;
   setStatus(false,"Disconnected");
-  renderTable();
+  renderFaq();
+
+  // When user switches to logs tab, auto-refresh once
+  document.querySelector('[data-tab="logs"]').addEventListener("click", ()=> setTimeout(loadLogs, 50));
 </script>
 </body>
 </html>
