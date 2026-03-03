@@ -1,255 +1,273 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>AI Support Console</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Support</title>
 
-<style>
-body {
-  margin: 0;
-  font-family: "Segoe UI", Arial, sans-serif;
-  background: #f5f7fa;
-}
+  <style>
+    :root {
+      --primary: #16a34a;
+      --primary-dark: #15803d;
+      --bg: #f4f6f9;
+      --chat-bg: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+    }
 
-.header {
-  background: #0f172a;
-  color: white;
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+    * {
+      box-sizing: border-box
+    }
 
-.container {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  height: calc(100vh - 60px);
-}
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: var(--bg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-.sidebar {
-  background: white;
-  border-right: 1px solid #e5e7eb;
-  padding: 20px;
-}
+    .chat-wrapper {
+      width: 100%;
+      max-width: 420px;
+      height: 92vh;
+      background: var(--chat-bg);
+      border-radius: 18px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
 
-.sidebar h3 {
-  margin-top: 0;
-  font-size: 16px;
-  margin-bottom: 15px;
-}
+    /* HEADER */
+    .chat-header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-.sidebar button {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 6px;
-  border: 1px solid #e5e7eb;
-  background: #fafafa;
-  cursor: pointer;
-}
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: white;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 16px;
+    }
 
-.sidebar button:hover {
-  background: #f1f5f9;
-}
+    .header-text {
+      flex: 1;
+    }
 
-.chat-area {
-  display: flex;
-  flex-direction: column;
-}
+    .header-text h3 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+    }
 
-.chat-window {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-}
+    .header-text span {
+      font-size: 12px;
+      opacity: .9;
+    }
 
-.message {
-  margin-bottom: 15px;
-}
+    /* CHAT AREA */
+    .chat-body {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: #fafafa;
+    }
 
-.message.user {
-  text-align: right;
-}
+    .message {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 16px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
 
-.bubble {
-  display: inline-block;
-  padding: 12px 16px;
-  border-radius: 14px;
-  max-width: 70%;
-  font-size: 14px;
-}
+    .user {
+      align-self: flex-end;
+      background: var(--primary);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
 
-.user .bubble {
-  background: #0f172a;
-  color: white;
-}
+    .bot {
+      align-self: flex-start;
+      background: white;
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+    }
 
-.bot .bubble {
-  background: #e2e8f0;
-  color: #111827;
-}
+    .system {
+      align-self: center;
+      background: #fff7ed;
+      border: 1px solid #fde68a;
+      font-size: 12px;
+      color: #92400e;
+      padding: 6px 12px;
+      border-radius: 20px;
+    }
 
-.input-area {
-  display: flex;
-  padding: 15px;
-  background: white;
-  border-top: 1px solid #e5e7eb;
-}
+    /* INPUT */
+    .chat-input {
+      border-top: 1px solid var(--border);
+      padding: 12px;
+      display: flex;
+      gap: 8px;
+      background: white;
+    }
 
-input {
-  flex: 1;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #d1d5db;
-}
+    .chat-input textarea {
+      flex: 1;
+      resize: none;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+      font-size: 14px;
+      outline: none;
+    }
 
-button.send {
-  margin-left: 10px;
-  padding: 10px 15px;
-  border-radius: 6px;
-  border: none;
-  background: #0f172a;
-  color: white;
-  cursor: pointer;
-}
+    .chat-input textarea:focus {
+      border-color: var(--primary);
+    }
 
-.status {
-  font-size: 13px;
-}
-</style>
+    .chat-input button {
+      background: var(--primary);
+      border: none;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .chat-input button:hover {
+      background: var(--primary-dark);
+    }
+
+    /* TYPING */
+    .typing {
+      font-size: 12px;
+      color: var(--muted);
+      padding-left: 4px;
+    }
+  </style>
 </head>
 
-<body>
+<body style="visibility: visible;">
 
-<div class="header">
-  <div><strong>AI Customer Support (Brazil & Mexico)</strong></div>
-  <div class="status" id="status">AI Mode: OFF</div>
-</div>
+  <div class="chat-wrapper">
+    <div class="chat-header">
+      <div class="avatar">CS</div>
+      <div class="header-text">
+        <h3>Customer Support</h3>
+        <span>Online • Reply within minutes</span>
+      </div>
+    </div>
 
-<div class="container">
+    <div class="chat-body" id="chat">
+      <div class="message bot">
+        Hello 👋 Welcome to Customer Support.<br>
+        How can we assist you today?
+      </div>
+      <div class="message user">hello</div>
+      <div class="message bot">This is a demo AI response for: hello</div>
+    </div>
 
-  <div class="sidebar">
-    <h3>Quick FAQ</h3>
-    <button onclick="showFAQ('deposit')">Deposit</button>
-    <button onclick="showFAQ('withdrawal')">Withdrawal</button>
-    <button onclick="showFAQ('bonus')">Bonus</button>
-    <button onclick="showFAQ('login')">Login</button>
-    <hr>
-    <button onclick="enableAI()">Enable AI Assistance</button>
-    <button onclick="escalate()">Contact Human Support</button>
-  </div>
-
-  <div class="chat-area">
-    <div class="chat-window" id="chat"></div>
-
-    <div class="input-area">
-      <input id="input" placeholder="Type your message..." />
-      <button class="send" onclick="sendMessage()">Send</button>
+    <div class="chat-input">
+      <textarea id="input" rows="1" placeholder="Type your message..."></textarea>
+      <button onclick="sendMessage()">Send</button>
     </div>
   </div>
 
-</div>
+  <script>
+    const API_BASE = "https://ai-chat-backend.marketing-696.workers.dev"; // change if needed
 
-<script>
+    const chat = document.getElementById("chat");
+    const input = document.getElementById("input");
 
-const API_URL = "https://ai-chat-backend.marketing-696.workers.dev/";
+    function addMessage(text, type) {
+      const div = document.createElement("div");
+      div.className = "message " + type;
+      div.innerHTML = text.replace(/\n/g, "<br>");
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
 
-let aiEnabled = false;
+    function addTyping() {
+      const div = document.createElement("div");
+      div.className = "typing";
+      div.id = "typing";
+      div.innerText = "Support is typing...";
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
 
-const FAQ = {
-  deposit: `
-Deposit Guide:
-1. Go to Cashier
-2. Select Deposit
-3. Choose payment method (PIX, SPEI, OXXO, Card)
-4. Confirm transaction
+    function removeTyping() {
+      const t = document.getElementById("typing");
+      if (t) t.remove();
+    }
 
-Pending deposits usually resolve within minutes.
-`,
-  withdrawal: `
-Withdrawal Guide:
-• Processing time depends on method
-• KYC verification may be required
-• Bonus wagering must be completed
-`,
-  bonus: `
-Bonus Information:
-• Review wagering requirements
-• Check expiry dates
-• Ensure promotion is activated
-`,
-  login: `
-Login Help:
-• Use "Forgot Password"
-• Clear browser cache
-• Ensure correct credentials
-`
-};
+    async function sendMessage() {
+      const text = input.value.trim();
+      if (!text) return;
 
-function addMessage(text, type="bot") {
-  const chat = document.getElementById("chat");
-  const msg = document.createElement("div");
-  msg.className = "message " + type;
+      addMessage(text, "user");
+      input.value = "";
+      addTyping();
 
-  const bubble = document.createElement("div");
-  bubble.className = "bubble";
-  bubble.innerText = text;
+      try {
+        const res = await fetch(API_BASE, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            message: text
+          })
+        });
 
-  msg.appendChild(bubble);
-  chat.appendChild(msg);
-  chat.scrollTop = chat.scrollHeight;
-}
+        const data = await res.json();
+        removeTyping();
 
-function showFAQ(type) {
-  addMessage(FAQ[type]);
-  addMessage("Did this resolve your issue? You may enable AI assistance if needed.");
-}
+        if (data.action === "escalate") {
+          addMessage("For security reasons, this request has been forwarded to a specialist. Please wait while we connect you.", "bot");
+          addMessage("A human agent will join shortly.", "system");
+        } else {
+          addMessage(data.reply || "Thank you. Our team will review this shortly.", "bot");
+        }
 
-function enableAI() {
-  aiEnabled = true;
-  document.getElementById("status").innerText = "AI Mode: ON";
-  addMessage("AI assistance enabled. Please type your question.");
-}
+      } catch (err) {
+        removeTyping();
+        addMessage("Connection error. Please try again later.", "system");
+      }
+    }
 
-function escalate() {
-  addMessage("For security or account-related issues, please contact our human support team.");
-}
+    input.addEventListener("keydown", function(e) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+  </script>
 
-async function sendMessage() {
-  const input = document.getElementById("input");
-  const message = input.value.trim();
-  if (!message) return;
-
-  addMessage(message, "user");
-  input.value = "";
-
-  if (!aiEnabled) {
-    addMessage("Please use FAQ or enable AI assistance.");
-    return;
-  }
-
-  const sensitive = /(withdraw|chargeback|fraud|blocked|kyc)/i;
-  if (sensitive.test(message)) {
-    addMessage("This issue requires human support for security reasons.");
-    return;
-  }
-
-  addMessage("Processing...");
-
-  const response = await fetch(API_URL, {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ message })
-  });
-
-  const data = await response.json();
-  addMessage(data.reply || "Unable to answer.");
-}
-
-addMessage("Welcome to Customer Support. Please select a FAQ category or enable AI assistance.");
-
-</script>
 
 </body>
+
 </html>
