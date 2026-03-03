@@ -224,40 +224,40 @@
       if (t) t.remove();
     }
 
-    async function sendMessage() {
-      const text = input.value.trim();
-      if (!text) return;
+  async function sendMessage() {
+  const text = input.value.trim();
+  if (!text) return;
 
-      addMessage(text, "user");
-      input.value = "";
-      addTyping();
+  addMessage(text, "user");
+  input.value = "";
+  addTyping();
 
-      try {
-        const res = await fetch(API_BASE, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            message: text
-          })
-        });
+  try {
+    const res = await fetch(API_BASE + "/chat?brand=demo", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message: text
+      })
+    });
 
-        const data = await res.json();
-        removeTyping();
+    const data = await res.json();
+    removeTyping();
 
-        if (data.action === "escalate") {
-          addMessage("For security reasons, this request has been forwarded to a specialist. Please wait while we connect you.", "bot");
-          addMessage("A human agent will join shortly.", "system");
-        } else {
-          addMessage(data.reply || "Thank you. Our team will review this shortly.", "bot");
-        }
-
-      } catch (err) {
-        removeTyping();
-        addMessage("Connection error. Please try again later.", "system");
-      }
+    if (data.action === "escalate") {
+      addMessage("For security reasons, this request has been forwarded to a specialist. Please wait while we connect you.", "bot");
+      addMessage("A human agent will join shortly.", "system");
+    } else {
+      addMessage(data.reply || "Thank you. Our team will review this shortly.", "bot");
     }
+
+  } catch (err) {
+    removeTyping();
+    addMessage("Connection error. Please try again later.", "system");
+  }
+}
 
     input.addEventListener("keydown", function(e) {
       if (e.key === "Enter" && !e.shiftKey) {
