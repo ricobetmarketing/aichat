@@ -1,74 +1,104 @@
 <!doctype html>
-<html lang="en">
+<html>
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>AI Support OS • Internal Console</title>
+<title>AI Support OS • Internal v2</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 body{margin:0;font-family:system-ui;background:#f4f6fb}
 .app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
 .sidebar{background:#0b1220;color:#fff;padding:20px}
-.sidebar button{display:block;width:100%;padding:10px;margin-bottom:8px;border:0;border-radius:8px;background:#111827;color:#fff;cursor:pointer;text-align:left}
+.sidebar h2{margin-top:0}
+.sidebar button{display:block;width:100%;padding:10px;margin-bottom:8px;border:0;border-radius:10px;background:#111827;color:#fff;text-align:left;cursor:pointer}
 .sidebar button.active{background:#16a34a}
 .main{padding:30px}
-.card{background:#fff;border-radius:14px;padding:20px;margin-bottom:20px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
-textarea{width:100%;min-height:120px;padding:10px;border-radius:10px;border:1px solid #ddd}
-.btn{padding:8px 14px;border-radius:8px;border:0;background:#16a34a;color:#fff;cursor:pointer;margin-right:10px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
 .pill{padding:6px 12px;border-radius:999px;font-size:12px}
 .ok{background:#dcfce7;color:#065f46}
 .bad{background:#fee2e2;color:#7f1d1d}
+.card{background:#fff;border-radius:16px;padding:20px;margin-bottom:20px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+.kpi{background:#fff;border-radius:16px;padding:16px;box-shadow:0 10px 20px rgba(0,0,0,.05)}
+.kpi h3{margin:0;font-size:22px}
+.section-title{font-weight:700;margin-bottom:10px}
+.log{font-size:12px;border-bottom:1px solid #eee;padding:6px 0}
+button.action{background:#16a34a;color:#fff;border:0;padding:6px 12px;border-radius:8px;cursor:pointer}
+button.danger{background:#dc2626}
+.hidden{display:none}
 </style>
 </head>
-<body>
 
+<body>
 <div class="app">
+
 <div class="sidebar">
-<h3>AI Support OS</h3>
-<button data-tab="rules" class="active">Rules</button>
+<h2>AI Support OS</h2>
+<button data-tab="dashboard" class="active">Dashboard</button>
+<button data-tab="rules">Rules</button>
 <button data-tab="faq">FAQ</button>
-<button data-tab="test">Preview</button>
-<button data-tab="analytics">Analytics</button>
 </div>
 
 <div class="main">
-<div style="display:flex;justify-content:space-between;margin-bottom:20px">
-<h2>Internal Admin Console</h2>
+<div class="header">
+<h2>Internal Admin v2</h2>
 <div id="status" class="pill bad">Connecting...</div>
 </div>
 
-<section id="rules">
+<!-- DASHBOARD -->
+<section id="dashboard">
+
+<div class="kpis">
+<div class="kpi"><h3 id="kTotal">0</h3><div>Total Messages</div></div>
+<div class="kpi"><h3 id="kAuto">0</h3><div>Auto Replies</div></div>
+<div class="kpi"><h3 id="kEsc">0</h3><div>Escalated</div></div>
+<div class="kpi"><h3 id="kConf">0</h3><div>Avg Confidence</div></div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
 <div class="card">
-<h3>System Rules (Draft)</h3>
-<textarea id="rulesBox"></textarea><br><br>
-<button class="btn" onclick="saveDraft()">Save Draft</button>
-<button class="btn" onclick="publish()">Publish</button>
+<div class="section-title">Intent Distribution</div>
+<canvas id="intentChart"></canvas>
+</div>
+
+<div class="card">
+<div class="section-title">Resolution Breakdown</div>
+<canvas id="resChart"></canvas>
+</div>
+</div>
+
+<div class="card">
+<div class="section-title">Recent Logs</div>
+<div id="logsBox"></div>
+</div>
+
+<div class="card">
+<div class="section-title">Version History</div>
+<div id="versionBox"></div>
+</div>
+
+</section>
+
+<!-- RULES -->
+<section id="rules" class="hidden">
+<div class="card">
+<div class="section-title">System Rules</div>
+<textarea id="rulesBox" style="width:100%;height:200px"></textarea>
+<br><br>
+<button class="action" onclick="saveDraft()">Save Draft</button>
+<button class="action danger" onclick="publish()">Publish</button>
 </div>
 </section>
 
-<section id="faq" style="display:none">
+<!-- FAQ -->
+<section id="faq" class="hidden">
 <div class="card">
-<h3>FAQ JSON (Draft)</h3>
-<textarea id="faqBox"></textarea><br><br>
-<button class="btn" onclick="saveDraft()">Save Draft</button>
-<button class="btn" onclick="publish()">Publish</button>
-</div>
-</section>
-
-<section id="test" style="display:none">
-<div class="card">
-<h3>Preview Draft</h3>
-<textarea id="testMsg"></textarea><br><br>
-<button class="btn" onclick="runTest()">Run</button>
-<div id="replyBox" style="margin-top:20px;font-weight:bold"></div>
-</div>
-</section>
-
-<section id="analytics" style="display:none">
-<div class="card">
-<h3>Analytics</h3>
-<canvas id="chart"></canvas>
+<div class="section-title">FAQ JSON</div>
+<textarea id="faqBox" style="width:100%;height:200px"></textarea>
+<br><br>
+<button class="action" onclick="saveDraft()">Save Draft</button>
+<button class="action danger" onclick="publish()">Publish</button>
 </div>
 </section>
 
@@ -76,80 +106,74 @@ textarea{width:100%;min-height:120px;padding:10px;border-radius:10px;border:1px 
 </div>
 
 <script>
-// =============================
-// FIXED INTERNAL CONFIG
-// =============================
-const API_BASE = "https://ai-chat-backend.marketing-696.workers.dev";
-const BRAND = "demo";
-const ADMIN_TOKEN = "698316Jo@"; // ← 改成你的真实 token
+const API_BASE="https://ai-chat-backend.marketing-696.workers.dev";
+const BRAND="demo";
+const ADMIN_TOKEN="YOUR_TOKEN";
 
-// =============================
-
-const $ = id => document.getElementById(id)
+const $=id=>document.getElementById(id)
 
 function headers(){
-return {
-"Content-Type":"application/json",
-"X-Admin-Token": ADMIN_TOKEN
-}
+return {"Content-Type":"application/json","X-Admin-Token":ADMIN_TOKEN}
 }
 
 async function connect(){
 try{
-const r = await fetch(API_BASE+"/admin/get?brand="+BRAND,{headers:headers()})
-const data = await r.json()
-$("rulesBox").value=(data.draft?.rules||[]).join("\n")
-$("faqBox").value=JSON.stringify(data.draft?.faq||[],null,2)
+await loadAnalytics()
 $("status").className="pill ok"
 $("status").innerText="Connected"
 }catch{
 $("status").className="pill bad"
-$("status").innerText="Connection Failed"
+$("status").innerText="Disconnected"
 }
+}
+
+async function loadAnalytics(){
+const r=await fetch(API_BASE+"/admin/analytics?brand="+BRAND,{headers:headers()})
+const data=await r.json()
+const m=data.metrics||{}
+
+$("kTotal").innerText=m.totalMessages||0
+$("kAuto").innerText=m.autoReply||0
+$("kEsc").innerText=m.escalated||0
+$("kConf").innerText=(m.avgConfidence||0).toFixed(2)
+
+new Chart(intentChart=new Chart($("intentChart"),{
+type:"pie",
+data:{labels:Object.keys(m.intents||{}),datasets:[{data:Object.values(m.intents||{})}]}
+}))
+
+new Chart(resChart=new Chart($("resChart"),{
+type:"bar",
+data:{labels:["Auto","Escalated","Copilot"],datasets:[{data:[m.autoReply||0,m.escalated||0,m.copilot||0]}]}
+}))
+
 }
 
 async function saveDraft(){
 const body={
-rules:$("rulesBox").value.split("\n").filter(x=>x.trim()),
+rules:$("rulesBox").value.split("\n"),
 faq:JSON.parse($("faqBox").value||"[]")
 }
-await fetch(API_BASE+"/admin/save?brand="+BRAND,{
-method:"POST",
-headers:headers(),
-body:JSON.stringify(body)
-})
+await fetch(API_BASE+"/admin/save?brand="+BRAND,{method:"POST",headers:headers(),body:JSON.stringify(body)})
 alert("Draft Saved")
 }
 
 async function publish(){
-await fetch(API_BASE+"/admin/publish?brand="+BRAND,{
-method:"POST",
-headers:headers()
-})
-alert("Published to Live")
+await fetch(API_BASE+"/admin/publish?brand="+BRAND,{method:"POST",headers:headers()})
+alert("Published")
 }
 
-async function runTest(){
-const r=await fetch(API_BASE+"/admin/test?brand="+BRAND,{
-method:"POST",
-headers:headers(),
-body:JSON.stringify({message:$("testMsg").value,mode:"draft"})
-})
-const data=await r.json()
-$("replyBox").innerText=data.reply||"No response"
-}
-
-// simple tab switch
 document.querySelectorAll(".sidebar button").forEach(btn=>{
 btn.onclick=()=>{
 document.querySelectorAll(".sidebar button").forEach(b=>b.classList.remove("active"))
 btn.classList.add("active")
-document.querySelectorAll("section").forEach(s=>s.style.display="none")
-document.getElementById(btn.dataset.tab).style.display="block"
+document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"))
+$(btn.dataset.tab).classList.remove("hidden")
 }
 })
 
 connect()
+setInterval(loadAnalytics,10000)
 </script>
 
 </body>
