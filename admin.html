@@ -2,1472 +2,289 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>AI Knowledge Console • Enterprise Admin</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AI Support OS • Enterprise Console</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 :root{
-  --bg:#f3f5f9;
-  --panel:#ffffff;
-  --border:#e5e7eb;
-  --text:#0f172a;
-  --muted:#64748b;
-  --nav1:#0b1220;
-  --nav2:#0f1a35;
-  --accent:#16a34a;
-  --accent-hover:#15803d;
-  --danger:#dc2626;
-  --warn:#f59e0b;
-  --radius:14px;
-  --shadow:0 10px 25px rgba(2,6,23,.06);
+--bg:#f4f6fb;
+--panel:#fff;
+--border:#e5e7eb;
+--text:#0f172a;
+--muted:#64748b;
+--nav1:#0b1220;
+--nav2:#0f1a35;
+--accent:#16a34a;
+--warn:#f59e0b;
+--danger:#dc2626;
+--radius:16px;
+--shadow:0 10px 30px rgba(2,6,23,.08);
 }
 
 *{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-  background:var(--bg);
-  color:var(--text);
-}
+body{margin:0;font-family:system-ui;background:var(--bg);color:var(--text)}
+.app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+.sidebar{background:linear-gradient(180deg,var(--nav1),var(--nav2));color:#fff;padding:20px}
+.brand{display:flex;gap:10px;align-items:center;margin-bottom:30px}
+.logo{width:42px;height:42px;border-radius:12px;background:rgba(22,163,74,.2);display:grid;place-items:center;font-weight:900;color:#bbf7d0}
+.nav button{width:100%;background:none;border:1px solid transparent;color:#fff;padding:10px;border-radius:12px;text-align:left;font-weight:700;cursor:pointer;margin-bottom:6px}
+.nav button.active{background:rgba(22,163,74,.2);border-color:rgba(22,163,74,.4)}
 
-a{color:inherit}
+.main{padding:30px;padding-bottom:120px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.title{font-size:20px;font-weight:900}
+.pill{padding:6px 12px;border-radius:999px;font-size:12px;border:1px solid var(--border)}
+.pill.ok{background:#dcfce7;color:#065f46}
+.pill.warn{background:#fef3c7;color:#92400e}
+.pill.bad{background:#fee2e2;color:#7f1d1d}
 
-.app{
-  display:grid;
-  grid-template-columns:280px 1fr;
-  min-height:100vh;
-}
-@media(max-width:1100px){
-  .app{grid-template-columns:1fr}
-  .sidebar{display:none}
-  .main{padding:18px}
-}
-
-.sidebar{
-  background:linear-gradient(180deg,var(--nav1),var(--nav2));
-  color:#e5e7eb;
-  padding:18px 14px;
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-.brand{
-  display:flex;
-  gap:12px;
-  align-items:center;
-  padding:12px;
-  border-radius:12px;
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.08);
-}
-
-.logo{
-  width:38px;
-  height:38px;
-  border-radius:12px;
-  background:rgba(22,163,74,.2);
-  display:grid;
-  place-items:center;
-  font-weight:1000;
-  color:#bbf7d0;
-}
-
-.brand h1{
-  font-size:14px;
-  margin:0;
-  font-weight:950;
-  letter-spacing:.2px;
-}
-.brand span{
-  font-size:12px;
-  opacity:.72;
-}
-
-.nav{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  margin-top:4px;
-}
-.nav button{
-  background:none;
-  border:1px solid transparent;
-  color:#e5e7eb;
-  padding:10px 12px;
-  text-align:left;
-  border-radius:10px;
-  font-weight:650;
-  cursor:pointer;
-}
-.nav button:hover{
-  background:rgba(255,255,255,.06);
-}
-.nav button.active{
-  background:rgba(22,163,74,.18);
-  border-color:rgba(22,163,74,.4);
-}
-
-.sidehint{
-  margin-top:auto;
-  padding:10px 12px;
-  border-radius:12px;
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.08);
-  font-size:12px;
-  line-height:1.35;
-  opacity:.9;
-}
-
-.main{
-  padding:28px;
-}
-
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:12px;
-  margin-bottom:18px;
-}
-
-.hgroup .title{
-  font-size:18px;
-  font-weight:950;
-}
-.hgroup .subtitle{
-  font-size:12px;
-  color:var(--muted);
-  margin-top:4px;
-}
-
-.statuswrap{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  flex-wrap:wrap;
-  justify-content:flex-end;
-}
-
-.pill{
-  padding:8px 12px;
-  border-radius:999px;
-  font-size:12px;
-  border:1px solid var(--border);
-  background:#fff;
-  color:var(--text);
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-.pill strong{font-weight:900}
-
-.status{
-  padding:8px 14px;
-  border-radius:999px;
-  font-size:12px;
-  border:1px solid var(--border);
-  font-weight:800;
-}
-.status.ok{
-  background:#dcfce7;
-  color:#065f46;
-  border-color:#bbf7d0;
-}
-.status.bad{
-  background:#fee2e2;
-  color:#7f1d1d;
-  border-color:#fecaca;
-}
-.status.warn{
-  background:#fffbeb;
-  color:#7c2d12;
-  border-color:#fde68a;
-}
-
-.toast{
-  position:fixed;
-  right:18px;
-  bottom:18px;
-  z-index:99;
-  max-width:420px;
-}
-.toast .t{
-  background:#0b1220;
-  color:#fff;
-  border:1px solid rgba(255,255,255,.1);
-  border-radius:14px;
-  padding:12px 14px;
-  box-shadow:0 18px 40px rgba(2,6,23,.22);
-  margin-top:10px;
-  font-size:13px;
-  line-height:1.3;
-  opacity:.98;
-}
-.toast .t small{opacity:.75}
-
-.card{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  margin-bottom:18px;
-}
-.cardhd{
-  padding:14px 18px;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-}
-.cardhd .left{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  flex-wrap:wrap;
-}
-.cardhd strong{font-weight:950}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px}
+.cardhd{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
 .cardbd{padding:18px}
-
-.row{
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
-  align-items:center;
-}
-.row.end{justify-content:flex-end}
-.grow{flex:1 1 260px}
-.small{font-size:12px;color:var(--muted)}
-
-input,textarea,select{
-  width:100%;
-  padding:10px 12px;
-  border-radius:10px;
-  border:1px solid var(--border);
-  font-size:14px;
-  background:#fff;
-  outline:none;
-}
-textarea{min-height:120px; resize:vertical}
-input:focus,textarea:focus,select:focus{
-  border-color:var(--accent);
-  box-shadow:0 0 0 3px rgba(22,163,74,.15);
-}
-
-.btn{
-  padding:9px 14px;
-  border-radius:10px;
-  border:1px solid var(--border);
-  background:#fff;
-  cursor:pointer;
-  font-weight:800;
-  font-size:13px;
-  white-space:nowrap;
-}
-.btn:hover{background:#f8fafc}
-.btn.primary{
-  background:var(--accent);
-  color:#fff;
-  border-color:var(--accent);
-}
-.btn.primary:hover{background:var(--accent-hover)}
-.btn.danger{
-  background:#fff;
-  border-color:#fecaca;
-  color:#991b1b;
-}
-.btn.danger:hover{background:#fff5f5}
-.btn.ghost{
-  background:transparent;
-}
-.btn.warn{
-  border-color:#fde68a;
-  color:#92400e;
-}
-.btn.warn:hover{background:#fffbeb}
-
-.kpis{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:16px;
-}
-@media(max-width:1100px){ .kpis{grid-template-columns:1fr} }
-.kpi{
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:16px;
-  box-shadow:var(--shadow);
-}
-.kpi h3{
-  margin:0;
-  font-size:22px;
-  font-weight:1000;
-}
-.kpi span{
-  font-size:12px;
-  color:var(--muted);
-}
-
-.table{
-  width:100%;
-  border-collapse:separate;
-  border-spacing:0;
-  overflow:hidden;
-  border:1px solid var(--border);
-  border-radius:14px;
-  background:#fff;
-}
-.table th,.table td{
-  padding:10px 12px;
-  border-bottom:1px solid var(--border);
-  font-size:13px;
-  vertical-align:top;
-}
-.table th{
-  background:#f8fafc;
-  text-align:left;
-  font-weight:950;
-  color:#0f172a;
-}
-.table tr:last-child td{border-bottom:none}
-.badge{
-  display:inline-flex;
-  gap:6px;
-  align-items:center;
-  padding:4px 10px;
-  border-radius:999px;
-  border:1px solid var(--border);
-  font-size:12px;
-  color:var(--muted);
-  background:#fff;
-}
-.badge.ok{border-color:#bbf7d0;background:#dcfce7;color:#065f46}
-.badge.warn{border-color:#fde68a;background:#fffbeb;color:#92400e}
-.badge.bad{border-color:#fecaca;background:#fee2e2;color:#7f1d1d}
-
 .hidden{display:none}
 
-/* Modal */
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(2,6,23,.45);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:18px;
-  z-index:100;
-}
-.modal.show{display:flex}
-.modal .panel{
-  width:min(900px,100%);
-  background:#fff;
-  border-radius:16px;
-  border:1px solid var(--border);
-  box-shadow:0 20px 55px rgba(2,6,23,.25);
-  overflow:hidden;
-}
-.modal .phd{
-  padding:14px 16px;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-}
-.modal .phd strong{font-weight:1000}
-.modal .pbd{padding:16px}
-.modal .pft{
-  padding:14px 16px;
-  border-top:1px solid var(--border);
-  display:flex;
-  justify-content:flex-end;
-  gap:10px;
-  flex-wrap:wrap;
-}
-.mgrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-@media(max-width:900px){ .mgrid{grid-template-columns:1fr} }
+input,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);margin-top:6px}
+textarea{min-height:120px}
 
-.mono{
-  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
-  font-size:12px;
+.btn{padding:8px 14px;border-radius:10px;border:1px solid var(--border);background:#fff;font-weight:700;cursor:pointer}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.warn{background:#fef3c7;border-color:#f59e0b;color:#92400e}
+.btn.danger{background:#fee2e2;border-color:#dc2626;color:#7f1d1d}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.kpi{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.kpi h3{margin:0;font-size:20px;font-weight:900}
+.kpi span{font-size:12px;color:var(--muted)}
+
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+
+.actionbar{
+position:fixed;bottom:20px;left:280px;right:20px;
+background:#fff;border:1px solid var(--border);
+border-radius:20px;box-shadow:0 20px 50px rgba(0,0,0,.1);
+padding:12px 20px;display:flex;justify-content:space-between;align-items:center
 }
-hr.sep{
-  border:none;
-  border-top:1px solid var(--border);
-  margin:14px 0;
+
+@media(max-width:1100px){
+.app{grid-template-columns:1fr}
+.sidebar{display:none}
+.kpis{grid-template-columns:1fr}
+.chart-grid{grid-template-columns:1fr}
+.actionbar{left:20px}
 }
 </style>
 </head>
-
 <body>
+
 <div class="app">
 
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="logo">AI</div>
-      <div>
-        <h1>Knowledge Console</h1>
-        <span>Enterprise Admin</span>
-      </div>
-    </div>
-
-    <div class="nav" id="nav">
-      <button class="active" data-tab="dashboard">Dashboard</button>
-      <button data-tab="rules">System Rules</button>
-      <button data-tab="faq">FAQ Manager</button>
-      <button data-tab="analytics">Analytics</button>
-    </div>
-
-    <div class="sidehint">
-      <strong>Tip:</strong> Fill <em>Worker Base URL</em> + <em>Admin Token</em> once — we save it locally in your browser.
-    </div>
-  </aside>
-
-  <main class="main">
-
-    <div class="topbar">
-      <div class="hgroup">
-        <div class="title">AI Knowledge Management</div>
-        <div class="subtitle">Rules + FAQ stored in KV • Secure Admin Console</div>
-      </div>
-      <div class="statuswrap">
-        <div class="pill"><strong>Env</strong> <span id="pillEnv">—</span></div>
-        <div id="status" class="status bad">Disconnected</div>
-      </div>
-    </div>
-
-    <!-- DASHBOARD -->
-    <section id="tab-dashboard">
-
-      <div class="card">
-        <div class="cardhd">
-          <div class="left">
-            <strong>Workspace Connection</strong>
-            <span class="small">Base URL + Token required</span>
-          </div>
-          <div class="row">
-            <button class="btn" id="btnPing">Ping</button>
-            <button class="btn primary" id="btnLoadAll">Load All</button>
-          </div>
-        </div>
-        <div class="cardbd">
-          <div class="row">
-            <div class="grow">
-              <input id="apiBase" placeholder="Worker Base URL (e.g. https://your-worker.example.com)">
-              <div class="small" style="margin-top:6px">Will call: <span class="mono" id="previewBase">—</span></div>
-            </div>
-            <div class="grow">
-              <input id="token" type="password" placeholder="Admin Token">
-              <div class="small" style="margin-top:6px">Header: <span class="mono">X-Admin-Token</span></div>
-            </div>
-          </div>
-
-          <hr class="sep"/>
-
-          <div class="row">
-            <div class="badge" id="bRules">Rules: —</div>
-            <div class="badge" id="bFaqs">FAQs: —</div>
-            <div class="badge" id="bLast">Last sync: —</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="kpis">
-        <div class="kpi"><h3 id="kTotal">—</h3><span>Total Messages</span></div>
-        <div class="kpi"><h3 id="kAuto">—</h3><span>Auto Replies</span></div>
-        <div class="kpi"><h3 id="kEsc">—</h3><span>Escalated</span></div>
-        <div class="kpi"><h3 id="kConf">—</h3><span>Avg Confidence</span></div>
-      </div>
-
-      <div class="card" style="margin-top:18px">
-        <div class="cardhd">
-          <div class="left">
-            <strong>Quick Actions</strong>
-            <span class="small">Export / Import entire knowledge base</span>
-          </div>
-          <div class="row">
-            <button class="btn" id="btnExportAll">Export All JSON</button>
-            <button class="btn warn" id="btnImportAll">Import All JSON</button>
-          </div>
-        </div>
-        <div class="cardbd">
-          <div class="small">
-            Import format example:
-            <div class="mono" style="margin-top:6px; padding:10px 12px; border:1px dashed var(--border); border-radius:12px; background:#f8fafc">
-{ "rules":[...], "faqs":[...] }
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- RULES -->
-    <section id="tab-rules" class="hidden">
-      <div class="card">
-        <div class="cardhd">
-          <div class="left">
-            <strong>System Rules</strong>
-            <span class="small">Create / edit / delete rules stored in KV</span>
-          </div>
-          <div class="row">
-            <input id="rulesSearch" placeholder="Search rules..." style="width:min(360px,100%)">
-            <button class="btn" id="btnRulesReload">Reload</button>
-            <button class="btn" id="btnRulesExport">Export JSON</button>
-            <button class="btn warn" id="btnRulesImport">Import JSON</button>
-            <button class="btn primary" id="btnRuleNew">New Rule</button>
-          </div>
-        </div>
-        <div class="cardbd">
-          <table class="table">
-            <thead>
-              <tr>
-                <th style="width:180px">ID</th>
-                <th>Title</th>
-                <th style="width:120px">Status</th>
-                <th style="width:160px">Updated</th>
-                <th style="width:220px">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="rulesTbody">
-              <tr><td colspan="5" class="small">No data.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- FAQ -->
-    <section id="tab-faq" class="hidden">
-      <div class="card">
-        <div class="cardhd">
-          <div class="left">
-            <strong>FAQ Manager</strong>
-            <span class="small">Manage Q&A entries stored in KV</span>
-          </div>
-          <div class="row">
-            <input id="faqSearch" placeholder="Search FAQs..." style="width:min(360px,100%)">
-            <button class="btn" id="btnFaqReload">Reload</button>
-            <button class="btn" id="btnFaqExport">Export JSON</button>
-            <button class="btn warn" id="btnFaqImport">Import JSON</button>
-            <button class="btn primary" id="btnFaqNew">New FAQ</button>
-          </div>
-        </div>
-        <div class="cardbd">
-          <table class="table">
-            <thead>
-              <tr>
-                <th style="width:180px">ID</th>
-                <th>Question</th>
-                <th style="width:120px">Status</th>
-                <th style="width:160px">Updated</th>
-                <th style="width:220px">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="faqTbody">
-              <tr><td colspan="5" class="small">No data.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- ANALYTICS -->
-    <section id="tab-analytics" class="hidden">
-      <div class="card">
-        <div class="cardhd">
-          <div class="left">
-            <strong>Analytics</strong>
-            <span class="small">Usage metrics + trends</span>
-          </div>
-          <div class="row">
-            <select id="rangeSel" style="width:180px">
-              <option value="7">Last 7 days</option>
-              <option value="14">Last 14 days</option>
-              <option value="30" selected>Last 30 days</option>
-              <option value="90">Last 90 days</option>
-            </select>
-            <button class="btn" id="btnAnalyticsReload">Reload</button>
-          </div>
-        </div>
-        <div class="cardbd">
-          <div class="kpis" style="margin-bottom:16px">
-            <div class="kpi"><h3 id="aTotal">—</h3><span>Total Messages</span></div>
-            <div class="kpi"><h3 id="aAuto">—</h3><span>Auto Replies</span></div>
-            <div class="kpi"><h3 id="aEsc">—</h3><span>Escalated</span></div>
-            <div class="kpi"><h3 id="aConf">—</h3><span>Avg Confidence</span></div>
-          </div>
-
-          <div class="card" style="margin-bottom:14px">
-            <div class="cardhd">
-              <strong>Messages over time</strong>
-              <span class="small">total / auto / escalated</span>
-            </div>
-            <div class="cardbd">
-              <canvas id="chartLine" height="110"></canvas>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="cardhd">
-              <strong>Outcome distribution</strong>
-              <span class="small">auto vs escalated</span>
-            </div>
-            <div class="cardbd">
-              <canvas id="chartBar" height="110"></canvas>
-            </div>
-          </div>
-
-          <div class="small" style="margin-top:12px">
-            Expected analytics response supports either:
-            <span class="mono">metrics</span> (summary) and optional <span class="mono">series</span> (daily points).
-          </div>
-        </div>
-      </div>
-    </section>
-
-  </main>
+<aside class="sidebar">
+<div class="brand">
+<div class="logo">AI</div>
+<div>
+<div style="font-weight:900">AI Support OS</div>
+<div style="font-size:12px;opacity:.7">Enterprise</div>
+</div>
 </div>
 
-<!-- MODAL: editor -->
-<div class="modal" id="modal">
-  <div class="panel">
-    <div class="phd">
-      <strong id="mTitle">Edit</strong>
-      <button class="btn" id="mClose">Close</button>
-    </div>
-    <div class="pbd">
-      <div class="mgrid">
-        <div>
-          <label class="small">ID (leave blank to auto-generate)</label>
-          <input id="mId" placeholder="e.g. rule_checkout_01">
-        </div>
-        <div>
-          <label class="small">Status</label>
-          <select id="mStatus">
-            <option value="active" selected>active</option>
-            <option value="disabled">disabled</option>
-          </select>
-        </div>
-      </div>
+<div class="nav">
+<button data-tab="overview">Overview</button>
+<button data-tab="rules">Rules</button>
+<button data-tab="faq">FAQ</button>
+<button data-tab="test">Preview</button>
+<button data-tab="analytics">Analytics</button>
+</div>
+</aside>
 
-      <div style="margin-top:10px">
-        <label class="small" id="mLabel1">Title / Question</label>
-        <input id="mField1" placeholder="">
-      </div>
+<main class="main">
 
-      <div style="margin-top:10px">
-        <label class="small" id="mLabel2">Body / Answer</label>
-        <textarea id="mField2" placeholder=""></textarea>
-      </div>
-
-      <div class="small" style="margin-top:10px">
-        Tip: You can paste JSON in the body if your Worker expects structured rules.
-      </div>
-    </div>
-    <div class="pft">
-      <button class="btn danger" id="mDelete" style="display:none">Delete</button>
-      <button class="btn" id="mCancel">Cancel</button>
-      <button class="btn primary" id="mSave">Save</button>
-    </div>
-  </div>
+<div class="topbar">
+<div class="title">Enterprise Admin Console</div>
+<div style="display:flex;gap:10px">
+<div id="modePill" class="pill warn">Draft</div>
+<div id="connPill" class="pill bad">Disconnected</div>
+</div>
 </div>
 
-<!-- MODAL: JSON import -->
-<div class="modal" id="modalJson">
-  <div class="panel">
-    <div class="phd">
-      <strong id="jTitle">Import JSON</strong>
-      <button class="btn" id="jClose">Close</button>
-    </div>
-    <div class="pbd">
-      <label class="small">Paste JSON</label>
-      <textarea id="jText" class="mono" style="min-height:260px" placeholder='[{"id":"..."}] or {"rules":[...],"faqs":[...]}'></textarea>
-      <div class="small" style="margin-top:10px" id="jHint">—</div>
-    </div>
-    <div class="pft">
-      <button class="btn" id="jCancel">Cancel</button>
-      <button class="btn primary" id="jApply">Apply</button>
-    </div>
-  </div>
+<section id="overview">
+<div class="card">
+<div class="cardhd">
+<div>Workspace</div>
+<button class="btn primary" onclick="loadAll()">Connect</button>
+</div>
+<div class="cardbd">
+<input id="apiBase" placeholder="Worker Base URL">
+<input id="brand" placeholder="Brand (demo)">
+<input id="token" type="password" placeholder="Admin Token">
+</div>
+</div>
+</section>
+
+<section id="rules" class="hidden">
+<div class="card">
+<div class="cardhd">
+<div>System Rules</div>
+</div>
+<div class="cardbd">
+<textarea id="rulesBox"></textarea>
+</div>
+</div>
+</section>
+
+<section id="faq" class="hidden">
+<div class="card">
+<div class="cardhd"><div>FAQ JSON</div></div>
+<div class="cardbd">
+<textarea id="faqBox"></textarea>
+</div>
+</div>
+</section>
+
+<section id="test" class="hidden">
+<div class="card">
+<div class="cardhd">
+<div>Preview Draft</div>
+<button class="btn primary" onclick="runTest()">Run</button>
+</div>
+<div class="cardbd">
+<textarea id="testMsg"></textarea>
+<div style="margin-top:20px;font-weight:600" id="replyBox"></div>
+</div>
+</div>
+</section>
+
+<section id="analytics" class="hidden">
+<div class="kpis">
+<div class="kpi"><h3 id="kTotal">—</h3><span>Total</span></div>
+<div class="kpi"><h3 id="kAuto">—</h3><span>Auto</span></div>
+<div class="kpi"><h3 id="kEsc">—</h3><span>Escalated</span></div>
+<div class="kpi"><h3 id="kConf">—</h3><span>Confidence</span></div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="chart-grid">
+<div class="card">
+<div class="cardhd">Intent</div>
+<div class="cardbd"><canvas id="intentChart"></canvas></div>
+</div>
+<div class="card">
+<div class="cardhd">Resolution</div>
+<div class="cardbd"><canvas id="resChart"></canvas></div>
+</div>
+</div>
+</section>
+
+</main>
+</div>
+
+<div class="actionbar">
+<div id="dirtyText">No changes</div>
+<div style="display:flex;gap:10px">
+<button class="btn" onclick="toggleMode()">Switch Mode</button>
+<button class="btn primary" onclick="saveDraft()">Save Draft</button>
+<button class="btn warn" onclick="publish()">Publish</button>
+</div>
+</div>
 
 <script>
-/* -------------------------
-  Helpers
--------------------------- */
-const $ = (id)=>document.getElementById(id);
+let mode="draft"
+let dirty=false
+let intentChart,resChart
 
-function toast(msg, detail=""){
-  const wrap = $("toast");
-  const el = document.createElement("div");
-  el.className="t";
-  el.innerHTML = `<div>${escapeHtml(msg)}</div>${detail?`<small>${escapeHtml(detail)}</small>`:""}`;
-  wrap.appendChild(el);
-  setTimeout(()=>{ el.style.opacity="0"; el.style.transform="translateY(6px)"; }, 2800);
-  setTimeout(()=>{ el.remove(); }, 3400);
+function setDirty(v){
+dirty=v
+document.getElementById("dirtyText").innerText=v?"Unsaved Changes":"No changes"
 }
 
-function escapeHtml(s){
-  return String(s ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+document.querySelectorAll(".nav button").forEach(btn=>{
+btn.onclick=()=>{
+location.hash=btn.dataset.tab
+}
+})
+
+function router(){
+const tab=location.hash.replace("#","")||"overview"
+document.querySelectorAll("main section").forEach(s=>s.classList.add("hidden"))
+document.getElementById(tab)?.classList.remove("hidden")
+document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"))
+document.querySelector(`[data-tab="${tab}"]`)?.classList.add("active")
+}
+window.onhashchange=router
+router()
+
+function headers(){
+return {"Content-Type":"application/json","X-Admin-Token":token.value}
 }
 
-function nowIso(){
-  return new Date().toISOString();
+async function loadAll(){
+try{
+const r=await fetch(apiBase.value+"/admin/get?brand="+brand.value,{headers:headers()})
+const data=await r.json()
+rulesBox.value=(data.draft?.rules||[]).join("\n")
+faqBox.value=JSON.stringify(data.draft?.faq||[],null,2)
+connPill.className="pill ok"
+connPill.innerText="Connected"
+}catch{
+connPill.className="pill bad"
+connPill.innerText="Disconnected"
+}
 }
 
-function fmtTime(ts){
-  if(!ts) return "—";
-  const d = new Date(ts);
-  if(isNaN(d.getTime())) return String(ts);
-  return d.toLocaleString();
+rulesBox.oninput=()=>setDirty(true)
+faqBox.oninput=()=>setDirty(true)
+
+async function saveDraft(){
+const body={
+rules:rulesBox.value.split("\n").filter(x=>x.trim()),
+faq:JSON.parse(faqBox.value||"[]")
+}
+await fetch(apiBase.value+"/admin/save?brand="+brand.value,{method:"POST",headers:headers(),body:JSON.stringify(body)})
+setDirty(false)
+alert("Draft Saved")
 }
 
-function setStatus(mode, text){
-  const st = $("status");
-  st.className = "status " + mode; // ok | bad | warn
-  st.textContent = text;
+async function publish(){
+await fetch(apiBase.value+"/admin/publish?brand="+brand.value,{method:"POST",headers:headers()})
+alert("Published")
 }
 
-function saveConn(){
-  localStorage.setItem("admin_apiBase", $("apiBase").value.trim());
-  localStorage.setItem("admin_token", $("token").value);
+function toggleMode(){
+mode=mode==="draft"?"live":"draft"
+modePill.innerText=mode.charAt(0).toUpperCase()+mode.slice(1)
+modePill.className="pill "+(mode==="draft"?"warn":"ok")
 }
 
-function loadConn(){
-  $("apiBase").value = localStorage.getItem("admin_apiBase") || "";
-  $("token").value = localStorage.getItem("admin_token") || "";
-  updatePreview();
+async function runTest(){
+const r=await fetch(apiBase.value+"/admin/test?brand="+brand.value,{method:"POST",headers:headers(),body:JSON.stringify({message:testMsg.value,mode})})
+const data=await r.json()
+replyBox.innerText=data.reply||"No response"
 }
 
-function normalizeBase(base){
-  base = (base||"").trim();
-  if(!base) return "";
-  return base.replace(/\/+$/,"");
+async function loadAnalytics(){
+const r=await fetch(apiBase.value+"/admin/analytics?brand="+brand.value,{headers:headers()})
+const data=await r.json()
+const m=data.metrics||{}
+kTotal.innerText=m.totalMessages||0
+kAuto.innerText=m.autoReply||0
+kEsc.innerText=m.escalated||0
+kConf.innerText=(m.avgConfidence||0).toFixed(2)
+
+if(intentChart) intentChart.destroy()
+if(resChart) resChart.destroy()
+
+intentChart=new Chart(intentChart=document.getElementById("intentChart"),{
+type:"pie",
+data:{labels:Object.keys(m.intents||{}),datasets:[{data:Object.values(m.intents||{})}]}
+})
+
+resChart=new Chart(resChart=document.getElementById("resChart"),{
+type:"bar",
+data:{labels:["Auto","Escalated","Copilot"],datasets:[{data:[m.autoReply||0,m.escalated||0,m.copilot||0]}]}
+})
 }
 
-function updatePreview(){
-  const base = normalizeBase($("apiBase").value);
-  $("previewBase").textContent = base ? (base + "/admin/...") : "—";
-  $("pillEnv").textContent = base ? new URL(base).host : "—";
-}
-
-$("apiBase").addEventListener("input", ()=>{ updatePreview(); saveConn(); });
-$("token").addEventListener("input", ()=>{ saveConn(); });
-
-/* -------------------------
-  API client
--------------------------- */
-async function api(path, opts={}){
-  const base = normalizeBase($("apiBase").value);
-  const token = $("token").value || "";
-  if(!base) throw new Error("Missing Worker Base URL");
-  if(!token) throw new Error("Missing Admin Token");
-
-  const url = base + path;
-
-  const headers = Object.assign(
-    {"X-Admin-Token": token},
-    opts.headers || {}
-  );
-
-  const init = Object.assign({}, opts, { headers });
-
-  // default JSON for body objects
-  if(init.body && typeof init.body === "object" && !(init.body instanceof FormData)){
-    headers["Content-Type"] = "application/json";
-    init.body = JSON.stringify(init.body);
-  }
-
-  const res = await fetch(url, init);
-  const ct = res.headers.get("content-type") || "";
-  const isJson = ct.includes("application/json");
-
-  let data = null;
-  try{
-    data = isJson ? await res.json() : await res.text();
-  }catch(e){
-    // ignore parse errors
-  }
-
-  if(!res.ok){
-    const msg = (data && data.error) ? data.error : (typeof data === "string" ? data : res.statusText);
-    const err = new Error(msg || ("HTTP " + res.status));
-    err.status = res.status;
-    err.data = data;
-    throw err;
-  }
-
-  return data;
-}
-
-/* -------------------------
-  Tab navigation
--------------------------- */
-const tabs = ["dashboard","rules","faq","analytics"];
-function showTab(name){
-  tabs.forEach(t=>{
-    const sec = $("tab-"+t);
-    if(sec) sec.classList.toggle("hidden", t !== name);
-  });
-
-  document.querySelectorAll("#nav button").forEach(b=>{
-    b.classList.toggle("active", b.dataset.tab === name);
-  });
-
-  // lightweight auto-load for each tab
-  if(name==="rules") loadRules(false);
-  if(name==="faq") loadFaqs(false);
-  if(name==="analytics") loadAnalytics(false);
-}
-
-document.querySelectorAll("#nav button").forEach(btn=>{
-  btn.addEventListener("click", ()=> showTab(btn.dataset.tab));
-});
-
-/* -------------------------
-  State
--------------------------- */
-let RULES = [];
-let FAQS  = [];
-
-function unwrapList(data, keys){
-  // accept direct array
-  if(Array.isArray(data)) return data;
-
-  // accept {items:[...]}
-  if(data && Array.isArray(data.items)) return data.items;
-
-  // accept {rules:[...]} or {faqs:[...]}
-  for(const k of keys){
-    if(data && Array.isArray(data[k])) return data[k];
-  }
-
-  // accept {data:[...]}
-  if(data && Array.isArray(data.data)) return data.data;
-
-  return [];
-}
-
-function idOrAuto(prefix){
-  return prefix + "_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16);
-}
-
-function badgeStatus(s){
-  const v = (s||"").toLowerCase();
-  if(v==="active" || v==="enabled") return "ok";
-  if(v==="disabled" || v==="inactive") return "bad";
-  return "warn";
-}
-
-/* -------------------------
-  Dashboard
--------------------------- */
-async function ping(){
-  try{
-    await api("/admin/analytics", { method:"GET" });
-    setStatus("ok","Connected");
-    toast("Connected ✅");
-    return true;
-  }catch(e){
-    setStatus("bad","Disconnected");
-    toast("Connection failed", e.message || "");
-    return false;
-  }
-}
-
-function fillKpis(metrics){
-  const m = metrics || {};
-  $("kTotal").textContent = m.totalMessages ?? m.total ?? 0;
-  $("kAuto").textContent  = m.autoReply ?? m.auto ?? 0;
-  $("kEsc").textContent   = m.escalated ?? m.escalations ?? 0;
-
-  const c = m.avgConfidence ?? m.confidence ?? 0;
-  const num = Number(c);
-  $("kConf").textContent  = (isFinite(num) ? num : 0).toFixed(2);
-}
-
-function updateCountsBadges(){
-  $("bRules").textContent = "Rules: " + (RULES?.length ?? 0);
-  $("bFaqs").textContent  = "FAQs: " + (FAQS?.length ?? 0);
-  $("bLast").textContent  = "Last sync: " + fmtTime(new Date());
-}
-
-$("btnPing").onclick = ping;
-
-$("btnLoadAll").onclick = async()=>{
-  const ok = await ping();
-  if(!ok) return;
-
-  await Promise.allSettled([
-    loadDashboard(),
-    loadRules(true),
-    loadFaqs(true)
-  ]);
-
-  updateCountsBadges();
-  toast("Load complete ✅");
-};
-
-async function loadDashboard(){
-  const data = await api("/admin/analytics", { method:"GET" });
-  const metrics = data?.metrics || data || {};
-  fillKpis(metrics);
-}
-
-/* -------------------------
-  Rules table + actions
--------------------------- */
-function renderRules(){
-  const q = ($("rulesSearch").value || "").trim().toLowerCase();
-  const list = (RULES||[]).filter(r=>{
-    if(!q) return true;
-    const hay = [
-      r.id, r.title, r.name, r.rule,
-      r.body, r.text, r.content, r.description
-    ].map(x=>String(x||"").toLowerCase()).join(" ");
-    return hay.includes(q);
-  });
-
-  const tb = $("rulesTbody");
-  tb.innerHTML = "";
-
-  if(!list.length){
-    tb.innerHTML = `<tr><td colspan="5" class="small">No rules found.</td></tr>`;
-    return;
-  }
-
-  for(const r of list){
-    const id = r.id ?? r.key ?? "";
-    const title = r.title ?? r.name ?? "(untitled)";
-    const status = r.status ?? (r.enabled===false ? "disabled" : "active");
-    const updated = r.updatedAt ?? r.updated_at ?? r.modifiedAt ?? r.modified_at ?? r.ts ?? "";
-
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td class="mono">${escapeHtml(id)}</td>
-      <td>${escapeHtml(title)}</td>
-      <td><span class="badge ${badgeStatus(status)}">${escapeHtml(status)}</span></td>
-      <td>${escapeHtml(fmtTime(updated))}</td>
-      <td>
-        <div class="row" style="gap:8px">
-          <button class="btn" data-act="edit">Edit</button>
-          <button class="btn danger" data-act="del">Delete</button>
-        </div>
-      </td>
-    `;
-
-    tr.querySelector('[data-act="edit"]').onclick = ()=> openEditor("rule", r);
-    tr.querySelector('[data-act="del"]').onclick  = ()=> deleteRule(r);
-
-    tb.appendChild(tr);
-  }
-}
-
-async function loadRules(loud=true){
-  try{
-    const data = await api("/admin/rules", { method:"GET" });
-    RULES = unwrapList(data, ["rules"]);
-    renderRules();
-    if(loud) toast("Rules loaded", String(RULES.length));
-    setStatus("ok","Connected");
-    return RULES;
-  }catch(e){
-    if(loud) toast("Failed to load rules", e.message || "");
-    setStatus("bad","Disconnected");
-    return [];
-  }
-}
-
-$("btnRulesReload").onclick = ()=> loadRules(true);
-$("rulesSearch").addEventListener("input", renderRules);
-
-$("btnRuleNew").onclick = ()=> openEditor("rule", null);
-
-async function saveRule(payload, isNew){
-  if(isNew){
-    return api("/admin/rules", { method:"POST", body: payload });
-  }else{
-    const id = encodeURIComponent(payload.id);
-    return api("/admin/rules/"+id, { method:"PUT", body: payload });
-  }
-}
-
-async function deleteRule(rule){
-  const id = rule.id ?? rule.key;
-  if(!id) return toast("Missing rule id");
-  if(!confirm("Delete rule: " + id + " ?")) return;
-
-  try{
-    await api("/admin/rules/"+encodeURIComponent(id), { method:"DELETE" });
-    toast("Rule deleted", id);
-    await loadRules(false);
-  }catch(e){
-    toast("Delete failed", e.message || "");
-  }
-}
-
-/* -------------------------
-  FAQ table + actions
--------------------------- */
-function renderFaqs(){
-  const q = ($("faqSearch").value || "").trim().toLowerCase();
-  const list = (FAQS||[]).filter(f=>{
-    if(!q) return true;
-    const hay = [
-      f.id, f.q, f.question, f.title,
-      f.a, f.answer, f.body, f.content
-    ].map(x=>String(x||"").toLowerCase()).join(" ");
-    return hay.includes(q);
-  });
-
-  const tb = $("faqTbody");
-  tb.innerHTML = "";
-
-  if(!list.length){
-    tb.innerHTML = `<tr><td colspan="5" class="small">No FAQs found.</td></tr>`;
-    return;
-  }
-
-  for(const f of list){
-    const id = f.id ?? f.key ?? "";
-    const qtxt = f.question ?? f.q ?? f.title ?? "(no question)";
-    const status = f.status ?? (f.enabled===false ? "disabled" : "active");
-    const updated = f.updatedAt ?? f.updated_at ?? f.modifiedAt ?? f.modified_at ?? f.ts ?? "";
-
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td class="mono">${escapeHtml(id)}</td>
-      <td>${escapeHtml(qtxt)}</td>
-      <td><span class="badge ${badgeStatus(status)}">${escapeHtml(status)}</span></td>
-      <td>${escapeHtml(fmtTime(updated))}</td>
-      <td>
-        <div class="row" style="gap:8px">
-          <button class="btn" data-act="edit">Edit</button>
-          <button class="btn danger" data-act="del">Delete</button>
-        </div>
-      </td>
-    `;
-
-    tr.querySelector('[data-act="edit"]').onclick = ()=> openEditor("faq", f);
-    tr.querySelector('[data-act="del"]').onclick  = ()=> deleteFaq(f);
-
-    tb.appendChild(tr);
-  }
-}
-
-async function loadFaqs(loud=true){
-  try{
-    const data = await api("/admin/faqs", { method:"GET" });
-    FAQS = unwrapList(data, ["faqs","faq"]);
-    renderFaqs();
-    if(loud) toast("FAQs loaded", String(FAQS.length));
-    setStatus("ok","Connected");
-    return FAQS;
-  }catch(e){
-    if(loud) toast("Failed to load FAQs", e.message || "");
-    setStatus("bad","Disconnected");
-    return [];
-  }
-}
-
-$("btnFaqReload").onclick = ()=> loadFaqs(true);
-$("faqSearch").addEventListener("input", renderFaqs);
-$("btnFaqNew").onclick = ()=> openEditor("faq", null);
-
-async function saveFaq(payload, isNew){
-  if(isNew){
-    return api("/admin/faqs", { method:"POST", body: payload });
-  }else{
-    const id = encodeURIComponent(payload.id);
-    return api("/admin/faqs/"+id, { method:"PUT", body: payload });
-  }
-}
-
-async function deleteFaq(faq){
-  const id = faq.id ?? faq.key;
-  if(!id) return toast("Missing FAQ id");
-  if(!confirm("Delete FAQ: " + id + " ?")) return;
-
-  try{
-    await api("/admin/faqs/"+encodeURIComponent(id), { method:"DELETE" });
-    toast("FAQ deleted", id);
-    await loadFaqs(false);
-  }catch(e){
-    toast("Delete failed", e.message || "");
-  }
-}
-
-/* -------------------------
-  Editor Modal (Rule / FAQ)
--------------------------- */
-const modal = $("modal");
-let editorMode = null; // "rule" | "faq"
-let editorIsNew = true;
-let editorOrigId = null;
-
-function openEditor(mode, item){
-  editorMode = mode;
-  editorIsNew = !item;
-  editorOrigId = item?.id ?? item?.key ?? null;
-
-  $("mTitle").textContent = (mode==="rule" ? "System Rule" : "FAQ") + (editorIsNew ? " • New" : " • Edit");
-
-  $("mLabel1").textContent = (mode==="rule") ? "Title" : "Question";
-  $("mLabel2").textContent = (mode==="rule") ? "Rule Body / Content" : "Answer";
-
-  $("mId").value = item?.id ?? item?.key ?? "";
-  $("mStatus").value = (item?.status ?? (item?.enabled===false ? "disabled" : "active")) || "active";
-
-  if(mode==="rule"){
-    $("mField1").value = item?.title ?? item?.name ?? "";
-    $("mField2").value = item?.body ?? item?.text ?? item?.content ?? item?.rule ?? "";
-  }else{
-    $("mField1").value = item?.question ?? item?.q ?? item?.title ?? "";
-    $("mField2").value = item?.answer ?? item?.a ?? item?.body ?? item?.content ?? "";
-  }
-
-  // show delete only when editing existing
-  $("mDelete").style.display = editorIsNew ? "none" : "inline-flex";
-
-  modal.classList.add("show");
-}
-
-function closeEditor(){
-  modal.classList.remove("show");
-  editorMode = null;
-  editorOrigId = null;
-}
-
-$("mClose").onclick = closeEditor;
-$("mCancel").onclick = closeEditor;
-
-$("mDelete").onclick = async()=>{
-  if(editorMode==="rule"){
-    const r = { id: $("mId").value.trim() || editorOrigId };
-    return deleteRule(r);
-  }else{
-    const f = { id: $("mId").value.trim() || editorOrigId };
-    return deleteFaq(f);
-  }
-};
-
-$("mSave").onclick = async()=>{
-  try{
-    const id = ($("mId").value || "").trim() || idOrAuto(editorMode);
-    const status = $("mStatus").value;
-
-    if(editorMode==="rule"){
-      const payload = {
-        id,
-        status,
-        title: ($("mField1").value || "").trim(),
-        body: ($("mField2").value || "").trim(),
-        updatedAt: nowIso()
-      };
-      await saveRule(payload, editorIsNew);
-      toast("Rule saved ✅", id);
-      closeEditor();
-      await loadRules(false);
-    }else if(editorMode==="faq"){
-      const payload = {
-        id,
-        status,
-        question: ($("mField1").value || "").trim(),
-        answer: ($("mField2").value || "").trim(),
-        updatedAt: nowIso()
-      };
-      await saveFaq(payload, editorIsNew);
-      toast("FAQ saved ✅", id);
-      closeEditor();
-      await loadFaqs(false);
-    }
-  }catch(e){
-    toast("Save failed", e.message || "");
-  }
-};
-
-/* -------------------------
-  JSON Import/Export (Rules/FAQ/All)
--------------------------- */
-const modalJson = $("modalJson");
-let jsonContext = null; // {mode:"rules"|"faq"|"all"}
-
-function openJson(title, hint, ctx){
-  jsonContext = ctx;
-  $("jTitle").textContent = title;
-  $("jHint").textContent = hint;
-  $("jText").value = "";
-  modalJson.classList.add("show");
-}
-
-function closeJson(){
-  modalJson.classList.remove("show");
-  jsonContext = null;
-}
-
-$("jClose").onclick = closeJson;
-$("jCancel").onclick = closeJson;
-
-function download(filename, text){
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([text], {type:"application/json"}));
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 0);
-}
-
-$("btnRulesExport").onclick = ()=>{
-  download("rules.json", JSON.stringify(RULES, null, 2));
-  toast("Exported rules.json");
-};
-$("btnFaqExport").onclick = ()=>{
-  download("faqs.json", JSON.stringify(FAQS, null, 2));
-  toast("Exported faqs.json");
-};
-
-$("btnExportAll").onclick = async()=>{
-  try{
-    await Promise.allSettled([ loadRules(false), loadFaqs(false) ]);
-    download("knowledge_base.json", JSON.stringify({rules:RULES, faqs:FAQS}, null, 2));
-    toast("Exported knowledge_base.json");
-  }catch(e){
-    toast("Export failed", e.message || "");
-  }
-};
-
-$("btnRulesImport").onclick = ()=>{
-  openJson(
-    "Import Rules JSON",
-    "Paste an array of rules OR {rules:[...]} then Apply.",
-    {mode:"rules"}
-  );
-};
-$("btnFaqImport").onclick = ()=>{
-  openJson(
-    "Import FAQs JSON",
-    "Paste an array of FAQs OR {faqs:[...]} then Apply.",
-    {mode:"faq"}
-  );
-};
-$("btnImportAll").onclick = ()=>{
-  openJson(
-    "Import Full Knowledge Base",
-    "Paste {rules:[...], faqs:[...]} then Apply.",
-    {mode:"all"}
-  );
-};
-
-$("jApply").onclick = async()=>{
-  const raw = $("jText").value || "";
-  let obj = null;
-  try{
-    obj = JSON.parse(raw);
-  }catch(e){
-    return toast("Invalid JSON", e.message || "");
-  }
-
-  try{
-    if(jsonContext?.mode==="rules"){
-      const list = unwrapList(obj, ["rules"]);
-      // bulk upsert (sequential)
-      for(const r of list){
-        const id = (r.id || r.key || "").trim() || idOrAuto("rule");
-        const payload = {
-          id,
-          status: r.status ?? (r.enabled===false ? "disabled" : "active"),
-          title: r.title ?? r.name ?? "",
-          body: r.body ?? r.text ?? r.content ?? r.rule ?? "",
-          updatedAt: r.updatedAt ?? r.updated_at ?? nowIso()
-        };
-        await api("/admin/rules", { method:"POST", body: payload });
-      }
-      toast("Rules imported ✅", String(list.length));
-      closeJson();
-      await loadRules(false);
-      return;
-    }
-
-    if(jsonContext?.mode==="faq"){
-      const list = unwrapList(obj, ["faqs","faq"]);
-      for(const f of list){
-        const id = (f.id || f.key || "").trim() || idOrAuto("faq");
-        const payload = {
-          id,
-          status: f.status ?? (f.enabled===false ? "disabled" : "active"),
-          question: f.question ?? f.q ?? f.title ?? "",
-          answer: f.answer ?? f.a ?? f.body ?? f.content ?? "",
-          updatedAt: f.updatedAt ?? f.updated_at ?? nowIso()
-        };
-        await api("/admin/faqs", { method:"POST", body: payload });
-      }
-      toast("FAQs imported ✅", String(list.length));
-      closeJson();
-      await loadFaqs(false);
-      return;
-    }
-
-    if(jsonContext?.mode==="all"){
-      const rules = unwrapList(obj?.rules ?? obj, ["rules"]);
-      const faqs  = unwrapList(obj?.faqs  ?? obj, ["faqs","faq"]);
-
-      for(const r of rules){
-        const id = (r.id || r.key || "").trim() || idOrAuto("rule");
-        const payload = {
-          id,
-          status: r.status ?? (r.enabled===false ? "disabled" : "active"),
-          title: r.title ?? r.name ?? "",
-          body: r.body ?? r.text ?? r.content ?? r.rule ?? "",
-          updatedAt: r.updatedAt ?? r.updated_at ?? nowIso()
-        };
-        await api("/admin/rules", { method:"POST", body: payload });
-      }
-
-      for(const f of faqs){
-        const id = (f.id || f.key || "").trim() || idOrAuto("faq");
-        const payload = {
-          id,
-          status: f.status ?? (f.enabled===false ? "disabled" : "active"),
-          question: f.question ?? f.q ?? f.title ?? "",
-          answer: f.answer ?? f.a ?? f.body ?? f.content ?? "",
-          updatedAt: f.updatedAt ?? f.updated_at ?? nowIso()
-        };
-        await api("/admin/faqs", { method:"POST", body: payload });
-      }
-
-      toast("Knowledge base imported ✅", `rules=${rules.length}, faqs=${faqs.length}`);
-      closeJson();
-      await Promise.allSettled([ loadRules(false), loadFaqs(false) ]);
-      updateCountsBadges();
-      return;
-    }
-
-    toast("Nothing to import");
-  }catch(e){
-    toast("Import failed", e.message || "");
-  }
-};
-
-/* -------------------------
-  Analytics (Charts)
--------------------------- */
-let chartLine = null;
-let chartBar = null;
-
-function destroyCharts(){
-  if(chartLine){ chartLine.destroy(); chartLine=null; }
-  if(chartBar){ chartBar.destroy(); chartBar=null; }
-}
-
-function fillAnalyticsKpis(metrics){
-  const m = metrics || {};
-  $("aTotal").textContent = m.totalMessages ?? m.total ?? 0;
-  $("aAuto").textContent  = m.autoReply ?? m.auto ?? 0;
-  $("aEsc").textContent   = m.escalated ?? m.escalations ?? 0;
-  const c = Number(m.avgConfidence ?? m.confidence ?? 0);
-  $("aConf").textContent  = (isFinite(c)?c:0).toFixed(2);
-}
-
-function buildCharts(series, metrics){
-  const pts = Array.isArray(series) ? series : [];
-  const labels = pts.map(p=>p.date ?? p.day ?? p.ts ?? "");
-  const total  = pts.map(p=>Number(p.totalMessages ?? p.total ?? 0));
-  const auto   = pts.map(p=>Number(p.autoReply ?? p.auto ?? 0));
-  const esc    = pts.map(p=>Number(p.escalated ?? p.escalations ?? 0));
-
-  const ctx1 = $("chartLine").getContext("2d");
-  chartLine = new Chart(ctx1, {
-    type:"line",
-    data:{
-      labels,
-      datasets:[
-        { label:"Total", data: total, tension:.25 },
-        { label:"Auto",  data: auto,  tension:.25 },
-        { label:"Escalated", data: esc, tension:.25 }
-      ]
-    },
-    options:{
-      responsive:true,
-      maintainAspectRatio:false,
-      plugins:{ legend:{ position:"top" } },
-      scales:{
-        x:{ ticks:{ maxRotation:0 } },
-        y:{ beginAtZero:true }
-      }
-    }
-  });
-
-  const m = metrics || {};
-  const a = Number(m.autoReply ?? m.auto ?? 0);
-  const e = Number(m.escalated ?? m.escalations ?? 0);
-
-  const ctx2 = $("chartBar").getContext("2d");
-  chartBar = new Chart(ctx2, {
-    type:"bar",
-    data:{
-      labels:["Auto Replies","Escalated"],
-      datasets:[{ label:"Count", data:[a,e] }]
-    },
-    options:{
-      responsive:true,
-      maintainAspectRatio:false,
-      plugins:{ legend:{ display:false } },
-      scales:{ y:{ beginAtZero:true } }
-    }
-  });
-}
-
-async function loadAnalytics(loud=true){
-  try{
-    const days = Number($("rangeSel").value || 30);
-    const data = await api("/admin/analytics?days="+encodeURIComponent(days), { method:"GET" });
-
-    const metrics = data?.metrics || data || {};
-    const series  = data?.series || data?.daily || data?.timeseries || [];
-
-    fillAnalyticsKpis(metrics);
-
-    destroyCharts();
-    buildCharts(series, metrics);
-
-    setStatus("ok","Connected");
-    if(loud) toast("Analytics loaded", "days=" + days);
-  }catch(e){
-    setStatus("bad","Disconnected");
-    if(loud) toast("Analytics failed", e.message || "");
-  }
-}
-
-$("btnAnalyticsReload").onclick = ()=> loadAnalytics(true);
-$("rangeSel").addEventListener("change", ()=> loadAnalytics(false));
-
-/* -------------------------
-  Boot
--------------------------- */
-loadConn();
-updatePreview();
-setStatus("warn","Not connected");
-showTab("dashboard");
-
-// best-effort ping (won't block)
-setTimeout(()=>{ ping(); }, 250);
+if(location.hash==="#analytics") loadAnalytics()
 </script>
+
 </body>
 </html>
