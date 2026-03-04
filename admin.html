@@ -279,7 +279,9 @@ alert("Draft Saved");
 
 async function publish(){
 
-await fetch(API+"/admin/publish?brand="+BRAND);
+await fetch(API+"/admin/publish?brand="+BRAND,{
+method:"POST"
+});
 
 alert("Knowledge Published");
 
