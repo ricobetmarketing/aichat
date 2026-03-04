@@ -1,106 +1,99 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>AI Support OS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Support OS - Admin</title>
 
 <style>
 
 body{
-font-family:Arial;
 margin:0;
-background:#f4f6f9;
+font-family:system-ui;
+background:#f3f4f6;
+display:flex;
 }
 
 .sidebar{
 width:220px;
 background:#0f172a;
 color:white;
-position:fixed;
-top:0;
-bottom:0;
+height:100vh;
 padding:20px;
 }
 
 .sidebar h2{
 margin-top:0;
+font-size:20px;
 }
 
 .menu button{
+display:block;
 width:100%;
-padding:12px;
-border:none;
+margin:8px 0;
+padding:10px;
+border:0;
+border-radius:6px;
 background:#1e293b;
 color:white;
-margin-bottom:10px;
-border-radius:6px;
 cursor:pointer;
 }
 
-.menu button:hover{
+.menu button.active{
 background:#22c55e;
 }
 
 .main{
-margin-left:240px;
+flex:1;
 padding:30px;
 }
 
 .card{
 background:white;
 padding:20px;
-border-radius:8px;
+border-radius:10px;
 margin-bottom:20px;
-box-shadow:0 2px 6px rgba(0,0,0,0.1);
+box-shadow:0 5px 20px rgba(0,0,0,.05);
 }
 
 textarea{
 width:100%;
 height:180px;
-padding:10px;
-border-radius:6px;
-border:1px solid #ccc;
 }
 
-button.green{
-background:#22c55e;
-color:white;
-border:none;
-padding:10px 20px;
-border-radius:6px;
-cursor:pointer;
+input{
+padding:8px;
+width:200px;
 }
 
-button.red{
-background:#ef4444;
-color:white;
-border:none;
-padding:10px 20px;
-border-radius:6px;
-cursor:pointer;
-}
-
-.stat{
-display:inline-block;
-background:white;
-padding:20px;
+button.action{
+padding:10px 14px;
+margin-top:10px;
 margin-right:10px;
+border:0;
 border-radius:6px;
-min-width:120px;
+cursor:pointer;
 }
+
+.save{background:#16a34a;color:white}
+.publish{background:#dc2626;color:white}
+.reload{background:#64748b;color:white}
 
 pre{
-background:#111;
-color:#0f0;
+background:#111827;
+color:#e5e7eb;
 padding:10px;
 border-radius:6px;
-max-height:300px;
+max-height:200px;
 overflow:auto;
+}
+
+.hidden{
+display:none;
 }
 
 </style>
 </head>
-
 
 <body>
 
@@ -110,12 +103,12 @@ overflow:auto;
 
 <div class="menu">
 
-<button onclick="tab('dashboard')">Dashboard</button>
-<button onclick="tab('rules')">Rules</button>
-<button onclick="tab('faq')">FAQ</button>
-<button onclick="tab('analytics')">Analytics</button>
-<button onclick="tab('history')">History</button>
-<button onclick="tab('logs')">Logs</button>
+<button onclick="show('dashboard')" class="active">Dashboard</button>
+<button onclick="show('rules')">Rules</button>
+<button onclick="show('faq')">FAQ</button>
+<button onclick="show('analytics')">Analytics</button>
+<button onclick="show('history')">History</button>
+<button onclick="show('logs')">Logs</button>
 
 </div>
 
@@ -126,209 +119,229 @@ overflow:auto;
 
 <h1>Internal Admin</h1>
 
-<div id="dashboard">
-
-<div class="stat">
-<h2 id="total">0</h2>
-Messages
-</div>
-
-<div class="stat">
-<h2 id="auto">0</h2>
-Auto Replies
-</div>
-
-</div>
-
-
-<div id="rules" style="display:none">
 
 <div class="card">
 
-<h3>Rules</h3>
+Brand
+<input id="brand" value="demo">
 
-<textarea id="rulesBox"></textarea>
+Admin Token
+<input id="token" type="password">
 
-<br><br>
-
-<button class="green" onclick="save()">Save Draft</button>
-<button class="red" onclick="publish()">Publish</button>
-
-</div>
+<button class="action save" onclick="connect()">Connect</button>
 
 </div>
 
 
-<div id="faq" style="display:none">
 
-<div class="card">
-
-<h3>FAQ</h3>
-
-<textarea id="faqBox"></textarea>
-
-<br><br>
-
-<button class="green" onclick="save()">Save Draft</button>
-<button class="red" onclick="publish()">Publish</button>
-
-</div>
-
-</div>
-
-
-<div id="analytics" style="display:none">
-
-<div class="card">
-
-<h3>Analytics</h3>
-
-<pre id="analyticsData"></pre>
-
-</div>
-
-</div>
-
-
-<div id="history" style="display:none">
-
-<div class="card">
+<div id="dashboard" class="card">
 
 <h3>Publish History</h3>
 
-<pre id="versions"></pre>
+<pre id="versions">No versions yet</pre>
 
 </div>
 
+
+
+<div id="rules" class="card hidden">
+
+<h3>Rules (one per line)</h3>
+
+<textarea id="rulesBox"></textarea>
+
+<button class="action save" onclick="saveDraft()">Save Draft</button>
+<button class="action publish" onclick="publish()">Publish</button>
+<button class="action reload" onclick="loadData()">Reload</button>
+
 </div>
 
 
-<div id="logs" style="display:none">
 
-<div class="card">
+<div id="faq" class="card hidden">
+
+<h3>FAQ JSON</h3>
+
+<textarea id="faqBox"></textarea>
+
+</div>
+
+
+
+<div id="logs" class="card hidden">
 
 <h3>Logs</h3>
 
-<pre id="logsData"></pre>
+<pre id="logsBox"></pre>
 
 </div>
 
-</div>
+
+
+<div id="history" class="card hidden">
+
+<h3>Knowledge Versions</h3>
+
+<pre id="historyBox"></pre>
 
 </div>
+
+
+
+<div id="analytics" class="card hidden">
+
+<h3>Analytics</h3>
+
+<pre id="analyticsBox"></pre>
+
+</div>
+
+
+
+</div>
+
 
 
 <script>
 
-const API="https://ai-chat-backend.marketing-696.workers.dev";
-const BRAND="demo";
+const API="https://ai-chat-backend.marketing-696.workers.dev"
 
-function tab(name){
 
-["dashboard","rules","faq","analytics","history","logs"].forEach(t=>{
 
-document.getElementById(t).style.display="none";
+function show(id){
 
-});
+document.querySelectorAll(".card").forEach(x=>x.classList.add("hidden"))
 
-document.getElementById(name).style.display="block";
+document.getElementById(id).classList.remove("hidden")
 
 }
 
-async function load(){
 
-const res=await fetch(API+"/admin/get?brand="+BRAND);
-const data=await res.json();
 
-const draft=data.draft||{};
+function headers(){
 
-document.getElementById("rulesBox").value=(draft.rules||[]).join("\n");
-
-document.getElementById("faqBox").value=
-JSON.stringify(draft.faq||[],null,2);
+return{
+"Content-Type":"application/json",
+"X-Admin-Token":document.getElementById("token").value
+}
 
 }
 
-async function save(){
 
-const rules=document.getElementById("rulesBox")
-.value.split("\n");
 
-const faq=JSON.parse(
-document.getElementById("faqBox").value||"[]"
-);
+function brand(){
 
-await fetch(API+"/admin/save?brand="+BRAND,{
+return document.getElementById("brand").value
+
+}
+
+
+
+async function connect(){
+
+await loadData()
+
+await loadLogs()
+
+await loadVersions()
+
+await loadAnalytics()
+
+}
+
+
+
+async function loadData(){
+
+const r=await fetch(API+"/api/admin/get?brand="+brand(),{headers:headers()})
+
+const data=await r.json()
+
+document.getElementById("rulesBox").value=(data.draft.rules||[]).join("\n")
+
+document.getElementById("faqBox").value=JSON.stringify(data.draft.faq||[],null,2)
+
+}
+
+
+
+async function saveDraft(){
+
+const rules=document.getElementById("rulesBox").value.split("\n")
+
+const faq=JSON.parse(document.getElementById("faqBox").value||"[]")
+
+await fetch(API+"/api/admin/save?brand="+brand(),{
 
 method:"POST",
 
-headers:{
-"Content-Type":"application/json"
-},
+headers:headers(),
 
-body:JSON.stringify({
-rules,
-faq
+body:JSON.stringify({rules,faq})
+
 })
 
-});
-
-alert("Draft Saved");
+alert("Draft Saved")
 
 }
+
+
 
 async function publish(){
 
-await fetch(API+"/admin/publish?brand="+BRAND,{
-method:"POST"
-});
+await fetch(API+"/api/admin/publish?brand="+brand(),{
 
-alert("Knowledge Published");
+method:"POST",
 
-loadHistory();
+headers:headers()
 
-}
+})
 
-async function loadAnalytics(){
+alert("Published")
 
-const res=await fetch(API+"/admin/analytics?brand="+BRAND);
-const data=await res.json();
-
-document.getElementById("analyticsData")
-.innerText=JSON.stringify(data,null,2);
-
-document.getElementById("total")
-.innerText=data.metrics?.totalMessages||0;
-
-document.getElementById("auto")
-.innerText=data.metrics?.autoReply||0;
+loadVersions()
 
 }
 
-async function loadHistory(){
 
-const res=await fetch(API+"/admin/versions?brand="+BRAND);
-const data=await res.json();
-
-document.getElementById("versions")
-.innerText=JSON.stringify(data,null,2);
-
-}
 
 async function loadLogs(){
 
-const res=await fetch(API+"/admin/logs?brand="+BRAND);
-const data=await res.json();
+const r=await fetch(API+"/api/admin/logs?brand="+brand(),{headers:headers()})
 
-document.getElementById("logsData")
-.innerText=JSON.stringify(data,null,2);
+const data=await r.json()
+
+document.getElementById("logsBox").innerText=data.logs.map(x=>x.time+" • "+x.action).join("\n")
 
 }
 
-load();
-loadAnalytics();
-loadHistory();
-loadLogs();
+
+
+async function loadVersions(){
+
+const r=await fetch(API+"/api/admin/versions?brand="+brand(),{headers:headers()})
+
+const data=await r.json()
+
+document.getElementById("versions").innerText=data.versions.map(v=>v.time+" • "+v.id).join("\n")
+
+document.getElementById("historyBox").innerText=document.getElementById("versions").innerText
+
+}
+
+
+
+async function loadAnalytics(){
+
+const r=await fetch(API+"/api/admin/analytics?brand="+brand(),{headers:headers()})
+
+const data=await r.json()
+
+document.getElementById("analyticsBox").innerText=JSON.stringify(data.metrics,null,2)
+
+}
+
+
 
 </script>
 
