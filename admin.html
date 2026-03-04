@@ -1,11 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>AI Support OS • Admin</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<title>AI Support OS</title>
 
 <style>
 
@@ -26,8 +23,7 @@ padding:20px;
 }
 
 .sidebar h2{
-font-size:18px;
-margin-bottom:20px;
+margin-top:0;
 }
 
 .menu button{
@@ -60,13 +56,13 @@ box-shadow:0 2px 6px rgba(0,0,0,0.1);
 
 textarea{
 width:100%;
-height:160px;
+height:180px;
 padding:10px;
-border:1px solid #ccc;
 border-radius:6px;
+border:1px solid #ccc;
 }
 
-button.primary{
+button.green{
 background:#22c55e;
 color:white;
 border:none;
@@ -75,7 +71,7 @@ border-radius:6px;
 cursor:pointer;
 }
 
-button.danger{
+button.red{
 background:#ef4444;
 color:white;
 border:none;
@@ -84,26 +80,27 @@ border-radius:6px;
 cursor:pointer;
 }
 
-.stats{
-display:flex;
-gap:20px;
-margin-bottom:20px;
-}
-
 .stat{
+display:inline-block;
 background:white;
-flex:1;
 padding:20px;
-border-radius:8px;
-box-shadow:0 2px 6px rgba(0,0,0,0.1);
+margin-right:10px;
+border-radius:6px;
+min-width:120px;
 }
 
-.stat h2{
-margin:0;
+pre{
+background:#111;
+color:#0f0;
+padding:10px;
+border-radius:6px;
+max-height:300px;
+overflow:auto;
 }
 
 </style>
 </head>
+
 
 <body>
 
@@ -112,51 +109,33 @@ margin:0;
 <h2>AI Support OS</h2>
 
 <div class="menu">
-<button onclick="showTab('dashboard')">Dashboard</button>
-<button onclick="showTab('rules')">Rules</button>
-<button onclick="showTab('faq')">FAQ</button>
+
+<button onclick="tab('dashboard')">Dashboard</button>
+<button onclick="tab('rules')">Rules</button>
+<button onclick="tab('faq')">FAQ</button>
+<button onclick="tab('analytics')">Analytics</button>
+<button onclick="tab('history')">History</button>
+<button onclick="tab('logs')">Logs</button>
+
 </div>
 
 </div>
+
 
 <div class="main">
 
-<h1>Internal Admin v2</h1>
+<h1>Internal Admin</h1>
 
 <div id="dashboard">
 
-<div class="stats">
-
 <div class="stat">
 <h2 id="total">0</h2>
-<p>Total Messages</p>
+Messages
 </div>
 
 <div class="stat">
 <h2 id="auto">0</h2>
-<p>Auto Replies</p>
-</div>
-
-<div class="stat">
-<h2 id="escalated">0</h2>
-<p>Escalated</p>
-</div>
-
-<div class="stat">
-<h2 id="confidence">0</h2>
-<p>Avg Confidence</p>
-</div>
-
-</div>
-
-<div class="card">
-<h3>Intent Distribution</h3>
-<canvas id="intentChart"></canvas>
-</div>
-
-<div class="card">
-<h3>Resolution Breakdown</h3>
-<canvas id="resolutionChart"></canvas>
+Auto Replies
 </div>
 
 </div>
@@ -166,15 +145,14 @@ margin:0;
 
 <div class="card">
 
-<h3>Rules (one per line)</h3>
+<h3>Rules</h3>
 
 <textarea id="rulesBox"></textarea>
 
 <br><br>
 
-<button class="primary" onclick="saveRules()">Save Draft</button>
-
-<button class="danger" onclick="publish()">Publish</button>
+<button class="green" onclick="save()">Save Draft</button>
+<button class="red" onclick="publish()">Publish</button>
 
 </div>
 
@@ -185,9 +163,53 @@ margin:0;
 
 <div class="card">
 
-<h3>FAQ (JSON)</h3>
+<h3>FAQ</h3>
 
 <textarea id="faqBox"></textarea>
+
+<br><br>
+
+<button class="green" onclick="save()">Save Draft</button>
+<button class="red" onclick="publish()">Publish</button>
+
+</div>
+
+</div>
+
+
+<div id="analytics" style="display:none">
+
+<div class="card">
+
+<h3>Analytics</h3>
+
+<pre id="analyticsData"></pre>
+
+</div>
+
+</div>
+
+
+<div id="history" style="display:none">
+
+<div class="card">
+
+<h3>Publish History</h3>
+
+<pre id="versions"></pre>
+
+</div>
+
+</div>
+
+
+<div id="logs" style="display:none">
+
+<div class="card">
+
+<h3>Logs</h3>
+
+<pre id="logsData"></pre>
 
 </div>
 
@@ -198,100 +220,113 @@ margin:0;
 
 <script>
 
-const API_BASE="https://ai-chat-backend.marketing-696.workers.dev"
-const brand="demo"
+const API="https://ai-chat-backend.marketing-696.workers.dev";
+const BRAND="demo";
 
+function tab(name){
 
-function showTab(tab){
+["dashboard","rules","faq","analytics","history","logs"].forEach(t=>{
 
-document.getElementById("dashboard").style.display="none"
-document.getElementById("rules").style.display="none"
-document.getElementById("faq").style.display="none"
+document.getElementById(t).style.display="none";
 
-document.getElementById(tab).style.display="block"
+});
 
-}
-
-async function loadDashboard(){
-
-const res=await fetch(API_BASE+"/admin/analytics?brand="+brand)
-
-const data=await res.json()
-
-const m=data.metrics||{}
-
-document.getElementById("total").innerText=m.totalMessages||0
-document.getElementById("auto").innerText=m.autoReply||0
-document.getElementById("escalated").innerText=m.escalated||0
-document.getElementById("confidence").innerText=(m.avgConfidence||0).toFixed(2)
-
-const intents=m.intents||{}
-
-new Chart(document.getElementById("intentChart"),{
-type:"pie",
-data:{
-labels:Object.keys(intents),
-datasets:[{data:Object.values(intents)}]
-}
-})
-
-new Chart(document.getElementById("resolutionChart"),{
-type:"bar",
-data:{
-labels:["Auto","Escalated"],
-datasets:[{data:[m.autoReply||0,m.escalated||0]}]
-}
-})
+document.getElementById(name).style.display="block";
 
 }
 
-async function loadRules(){
+async function load(){
 
-const res=await fetch(API_BASE+"/admin/get?brand="+brand)
+const res=await fetch(API+"/admin/get?brand="+BRAND);
+const data=await res.json();
 
-const data=await res.json()
+const draft=data.draft||{};
 
-const draft=data.draft||{}
+document.getElementById("rulesBox").value=(draft.rules||[]).join("\n");
 
-document.getElementById("rulesBox").value=(draft.rules||[]).join("\n")
-
-document.getElementById("faqBox").value=JSON.stringify(draft.faq||[],null,2)
+document.getElementById("faqBox").value=
+JSON.stringify(draft.faq||[],null,2);
 
 }
 
-async function saveRules(){
+async function save(){
 
-const rules=document.getElementById("rulesBox").value.split("\n")
+const rules=document.getElementById("rulesBox")
+.value.split("\n");
 
-const faq=JSON.parse(document.getElementById("faqBox").value)
+const faq=JSON.parse(
+document.getElementById("faqBox").value||"[]"
+);
 
-await fetch(API_BASE+"/admin/save?brand="+brand,{
+await fetch(API+"/admin/save?brand="+BRAND,{
+
 method:"POST",
+
 headers:{
 "Content-Type":"application/json"
 },
+
 body:JSON.stringify({
 rules,
 faq
 })
-})
 
-alert("Draft Saved")
+});
+
+alert("Draft Saved");
 
 }
 
 async function publish(){
 
-await fetch(API_BASE+"/admin/publish?brand="+brand,{
-method:"POST"
-})
+await fetch(API+"/admin/publish?brand="+BRAND);
 
-alert("AI Training Published")
+alert("Knowledge Published");
+
+loadHistory();
 
 }
 
-loadDashboard()
-loadRules()
+async function loadAnalytics(){
+
+const res=await fetch(API+"/admin/analytics?brand="+BRAND);
+const data=await res.json();
+
+document.getElementById("analyticsData")
+.innerText=JSON.stringify(data,null,2);
+
+document.getElementById("total")
+.innerText=data.metrics?.totalMessages||0;
+
+document.getElementById("auto")
+.innerText=data.metrics?.autoReply||0;
+
+}
+
+async function loadHistory(){
+
+const res=await fetch(API+"/admin/versions?brand="+BRAND);
+const data=await res.json();
+
+document.getElementById("versions")
+.innerText=JSON.stringify(data,null,2);
+
+}
+
+async function loadLogs(){
+
+const res=await fetch(API+"/admin/logs?brand="+BRAND);
+const data=await res.json();
+
+document.getElementById("logsData")
+.innerText=JSON.stringify(data,null,2);
+
+}
+
+load();
+loadAnalytics();
+loadHistory();
+loadLogs();
 
 </script>
 
