@@ -2,204 +2,51 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>AI Support OS • Enterprise Analytics</title>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AI Support OS • Analytics</title>
 <style>
-:root{
-  --bg:#f4f6f9;
-  --panel:#ffffff;
-  --border:#e5e7eb;
-  --text:#0f172a;
-  --muted:#64748b;
-  --nav1:#0b1220;
-  --nav2:#0e1a35;
-  --accent:#16a34a;
-  --danger:#dc2626;
-  --radius:14px;
-  --shadow:0 10px 25px rgba(2,6,23,.06);
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto;background:var(--bg);color:var(--text)}
-.app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
-.sidebar{background:linear-gradient(180deg,var(--nav1),var(--nav2));color:#e5e7eb;padding:20px}
-.brand{display:flex;gap:12px;align-items:center;margin-bottom:30px}
-.logo{width:36px;height:36px;border-radius:10px;background:rgba(22,163,74,.2);display:grid;place-items:center;font-weight:900;color:#bbf7d0}
-.brand h1{font-size:14px;margin:0;font-weight:900}
-.nav button{width:100%;background:none;border:1px solid transparent;color:#e5e7eb;padding:10px;border-radius:10px;text-align:left;font-weight:600;cursor:pointer}
-.nav button:hover{background:rgba(255,255,255,.06)}
-.nav button.active{background:rgba(22,163,74,.18);border-color:rgba(22,163,74,.4)}
-
-.main{padding:28px}
-.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.title{font-size:18px;font-weight:900}
-.status{padding:8px 14px;border-radius:999px;font-size:12px;border:1px solid var(--border)}
-.status.ok{background:#dcfce7;color:#065f46;border-color:#bbf7d0}
-.status.bad{background:#fee2e2;color:#7f1d1d;border-color:#fecaca}
-
-.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px}
-.cardhd{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.cardbd{padding:18px}
-
-input{padding:8px 10px;border-radius:10px;border:1px solid var(--border);font-size:14px;width:100%}
-.row{display:flex;gap:12px;flex-wrap:wrap}
-
-.btn{padding:8px 14px;border-radius:10px;border:1px solid var(--border);background:#fff;font-weight:700;cursor:pointer}
-.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
-
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-.kpi{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
-.kpi h3{margin:0;font-size:20px;font-weight:900}
-.kpi span{font-size:12px;color:var(--muted)}
-
-.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-@media(max-width:1100px){
-  .app{grid-template-columns:1fr}
-  .sidebar{display:none}
-  .kpis{grid-template-columns:1fr}
-  .chart-grid{grid-template-columns:1fr}
-}
+body{margin:0;font-family:system-ui;background:#f3f4f6}
+.wrap{max-width:980px;margin:22px auto;padding:0 14px}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 10px 25px rgba(2,6,23,.06);padding:16px;margin-bottom:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+input{border:1px solid #e5e7eb;border-radius:10px;padding:10px;font:inherit}
+.btn{border:0;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:900;background:#22c55e;color:#052e16}
+pre{background:#0b1220;color:#e5e7eb;border-radius:10px;padding:12px;overflow:auto}
+.small{font-size:12px;color:#64748b}
 </style>
 </head>
-
 <body>
-
-<div class="app">
-
-<aside class="sidebar">
-  <div class="brand">
-    <div class="logo">AI</div>
-    <div>
-      <h1>AI Support OS</h1>
-      <span>Enterprise Console</span>
-    </div>
-  </div>
-  <div class="nav">
-    <button class="active">Analytics Dashboard</button>
-  </div>
-</aside>
-
-<main class="main">
-
-<div class="topbar">
-  <div class="title">Analytics Dashboard</div>
-  <div id="status" class="status bad">Disconnected</div>
-</div>
-
-<div class="card">
-  <div class="cardhd">
-    <div>Workspace</div>
-    <button class="btn primary" id="loadBtn">Load Data</button>
-  </div>
-  <div class="cardbd">
+<div class="wrap">
+  <h1>Analytics</h1>
+  <div class="card">
     <div class="row">
-      <input id="apiBase" placeholder="Worker Base URL">
-      <input id="token" type="password" placeholder="Admin Token">
-      <input id="brand" placeholder="Brand (demo/brazil/mexico)" value="demo">
-    </div>
-  </div>
-</div>
-
-<div class="kpis">
-  <div class="kpi"><h3 id="kTotal">—</h3><span>Total Messages</span></div>
-  <div class="kpi"><h3 id="kAuto">—</h3><span>Auto Replies</span></div>
-  <div class="kpi"><h3 id="kEsc">—</h3><span>Escalated</span></div>
-  <div class="kpi"><h3 id="kConf">—</h3><span>Avg Confidence</span></div>
-</div>
-
-<div class="chart-grid">
-  <div class="card">
-    <div class="cardhd">Intent Distribution</div>
-    <div class="cardbd">
-      <canvas id="intentChart"></canvas>
+      <input id="brand" value="demo" placeholder="brand"/>
+      <input id="token" type="password" placeholder="ADMIN_TOKEN"/>
+      <button class="btn" id="load">Load</button>
+      <a class="small" href="./index.html">Chat</a>
+      <a class="small" href="./admin.html">Admin</a>
+      <a class="small" href="./agent.html">Agent</a>
     </div>
   </div>
   <div class="card">
-    <div class="cardhd">Resolution Overview</div>
-    <div class="cardbd">
-      <canvas id="resolutionChart"></canvas>
-    </div>
+    <pre id="out">—</pre>
   </div>
-</div>
-
-</main>
 </div>
 
 <script>
-const $=id=>document.getElementById(id)
-const status=$("status")
+const API_BASE = "https://ai-chat-backend.marketing-696.workers.dev";
+const $ = id=>document.getElementById(id);
 
-let intentChart, resolutionChart
-
-function setStatus(ok){
-  status.className="status "+(ok?"ok":"bad")
-  status.innerText=ok?"Connected":"Disconnected"
-}
-
-async function loadData(){
-  try{
-    const r=await fetch(
-      $("apiBase").value+"/admin/analytics?brand="+$("brand").value,
-      {headers:{"X-Admin-Token":$("token").value}}
-    )
-    if(!r.ok) throw new Error()
-    const data=await r.json()
-    setStatus(true)
-
-    const m=data.metrics||{}
-    $("kTotal").innerText=m.totalMessages||0
-    $("kAuto").innerText=m.autoReply||0
-    $("kEsc").innerText=m.escalated||0
-    $("kConf").innerText=(m.avgConfidence||0).toFixed(2)
-
-    renderCharts(m)
-
-  }catch{
-    setStatus(false)
-  }
-}
-
-function renderCharts(m){
-  const intents=m.intents||{}
-  const labels=Object.keys(intents)
-  const values=Object.values(intents)
-
-  if(intentChart) intentChart.destroy()
-  if(resolutionChart) resolutionChart.destroy()
-
-  intentChart=new Chart(
-    document.getElementById("intentChart"),
-    {
-      type:"pie",
-      data:{
-        labels:labels,
-        datasets:[{data:values}]
-      }
-    }
-  )
-
-  resolutionChart=new Chart(
-    document.getElementById("resolutionChart"),
-    {
-      type:"bar",
-      data:{
-        labels:["Auto","Escalated","Copilot"],
-        datasets:[{
-          data:[
-            m.autoReply||0,
-            m.escalated||0,
-            m.copilot||0
-          ]
-        }]
-      }
-    }
-  )
-}
-
-$("loadBtn").onclick=loadData
+$("load").onclick = async ()=>{
+  const brand = ($("brand").value||"demo").trim()||"demo";
+  const token = $("token").value;
+  const r = await fetch(API_BASE+"/api/admin/analytics?brand="+encodeURIComponent(brand), {
+    headers: {"X-Admin-Token": token}
+  });
+  if(!r.ok) return alert("Load failed. Check ADMIN_TOKEN.");
+  const data = await r.json();
+  $("out").textContent = JSON.stringify(data.metrics||{}, null, 2);
+};
 </script>
-
 </body>
 </html>
