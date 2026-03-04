@@ -1,349 +1,253 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Support OS - Admin</title>
-
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AI Support OS • Admin</title>
 <style>
-
-body{
-margin:0;
-font-family:system-ui;
-background:#f3f4f6;
-display:flex;
-}
-
-.sidebar{
-width:220px;
-background:#0f172a;
-color:white;
-height:100vh;
-padding:20px;
-}
-
-.sidebar h2{
-margin-top:0;
-font-size:20px;
-}
-
-.menu button{
-display:block;
-width:100%;
-margin:8px 0;
-padding:10px;
-border:0;
-border-radius:6px;
-background:#1e293b;
-color:white;
-cursor:pointer;
-}
-
-.menu button.active{
-background:#22c55e;
-}
-
-.main{
-flex:1;
-padding:30px;
-}
-
-.card{
-background:white;
-padding:20px;
-border-radius:10px;
-margin-bottom:20px;
-box-shadow:0 5px 20px rgba(0,0,0,.05);
-}
-
-textarea{
-width:100%;
-height:180px;
-}
-
-input{
-padding:8px;
-width:200px;
-}
-
-button.action{
-padding:10px 14px;
-margin-top:10px;
-margin-right:10px;
-border:0;
-border-radius:6px;
-cursor:pointer;
-}
-
-.save{background:#16a34a;color:white}
-.publish{background:#dc2626;color:white}
-.reload{background:#64748b;color:white}
-
-pre{
-background:#111827;
-color:#e5e7eb;
-padding:10px;
-border-radius:6px;
-max-height:200px;
-overflow:auto;
-}
-
-.hidden{
-display:none;
-}
-
+:root{--nav:#0f172a;--nav2:#111827;--card:#fff;--bg:#f3f4f6;--muted:#64748b;--ok:#22c55e;--danger:#ef4444;--border:#e5e7eb}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui;background:var(--bg);display:flex;min-height:100vh}
+aside{width:240px;background:linear-gradient(180deg,var(--nav),var(--nav2));color:#fff;padding:18px}
+.brand{font-weight:900;font-size:18px;margin-bottom:14px}
+.navbtn{width:100%;text-align:center;border:0;border-radius:8px;padding:10px;margin:8px 0;background:#1f2937;color:#fff;cursor:pointer;font-weight:800}
+.navbtn.active{background:var(--ok);color:#052e16}
+main{flex:1;padding:22px}
+h1{margin:0 0 14px 0}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 10px 25px rgba(2,6,23,.06);padding:16px;margin-bottom:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+input,textarea{border:1px solid var(--border);border-radius:10px;padding:10px;font:inherit}
+textarea{width:100%;min-height:220px}
+.small{font-size:12px;color:var(--muted)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.btn{border:0;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:900}
+.save{background:var(--ok);color:#052e16}
+.publish{background:var(--danger);color:#fff}
+.gray{background:#94a3b8;color:#0b1220}
+pre{background:#0b1220;color:#e5e7eb;border-radius:10px;padding:12px;overflow:auto;max-height:260px}
+.pill{display:inline-block;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:800;border:1px solid var(--border);background:#fff}
+.pill.ok{background:#dcfce7;border-color:#bbf7d0;color:#065f46}
+.pill.bad{background:#fee2e2;border-color:#fecaca;color:#7f1d1d}
+.hidden{display:none}
 </style>
 </head>
-
 <body>
 
-<div class="sidebar">
+<aside>
+  <div class="brand">AI Support OS</div>
+  <button class="navbtn active" data-tab="dashboard">Dashboard</button>
+  <button class="navbtn" data-tab="rules">Rules</button>
+  <button class="navbtn" data-tab="faq">FAQ</button>
+  <button class="navbtn" data-tab="analytics">Analytics</button>
+  <button class="navbtn" data-tab="history">History</button>
+  <button class="navbtn" data-tab="logs">Logs</button>
+</aside>
 
-<h2>AI Support OS</h2>
+<main>
+  <h1>Internal Admin</h1>
 
-<div class="menu">
+  <div class="card">
+    <div class="row">
+      <label class="small">Brand</label>
+      <input id="brand" value="demo" />
+      <label class="small">Admin Token (optional for DEV)</label>
+      <input id="token" type="password" placeholder="Leave empty for DEV mode"/>
+      <button class="btn save" id="connect">Connect</button>
+      <a class="small" href="./index.html">Chat</a>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <span id="mode" class="pill bad">DEV MODE (local only)</span>
+      <span class="small">DEV = saves to browser only. LIVE = saves to Cloudflare KV + versions/logs.</span>
+    </div>
+  </div>
 
-<button onclick="show('dashboard')" class="active">Dashboard</button>
-<button onclick="show('rules')">Rules</button>
-<button onclick="show('faq')">FAQ</button>
-<button onclick="show('analytics')">Analytics</button>
-<button onclick="show('history')">History</button>
-<button onclick="show('logs')">Logs</button>
+  <div id="dashboard" class="card">
+    <h3 style="margin:0 0 8px 0">Publish History</h3>
+    <pre id="versions">—</pre>
+  </div>
 
-</div>
+  <div id="rules" class="card hidden">
+    <h3 style="margin:0 0 8px 0">Rules (one per line)</h3>
+    <textarea id="rulesBox"></textarea>
+    <div class="actions">
+      <button class="btn save" id="saveDraft">Save Draft</button>
+      <button class="btn publish" id="publish">Publish</button>
+      <button class="btn gray" id="reload">Reload</button>
+    </div>
+    <div class="small" style="margin-top:8px">
+      Tip: Rules & FAQ work even without OpenAI. OpenAI/Gemini is only “extra”.
+    </div>
+  </div>
 
-</div>
+  <div id="faq" class="card hidden">
+    <h3 style="margin:0 0 8px 0">FAQ (JSON array)</h3>
+    <textarea id="faqBox"></textarea>
+    <div class="small">
+      Format: [{"q":"...","a":"..."}]
+    </div>
+  </div>
 
+  <div id="analytics" class="card hidden">
+    <h3 style="margin:0 0 8px 0">Analytics</h3>
+    <pre id="analyticsBox">—</pre>
+  </div>
 
-<div class="main">
+  <div id="history" class="card hidden">
+    <h3 style="margin:0 0 8px 0">Versions</h3>
+    <pre id="historyBox">—</pre>
+  </div>
 
-<h1>Internal Admin</h1>
-
-
-<div class="card">
-
-Brand
-<input id="brand" value="demo">
-
-Admin Token
-<input id="token" type="password">
-
-<button class="action save" onclick="connect()">Connect</button>
-
-</div>
-
-
-
-<div id="dashboard" class="card">
-
-<h3>Publish History</h3>
-
-<pre id="versions">No versions yet</pre>
-
-</div>
-
-
-
-<div id="rules" class="card hidden">
-
-<h3>Rules (one per line)</h3>
-
-<textarea id="rulesBox"></textarea>
-
-<button class="action save" onclick="saveDraft()">Save Draft</button>
-<button class="action publish" onclick="publish()">Publish</button>
-<button class="action reload" onclick="loadData()">Reload</button>
-
-</div>
-
-
-
-<div id="faq" class="card hidden">
-
-<h3>FAQ JSON</h3>
-
-<textarea id="faqBox"></textarea>
-
-</div>
-
-
-
-<div id="logs" class="card hidden">
-
-<h3>Logs</h3>
-
-<pre id="logsBox"></pre>
-
-</div>
-
-
-
-<div id="history" class="card hidden">
-
-<h3>Knowledge Versions</h3>
-
-<pre id="historyBox"></pre>
-
-</div>
-
-
-
-<div id="analytics" class="card hidden">
-
-<h3>Analytics</h3>
-
-<pre id="analyticsBox"></pre>
-
-</div>
-
-
-
-</div>
-
-
+  <div id="logs" class="card hidden">
+    <h3 style="margin:0 0 8px 0">Logs</h3>
+    <pre id="logsBox">—</pre>
+  </div>
+</main>
 
 <script>
+const API_BASE = "https://ai-chat-backend.marketing-696.workers.dev";
 
-const API="https://ai-chat-backend.marketing-696.workers.dev"
+const $ = (id)=>document.getElementById(id);
 
-
-
-function show(id){
-
-document.querySelectorAll(".card").forEach(x=>x.classList.add("hidden"))
-
-document.getElementById(id).classList.remove("hidden")
-
+function isLiveMode(){
+  return !!($("token").value || "").trim();
 }
-
-
-
+function setModePill(){
+  const el = $("mode");
+  if(isLiveMode()){
+    el.className="pill ok";
+    el.textContent="LIVE MODE (Cloudflare KV)";
+  } else {
+    el.className="pill bad";
+    el.textContent="DEV MODE (local only)";
+  }
+}
+function brand(){ return ($("brand").value || "demo").trim() || "demo"; }
 function headers(){
+  return {
+    "Content-Type":"application/json",
+    "X-Admin-Token": $("token").value
+  };
+}
+function lsKey(k){ return `aichat:${brand()}:${k}`; }
 
-return{
-"Content-Type":"application/json",
-"X-Admin-Token":document.getElementById("token").value
+function nav(tab){
+  document.querySelectorAll(".navbtn").forEach(b=>{
+    b.classList.toggle("active", b.dataset.tab===tab);
+  });
+  ["dashboard","rules","faq","analytics","history","logs"].forEach(id=>{
+    $(id).classList.toggle("hidden", id!==tab);
+  });
 }
 
+document.querySelectorAll(".navbtn").forEach(btn=>{
+  btn.onclick = ()=>nav(btn.dataset.tab);
+});
+
+async function api(path, opts={}){
+  const url = API_BASE + path + "?brand=" + encodeURIComponent(brand());
+  const r = await fetch(url, {
+    ...opts,
+    headers: { ...(opts.headers||{}), ...headers() }
+  });
+  if(!r.ok) throw new Error(await r.text());
+  return r.json();
 }
 
-
-
-function brand(){
-
-return document.getElementById("brand").value
-
+// DEV load/save
+function devLoad(){
+  $("rulesBox").value = localStorage.getItem(lsKey("rules")) || "";
+  $("faqBox").value = localStorage.getItem(lsKey("faq")) || "[]";
+  $("versions").textContent = localStorage.getItem(lsKey("versions")) || "DEV mode: no versions";
+  $("historyBox").textContent = $("versions").textContent;
+  $("logsBox").textContent = localStorage.getItem(lsKey("logs")) || "DEV mode: no logs";
+  $("analyticsBox").textContent = localStorage.getItem(lsKey("analytics")) || "DEV mode: no analytics";
+}
+function devSaveDraft(){
+  localStorage.setItem(lsKey("rules"), $("rulesBox").value);
+  localStorage.setItem(lsKey("faq"), $("faqBox").value || "[]");
+  const logs = (localStorage.getItem(lsKey("logs"))||"").split("\n").filter(Boolean);
+  logs.unshift(new Date().toISOString()+" • dev:draft_saved");
+  localStorage.setItem(lsKey("logs"), logs.slice(0,200).join("\n"));
+  alert("Saved in DEV mode (browser only).");
+}
+function devPublish(){
+  // In DEV mode we simulate versions, but it does NOT affect backend.
+  const versions = (localStorage.getItem(lsKey("versions"))||"").split("\n").filter(Boolean);
+  versions.unshift(new Date().toISOString()+" • dev-version");
+  localStorage.setItem(lsKey("versions"), versions.slice(0,50).join("\n"));
+  const logs = (localStorage.getItem(lsKey("logs"))||"").split("\n").filter(Boolean);
+  logs.unshift(new Date().toISOString()+" • dev:published");
+  localStorage.setItem(lsKey("logs"), logs.slice(0,200).join("\n"));
+  $("versions").textContent = versions.slice(0,50).join("\n");
+  $("historyBox").textContent = $("versions").textContent;
+  alert("Published in DEV mode (browser only).");
 }
 
+async function liveLoadAll(){
+  const d = await api("/api/admin/get", { method:"GET" });
+  const draft = d.draft || {rules:[],faq:[]};
+  $("rulesBox").value = (draft.rules||[]).join("\n");
+  $("faqBox").value = JSON.stringify(draft.faq||[], null, 2);
 
+  const v = await api("/api/admin/versions", { method:"GET" });
+  $("versions").textContent = (v.versions||[]).map(x=>`${x.time} • ${x.id}`).join("\n") || "—";
+  $("historyBox").textContent = $("versions").textContent;
+
+  const l = await api("/api/admin/logs", { method:"GET" });
+  $("logsBox").textContent = (l.logs||[]).map(x=>`${x.time} • ${x.action}`).join("\n") || "—";
+
+  const a = await api("/api/admin/analytics", { method:"GET" });
+  $("analyticsBox").textContent = JSON.stringify(a.metrics||{}, null, 2) || "—";
+}
+
+async function liveSaveDraft(){
+  const rules = $("rulesBox").value.split("\n").map(s=>s.trim()).filter(Boolean);
+  let faq = [];
+  try{ faq = JSON.parse($("faqBox").value || "[]"); }catch{ throw new Error("FAQ JSON is invalid."); }
+  await api("/api/admin/save", { method:"POST", body: JSON.stringify({rules, faq}) });
+  alert("Draft saved to Cloudflare KV.");
+  await liveLoadAll();
+}
+
+async function livePublish(){
+  await api("/api/admin/publish", { method:"POST" });
+  alert("Published LIVE to Cloudflare KV.");
+  await liveLoadAll();
+}
 
 async function connect(){
-
-await loadData()
-
-await loadLogs()
-
-await loadVersions()
-
-await loadAnalytics()
-
+  setModePill();
+  if(isLiveMode()){
+    try{
+      await liveLoadAll();
+    }catch(e){
+      alert("LIVE connect failed. Check ADMIN_TOKEN.");
+      // fallback to dev load so user still sees something
+      devLoad();
+    }
+  } else {
+    devLoad();
+  }
 }
 
+$("connect").onclick = connect;
 
+$("saveDraft").onclick = async ()=>{
+  setModePill();
+  if(isLiveMode()) await liveSaveDraft();
+  else devSaveDraft();
+};
 
-async function loadData(){
+$("publish").onclick = async ()=>{
+  setModePill();
+  if(isLiveMode()) await livePublish();
+  else devPublish();
+};
 
-const r=await fetch(API+"/api/admin/get?brand="+brand(),{headers:headers()})
+$("reload").onclick = connect;
 
-const data=await r.json()
-
-document.getElementById("rulesBox").value=(data.draft.rules||[]).join("\n")
-
-document.getElementById("faqBox").value=JSON.stringify(data.draft.faq||[],null,2)
-
-}
-
-
-
-async function saveDraft(){
-
-const rules=document.getElementById("rulesBox").value.split("\n")
-
-const faq=JSON.parse(document.getElementById("faqBox").value||"[]")
-
-await fetch(API+"/api/admin/save?brand="+brand(),{
-
-method:"POST",
-
-headers:headers(),
-
-body:JSON.stringify({rules,faq})
-
-})
-
-alert("Draft Saved")
-
-}
-
-
-
-async function publish(){
-
-await fetch(API+"/api/admin/publish?brand="+brand(),{
-
-method:"POST",
-
-headers:headers()
-
-})
-
-alert("Published")
-
-loadVersions()
-
-}
-
-
-
-async function loadLogs(){
-
-const r=await fetch(API+"/api/admin/logs?brand="+brand(),{headers:headers()})
-
-const data=await r.json()
-
-document.getElementById("logsBox").innerText=data.logs.map(x=>x.time+" • "+x.action).join("\n")
-
-}
-
-
-
-async function loadVersions(){
-
-const r=await fetch(API+"/api/admin/versions?brand="+brand(),{headers:headers()})
-
-const data=await r.json()
-
-document.getElementById("versions").innerText=data.versions.map(v=>v.time+" • "+v.id).join("\n")
-
-document.getElementById("historyBox").innerText=document.getElementById("versions").innerText
-
-}
-
-
-
-async function loadAnalytics(){
-
-const r=await fetch(API+"/api/admin/analytics?brand="+brand(),{headers:headers()})
-
-const data=await r.json()
-
-document.getElementById("analyticsBox").innerText=JSON.stringify(data.metrics,null,2)
-
-}
-
-
-
+// auto load on open
+connect();
 </script>
-
 </body>
 </html>
