@@ -74,7 +74,7 @@ function add(text, cls){
 function sys(text){
   const d=document.createElement("div");
   d.className="sys";
-  d.textContent=text;
+  d.innerHTML = text;
   chat.appendChild(d);
   chat.scrollTop=chat.scrollHeight;
 }
