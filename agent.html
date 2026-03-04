@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AI Support OS • Agent</title>
+<style>
+body{margin:0;font-family:system-ui;background:#f3f4f6}
+.wrap{max-width:1100px;margin:22px auto;padding:0 14px}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 10px 25px rgba(2,6,23,.06);padding:16px;margin-bottom:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+input,textarea{border:1px solid #e5e7eb;border-radius:10px;padding:10px;font:inherit}
+textarea{width:100%;min-height:120px}
+.btn{border:0;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:900}
+.ok{background:#22c55e;color:#052e16}
+.gray{background:#94a3b8;color:#0b1220}
+.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.ticket{border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin:10px 0;background:#fff;cursor:pointer}
+.small{font-size:12px;color:#64748b}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Agent Desk</h1>
+
+  <div class="card">
+    <div class="row">
+      <input id="brand" value="demo" placeholder="brand"/>
+      <input id="token" type="password" placeholder="AGENT_TOKEN"/>
+      <button class="btn ok" id="load">Load Tickets</button>
+      <a class="small" href="./index.html">Chat</a>
+      <a class="small" href="./admin.html">Admin</a>
+      <a class="small" href="./analytics.html">Analytics</a>
+    </div>
+    <div class="small" style="margin-top:8px">Flow: Click ticket → Join Live → Reply. Your reply auto-trains “Learned answers”.</div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3 style="margin:0 0 10px 0">Open Tickets</h3>
+      <div id="list" class="small">—</div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px 0">Actions</h3>
+      <div id="sel" class="small">Select a ticket.</div>
+      <div class="row" style="margin:10px 0">
+        <button class="btn ok" id="join">Join Live</button>
+        <button class="btn gray" id="send">Send Reply</button>
+      </div>
+      <textarea id="reply" placeholder="Type agent reply..."></textarea>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_BASE = "https://ai-chat-backend.marketing-696.workers.dev";
+const $ = id=>document.getElementById(id);
+let selected=null;
+
+function brand(){ return ($("brand").value||"demo").trim()||"demo"; }
+function token(){ return $("token").value; }
+
+function escapeHtml(s){
+  return String(s||"").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+}
+
+async function loadTickets(){
+  const r = await fetch(API_BASE+"/api/agent/tickets?brand="+encodeURIComponent(brand()), {
+    headers: {"X-Agent-Token": token()}
+  });
+  if(!r.ok) return alert("Load failed. Check AGENT_TOKEN.");
+  const data = await r.json();
+  const tickets = (data.tickets||[]).filter(t=>t.status==="open");
+  if(!tickets.length){ $("list").textContent="No open tickets."; return; }
+
+  $("list").innerHTML = tickets.map(t=>`
+    <div class="ticket" onclick="selectTicket('${t.id}')">
+      <b>${t.id.slice(0,8)}</b> <span class="small">(${escapeHtml(t.intent||"general")} • conf ${(t.confidence||0).toFixed(2)})</span>
+      <div class="small">${escapeHtml(t.createdAt||"")}</div>
+      <div style="margin-top:6px">${escapeHtml(t.message||"")}</div>
+    </div>
+  `).join("");
+
+  window.__tickets = tickets;
+}
+
+window.selectTicket = (id)=>{
+  const t = (window.__tickets||[]).find(x=>x.id===id);
+  if(!t) return;
+  selected = t;
+  $("sel").innerHTML = `<b>Ticket:</b> ${t.id}<br><span class="small">Session:</span> ${t.sessionId}`;
+  $("reply").value = "";
+};
+
+async function joinLive(){
+  if(!selected) return alert("Select a ticket first.");
+  const r = await fetch(API_BASE+"/api/agent/join?brand="+encodeURIComponent(brand()), {
+    method:"POST",
+    headers: {"Content-Type":"application/json","X-Agent-Token": token()},
+    body: JSON.stringify({ticketId:selected.id})
+  });
+  if(!r.ok) return alert("Join failed.");
+  alert("Joined live chat. User will see: Agent joined.");
+}
+
+async function sendReply(){
+  if(!selected) return alert("Select a ticket first.");
+  const text = ($("reply").value||"").trim();
+  if(!text) return alert("Type a reply.");
+
+  const r = await fetch(API_BASE+"/api/agent/reply?brand="+encodeURIComponent(brand()), {
+    method:"POST",
+    headers: {"Content-Type":"application/json","X-Agent-Token": token()},
+    body: JSON.stringify({ticketId:selected.id, reply:text})
+  });
+  if(!r.ok) return alert("Send failed.");
+  alert("Reply sent. Ticket answered. AI learned this answer.");
+  selected=null;
+  $("sel").textContent="Select a ticket.";
+  $("reply").value="";
+  loadTickets();
+}
+
+$("load").onclick = loadTickets;
+$("join").onclick = joinLive;
+$("send").onclick = sendReply;
+</script>
+</body>
+</html>
