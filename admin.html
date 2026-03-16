@@ -3,323 +3,243 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>AI Support OS • Pro Admin</title>
+<title>AI Support OS • Secure Admin</title>
 <style>
-:root {
-  --nav: #0f172a;
-  --nav-hover: #1e293b;
-  --primary: #22c55e;
-  --bg: #f8fafc;
-  --card: #ffffff;
-  --border: #e2e8f0;
-  --text: #1e293b;
-  --muted: #64748b;
-  --danger: #ef4444;
-}
-* { box-sizing: border-box; transition: all 0.2s ease; }
-body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: var(--bg); display: flex; color: var(--text); }
-
-/* Sidebar */
-aside { width: 260px; background: var(--nav); color: #fff; padding: 24px; min-height: 100vh; position: sticky; top: 0; }
-.brand { font-size: 20px; font-weight: 900; margin-bottom: 30px; color: var(--primary); display: flex; align-items: center; gap: 8px; }
-.nav-group { margin-bottom: 20px; }
-.nav-label { font-size: 11px; text-transform: uppercase; color: var(--muted); letter-spacing: 1px; margin-bottom: 8px; padding-left: 12px; }
-.navbtn { 
-  width: 100%; text-align: left; border: 0; border-radius: 10px; padding: 12px 16px; margin: 4px 0; 
-  background: transparent; color: #cbd5e1; cursor: pointer; font-weight: 600; font-size: 14px;
-}
-.navbtn:hover { background: var(--nav-hover); color: #fff; }
-.navbtn.active { background: var(--primary); color: #052e16; }
-
-/* Main Content */
-main { flex: 1; padding: 40px; max-width: 1200px; }
-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-h1 { margin: 0; font-size: 28px; letter-spacing: -1px; }
-
-/* Cards & Components */
-.card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 24px; }
-.row { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; }
-input, textarea, select { 
-  border: 1px solid var(--border); border-radius: 10px; padding: 12px; font: inherit; outline: none; width: 100%;
-}
-input:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1); }
-
-/* FAQ Visual Editor */
-.faq-grid { display: grid; gap: 16px; }
-.faq-card { 
-  background: #fff; border: 2px solid var(--border); border-radius: 12px; padding: 20px; 
-  position: relative; cursor: grab;
-}
-.faq-card:hover { border-color: #cbd5e1; }
-.faq-card .handle { position: absolute; left: -10px; top: 50%; width: 20px; height: 40px; background: #eee; border-radius: 4px; display: none; }
-.tag-badge { 
-  display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; 
-  background: #f1f5f9; color: var(--muted); margin-bottom: 8px;
-}
-
-/* Buttons */
-.btn { border: 0; border-radius: 10px; padding: 12px 20px; cursor: pointer; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; }
-.btn-save { background: var(--primary); color: #052e16; }
-.btn-save:hover { filter: brightness(1.1); }
-.btn-outline { background: #fff; border: 1px solid var(--border); color: var(--text); }
-.btn-danger { background: #fee2e2; color: var(--danger); }
-
-/* Status Pill */
-.status-pill { padding: 6px 12px; border-radius: 99px; font-size: 12px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
-.status-online { background: #dcfce7; color: #166534; }
-.status-offline { background: #f1f5f9; color: var(--muted); }
-
-.hidden { display: none; }
-pre { background: #0f172a; color: #94a3b8; padding: 16px; border-radius: 12px; overflow: auto; font-size: 13px; }
+:root{--nav:#0f172a;--nav2:#111827;--card:#fff;--bg:#f3f4f6;--muted:#64748b;--ok:#22c55e;--danger:#ef4444;--border:#e5e7eb}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui;background:var(--bg);display:flex;min-height:100vh}
+aside{width:240px;background:linear-gradient(180deg,var(--nav),var(--nav2));color:#fff;padding:18px}
+.brand{font-weight:900;font-size:18px;margin-bottom:14px;color:var(--ok)}
+.navbtn{width:100%;text-align:left;border:0;border-radius:8px;padding:12px;margin:4px 0;background:transparent;color:#94a3b8;cursor:pointer;font-weight:600}
+.navbtn:hover{background:#1f2937;color:#fff}
+.navbtn.active{background:var(--ok);color:#052e16}
+main{flex:1;padding:22px;max-width:1200px}
+h1{margin:0 0 14px 0;letter-spacing:-1px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 10px 25px rgba(2,6,23,.06);padding:20px;margin-bottom:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+input,textarea{border:1px solid var(--border);border-radius:10px;padding:10px;font:inherit;outline:none}
+input:focus,textarea:focus{border-color:var(--ok)}
+textarea{width:100%;min-height:300px;font-family:monospace;font-size:13px}
+.small{font-size:12px;color:var(--muted)}
+.actions{display:flex;gap:10px;margin-top:10px}
+.btn{border:0;border-radius:10px;padding:10px 18px;cursor:pointer;font-weight:800;font-size:13px}
+.save{background:var(--ok);color:#052e16}
+.publish{background:var(--danger);color:#fff}
+.gray{background:#e5e7eb;color:#4b5563}
+pre{background:#0b1220;color:#e5e7eb;border-radius:10px;padding:12px;overflow:auto;max-height:260px;font-size:12px}
+.pill{display:inline-block;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:800;border:1px solid var(--border)}
+.pill.ok{background:#dcfce7;border-color:#bbf7d0;color:#166534}
+.pill.bad{background:#f1f5f9;color:var(--muted)}
+.hidden{display:none}
 </style>
 </head>
 <body>
 
 <aside>
-  <div class="brand"><span>⚡</span> AI Support</div>
+  <div class="brand">⚡ AI Support OS</div>
+  <p class="small" style="padding:0 10px; opacity:0.6">Control Panel</p>
+  <button class="navbtn active" data-tab="dashboard">Dashboard</button>
+  <button class="navbtn" data-tab="rules">AI Behavior</button>
+  <button class="navbtn" data-tab="faq">FAQ Library</button>
+  <button class="navbtn" data-tab="analytics">Analytics</button>
+  <button class="navbtn" data-tab="logs">System Logs</button>
   
-  <div class="nav-group">
-    <div class="nav-label">Management</div>
-    <button class="navbtn active" data-tab="dashboard">Dashboard</button>
-    <button class="navbtn" data-tab="rules">AI Rules</button>
-    <button class="navbtn" data-tab="faq">FAQ Flow</button>
-  </div>
-
-  <div class="nav-group">
-    <div class="nav-label">Data & Logs</div>
-    <button class="navbtn" data-tab="analytics">Analytics</button>
-    <button class="navbtn" data-tab="logs">System Logs</button>
-  </div>
-
-  <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid #1e293b;">
-    <input type="password" id="token" placeholder="Admin Token" style="background:#1e293b; border:0; color:#fff; margin-bottom:10px; font-size:12px;">
-    <button class="btn btn-save" id="connect" style="width:100%; font-size:12px;">Connect KV</button>
+  <div style="margin-top:auto; padding:10px;">
+     <a href="./index.html" style="color:var(--ok); text-decoration:none; font-size:12px;">← Open Chat UI</a>
   </div>
 </aside>
 
 <main>
-  <header>
-    <div>
-      <h1 id="tabTitle">Dashboard</h1>
-      <div id="statusIndicator" class="status-pill status-offline" style="margin-top:8px; width:fit-content;">
-        <span style="width:8px; height:8px; border-radius:50%; background:currentColor;"></span>
-        <span id="modeText">Offline / Dev Mode</span>
-      </div>
-    </div>
+  <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+    <h1>Management Console</h1>
     <div class="row">
-      <input id="brand" value="demo" style="width:120px;" placeholder="Brand ID" />
-      <button class="btn btn-save" id="publishBtn">Publish Live</button>
+      <span id="modePill" class="pill bad">Connecting...</span>
     </div>
   </header>
 
+  <div class="card">
+    <div class="row">
+      <div style="flex:1">
+        <label class="small">Brand Context</label><br>
+        <input id="brand" value="demo" style="width:100%; max-width:200px" />
+      </div>
+      <div>
+        <label class="small">Zero Trust Identity</label><br>
+        <div id="identity" class="small" style="font-weight:bold; margin-top:8px">Checking Access...</div>
+      </div>
+      <button class="btn gray" id="reload" style="margin-top:15px">Refresh Data</button>
+    </div>
+  </div>
+
   <div id="dashboard" class="tab-content">
     <div class="card">
-      <h3>Publish History</h3>
-      <pre id="versions">Connect to load version history...</pre>
-    </div>
-    <div class="card">
-      <h3>Quick Links</h3>
-      <div class="row">
-        <a href="./index.html" target="_blank" class="btn btn-outline">Open Chat UI</a>
-        <a href="./agent.html" target="_blank" class="btn btn-outline">Agent Portal</a>
-      </div>
+      <h3 style="margin-top:0">Deployment History</h3>
+      <pre id="versions">Loading versions...</pre>
     </div>
   </div>
 
   <div id="rules" class="tab-content hidden">
     <div class="card">
-      <h3>AI Behavior Rules</h3>
-      <p class="small">Define how the AI thinks. One rule per line.</p>
-      <textarea id="rulesBox" placeholder="Example: Only suggest withdrawal if KYC is verified..."></textarea>
-      <div class="row" style="margin-top:20px;">
-        <button class="btn btn-save" id="saveRules">Save Rules Draft</button>
+      <h3>AI Behavioral Rules</h3>
+      <p class="small">These instructions guide the AI's personality and boundaries.</p>
+      <textarea id="rulesBox" placeholder="Enter rules, one per line..."></textarea>
+      <div class="actions">
+        <button class="btn save" id="saveRulesDraft">Save to Draft</button>
+        <button class="btn publish" id="publishRules">Publish to Live</button>
       </div>
     </div>
   </div>
 
   <div id="faq" class="tab-content hidden">
-    <div class="row" style="justify-content: space-between;">
-      <h3>Knowledge Cards</h3>
-      <button class="btn btn-save" onclick="addFAQCard()">+ Add Card</button>
-    </div>
-    
-    <div id="faqGrid" class="faq-grid">
+    <div class="card">
+      <h3>Static FAQ Knowledge</h3>
+      <p class="small">JSON Array format: [{"q":"question", "a":"answer"}]</p>
+      <textarea id="faqBox" placeholder='[{"q":"Hi", "a":"Hello!"}]'></textarea>
+      <div class="actions">
+        <button class="btn save" id="saveFAQDraft">Save FAQ Draft</button>
       </div>
-
-    <div style="margin-top: 30px; padding: 20px; background: #fff; border-radius: 12px; border: 1px dashed var(--border);">
-      <details>
-        <summary style="cursor:pointer; color:var(--muted); font-size:12px;">View Raw JSON Data (Expert Mode)</summary>
-        <textarea id="faqBox" style="margin-top:10px; font-family:monospace; font-size:12px;"></textarea>
-      </details>
-    </div>
-    
-    <div class="row" style="margin-top:20px;">
-      <button class="btn btn-save" id="saveFAQ">Save FAQ Draft</button>
     </div>
   </div>
 
   <div id="analytics" class="tab-content hidden">
     <div class="card">
-      <h3>Usage Metrics</h3>
+      <h3>Platform Metrics</h3>
       <pre id="analyticsBox">—</pre>
     </div>
   </div>
 
   <div id="logs" class="tab-content hidden">
     <div class="card">
-      <h3>Recent Activities</h3>
+      <h3>Activity Logs</h3>
       <pre id="logsBox">—</pre>
     </div>
   </div>
 </main>
 
 <script>
-const API_BASE = "https://ai-chat-backend.marketing-696.workers.dev";
+// --- Configuration ---
+const API_BASE = "https://ai-chat-backend.marketing-696.workers.dev"; //
 const $ = (id) => document.getElementById(id);
-let currentKB = { rules: [], faq: [] };
-
-// --- Navigation ---
-document.querySelectorAll(".navbtn").forEach(btn => {
-  btn.onclick = () => {
-    document.querySelectorAll(".navbtn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    document.querySelectorAll(".tab-content").forEach(t => t.classList.add("hidden"));
-    $(btn.dataset.tab).classList.remove("hidden");
-    $("tabTitle").textContent = btn.textContent;
-  };
-});
 
 // --- State Management ---
-function isLive() { return !!$("token").value.trim(); }
-function updateStatus() {
-  const pill = $("statusIndicator");
-  if(isLive()) {
-    pill.className = "status-pill status-online";
-    $("modeText").textContent = "Live Mode (Cloudflare KV)";
-  } else {
-    pill.className = "status-pill status-offline";
-    $("modeText").textContent = "Dev Mode (Local Only)";
-  }
+function isLiveMode() {
+    // If not on localhost, assume Cloudflare Zero Trust is handling auth
+    return window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1";
+}
+
+function updateUI() {
+    const pill = $("modePill");
+    if (isLiveMode()) {
+        pill.className = "pill ok";
+        pill.textContent = "LIVE: Zero Trust Secure";
+    } else {
+        pill.className = "pill bad";
+        pill.textContent = "DEV: Local Browser Storage";
+    }
 }
 
 // --- API Wrapper ---
 async function api(path, opts = {}) {
-  const brandId = ($("brand").value || "demo").trim();
-  const url = `${API_BASE}${path}?brand=${encodeURIComponent(brandId)}`;
-  const headers = {
-    "Content-Type": "application/json",
-    "X-Admin-Token": $("token").value
-  };
-  const r = await fetch(url, { ...opts, headers });
-  if(!r.ok) throw new Error(await r.text());
-  return r.json();
+    const brandId = ($("brand").value || "demo").trim();
+    const url = `${API_BASE}${path}?brand=${encodeURIComponent(brandId)}`;
+    
+    // In Zero Trust, we don't need to manually send the token if the Worker 
+    // is configured to trust the Access headers
+    const r = await fetch(url, {
+        ...opts,
+        headers: { "Content-Type": "application/json", ...opts.headers }
+    });
+    
+    if (!r.ok) {
+        if(r.status === 401 || r.status === 403) {
+            $("identity").textContent = "Access Denied ❌";
+            throw new Error("Unauthorized by Zero Trust");
+        }
+        throw new Error(await r.text());
+    }
+    return r.json();
 }
 
-// --- FAQ Visual Logic ---
-function renderFAQCards() {
-  const grid = $("faqGrid");
-  grid.innerHTML = "";
-  currentKB.faq.forEach((item, index) => {
-    const card = document.createElement("div");
-    card.className = "faq-card card";
-    card.innerHTML = `
-      <div class="tag-badge">${item.tags || 'General FAQ'}</div>
-      <div style="position:absolute; right:15px; top:15px;">
-        <button class="btn btn-danger" style="padding:5px 10px;" onclick="removeFAQ(${index})">Delete</button>
-      </div>
-      <div class="row">
-        <input placeholder="User asks... (Trigger Question)" value="${item.q || ''}" oninput="updateFAQData(${index}, 'q', this.value)">
-      </div>
-      <div class="row">
-        <textarea rows="3" placeholder="AI responds with..." oninput="updateFAQData(${index}, 'a', this.value)">${item.a || ''}</textarea>
-      </div>
-      <div class="row">
-        <input style="font-size:12px; width:50%;" placeholder="Category/Tag" value="${item.tags || ''}" oninput="updateFAQData(${index}, 'tags', this.value)">
-      </div>
-    `;
-    grid.appendChild(card);
-  });
-  // Sync back to hidden JSON box
-  $("faqBox").value = JSON.stringify(currentKB.faq, null, 2);
-}
+// --- Tab Logic ---
+document.querySelectorAll(".navbtn").forEach(btn => {
+    btn.onclick = () => {
+        document.querySelectorAll(".navbtn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        document.querySelectorAll(".tab-content").forEach(t => t.classList.add("hidden"));
+        $(btn.dataset.tab).classList.remove("hidden");
+    };
+});
 
-function updateFAQData(index, field, value) {
-  currentKB.faq[index][field] = value;
-  $("faqBox").value = JSON.stringify(currentKB.faq, null, 2);
-}
+// --- Data Loading ---
+async function load() {
+    updateUI();
+    if (!isLiveMode()) {
+        const rules = localStorage.getItem("dev_rules") || "";
+        const faq = localStorage.getItem("dev_faq") || "[]";
+        $("rulesBox").value = rules;
+        $("faqBox").value = faq;
+        $("identity").textContent = "Local Developer";
+        return;
+    }
 
-function addFAQCard() {
-  currentKB.faq.unshift({ q: "", a: "", tags: "New Intent" });
-  renderFAQCards();
-}
-
-function removeFAQ(index) {
-  if(confirm("Delete this card?")) {
-    currentKB.faq.splice(index, 1);
-    renderFAQCards();
-  }
-}
-
-// --- Sync Logic ---
-async function loadAll() {
-  updateStatus();
-  if(!isLive()) {
-    // DEV Mode Load
-    currentKB.rules = (localStorage.getItem("dev_rules") || "").split("\n");
-    currentKB.faq = JSON.parse(localStorage.getItem("dev_faq") || "[]");
-  } else {
-    // LIVE Mode Load
     try {
-      const d = await api("/api/admin/get");
-      currentKB = d.draft || { rules: [], faq: [] };
-      
-      const v = await api("/api/admin/versions");
-      $("versions").textContent = v.versions.map(x => `${x.time} • ${x.id}`).join("\n");
-      
-      const l = await api("/api/admin/logs");
-      $("logsBox").textContent = l.logs.map(x => `${x.time} • ${x.action}`).join("\n");
-      
-      const a = await api("/api/admin/analytics");
-      $("analyticsBox").textContent = JSON.stringify(a.metrics, null, 2);
-    } catch(e) { alert("KV Load Failed: " + e.message); }
-  }
-  
-  $("rulesBox").value = currentKB.rules.join("\n");
-  renderFAQCards();
+        $("identity").textContent = "Verifying Identity...";
+        const data = await api("/api/admin/get");
+        $("rulesBox").value = (data.draft?.rules || []).join("\n");
+        $("faqBox").value = JSON.stringify(data.draft?.faq || [], null, 2);
+        $("identity").textContent = "Authenticated ✅";
+
+        const v = await api("/api/admin/versions");
+        $("versions").textContent = (v.versions || []).map(x => `${x.time} • ${x.id}`).join("\n") || "No versions yet";
+
+        const a = await api("/api/admin/analytics");
+        $("analyticsBox").textContent = JSON.stringify(a.metrics || {}, null, 2);
+
+        const l = await api("/api/admin/logs");
+        $("logsBox").textContent = (l.logs || []).map(x => `${x.time} • ${x.action}`).join("\n");
+
+    } catch (e) {
+        console.error(e);
+        $("identity").textContent = "Error: " + e.message;
+    }
 }
 
-async function saveDraft() {
-  currentKB.rules = $("rulesBox").value.split("\n").map(s => s.trim()).filter(Boolean);
-  // currentKB.faq is already updated via oninput
-  
-  if(!isLive()) {
-    localStorage.setItem("dev_rules", currentKB.rules.join("\n"));
-    localStorage.setItem("dev_faq", JSON.stringify(currentKB.faq));
-    alert("Saved to Browser LocalStorage");
-  } else {
+// --- Save Logic ---
+async function save(isPublish = false) {
+    const rules = $("rulesBox").value.split("\n").map(s => s.trim()).filter(Boolean);
+    let faq = [];
+    try { faq = JSON.parse($("faqBox").value || "[]"); } catch (e) { return alert("Invalid FAQ JSON"); }
+
+    if (!isLiveMode()) {
+        localStorage.setItem("dev_rules", $("rulesBox").value);
+        localStorage.setItem("dev_faq", $("faqBox").value);
+        alert("Saved to local browser storage.");
+        return;
+    }
+
     try {
-      await api("/api/admin/save", { method: "POST", body: JSON.stringify(currentKB) });
-      alert("Draft Saved to Cloudflare KV");
-      loadAll();
-    } catch(e) { alert("Save Failed: " + e.message); }
-  }
+        const path = isPublish ? "/api/admin/publish" : "/api/admin/save";
+        await api(path, {
+            method: "POST",
+            body: JSON.stringify({ rules, faq })
+        });
+        alert(isPublish ? "Published LIVE successfully!" : "Draft saved to KV.");
+        load();
+    } catch (e) {
+        alert("Action failed: " + e.message);
+    }
 }
 
 // --- Init ---
-$("connect").onclick = loadAll;
-$("saveRules").onclick = saveDraft;
-$("saveFAQ").onclick = saveDraft;
-$("publishBtn").onclick = async () => {
-  if(!isLive()) return alert("Switch to LIVE MODE (enter token) to publish.");
-  if(confirm("Publish draft to LIVE?")) {
-    await api("/api/admin/publish", { method: "POST" });
-    alert("Successfully Published!");
-    loadAll();
-  }
+$("reload").onclick = load;
+$("saveRulesDraft").onclick = () => save(false);
+$("saveFAQDraft").onclick = () => save(false);
+$("publishRules").onclick = () => {
+    if(confirm("This will make all changes live. Continue?")) save(true);
 };
 
-// Start
-loadAll();
+// Initial Load
+load();
 </script>
 </body>
 </html>
