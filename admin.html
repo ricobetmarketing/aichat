@@ -2,170 +2,132 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>AI Support OS • Visual Admin</title>
+<title>Console • AI Support</title>
 <style>
-:root{--nav:#0f172a;--nav2:#111827;--card:#fff;--bg:#f3f4f6;--muted:#64748b;--ok:#22c55e;--danger:#ef4444;--border:#e5e7eb;--accent:#3b82f6}
-*{box-sizing:border-box}
-body{margin:0;font-family:system-ui;background:var(--bg);display:flex;min-height:100vh}
-/* 侧边栏样式恢复 */
-aside{width:240px;background:linear-gradient(180deg,var(--nav),var(--nav2));color:#fff;padding:18px;display:flex;flex-direction:column}
-.brand{font-weight:900;font-size:18px;margin-bottom:14px;color:var(--ok)}
-.navbtn{width:100%;text-align:left;border:0;border-radius:8px;padding:12px;margin:4px 0;background:transparent;color:#94a3b8;cursor:pointer;font-weight:600}
-.navbtn:hover{background:#1f2937;color:#fff}
-.navbtn.active{background:var(--ok);color:#052e16}
-/* 主内容区 */
-main{flex:1;padding:22px;max-width:1200px;overflow-y:auto}
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 10px 25px rgba(2,6,23,.06);padding:20px;margin-bottom:14px}
-/* 可视化 FAQ 卡片 */
-.faq-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:15px}
-.faq-card{background:#fff;border:2px solid var(--border);border-radius:12px;padding:15px;position:relative}
+:root{--nav:#0f172a;--bg:#f8fafc;--accent:#2563eb;--ok:#22c55e;--border:#e2e8f0}
+body{margin:0;font-family:inter,system-ui;background:var(--bg);display:flex;height:100vh;overflow:hidden}
+/* 侧边栏 - 确保不重复 */
+aside{width:220px;background:var(--nav);color:#fff;display:flex;flex-direction:column;padding:20px 10px}
+.nav-item{padding:12px 15px;cursor:pointer;border-radius:8px;margin-bottom:5px;font-size:14px;color:#94a3b8;transition:0.2s}
+.nav-item:hover{background:#1e293b;color:#fff}
+.nav-item.active{background:var(--accent);color:#fff}
+/* 主体 */
+main{flex:1;overflow-y:auto;padding:30px}
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,0.1)}
+.faq-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(300px, 1fr));gap:15px}
+.faq-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:15px;position:relative}
 .faq-card:hover{border-color:var(--accent)}
-.faq-delete{position:absolute;top:10px;right:10px;background:none;border:0;color:var(--danger);cursor:pointer;font-size:18px}
-.faq-cat{display:inline-block;background:var(--bg);padding:4px 8px;border-radius:6px;font-size:11px;font-weight:bold;color:var(--muted);margin-bottom:10px;border:1px solid var(--border)}
-/* 按钮与输入 */
-input,textarea{border:1px solid var(--border);border-radius:10px;padding:10px;font:inherit;outline:none;width:100%}
-.btn{border:0;border-radius:10px;padding:10px 18px;cursor:pointer;font-weight:800;font-size:13px}
-.save{background:var(--ok);color:#052e16}
-.publish{background:var(--danger);color:#fff}
-.add{background:var(--accent);color:#fff;margin-bottom:15px}
-pre{background:#0b1220;color:#e5e7eb;border-radius:10px;padding:12px;overflow:auto;font-size:12px}
+input,textarea{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;margin-top:5px;font-size:14px}
+.btn{padding:10px 20px;border-radius:8px;border:0;cursor:pointer;font-weight:600;font-size:13px}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-save{background:var(--ok);color:#fff}
 .hidden{display:none}
 </style>
 </head>
 <body>
 
 <aside>
-  <div class="brand">⚡ AI Support OS</div>
-  <p class="small" style="padding:0 10px; opacity:0.6; font-size:11px">CONTROL PANEL</p>
-  <button class="navbtn active" data-tab="dashboard">Dashboard</button>
-  <button class="navbtn" data-tab="rules">AI Behavior</button>
-  <button class="navbtn" data-tab="faq">FAQ Library (Visual)</button>
-  <button class="navbtn" data-tab="analytics">Analytics</button>
-  <button class="navbtn" data-tab="logs">System Logs</button>
-  <div style="margin-top:auto; padding:10px;"><a href="./index.html" style="color:var(--ok); text-decoration:none; font-size:12px;">← Open Chat UI</a></div>
+  <div style="font-weight:900; padding:10px; color:var(--ok)">⚡ AI CONSOLE</div>
+  <div class="nav-item active" onclick="showTab('rules', this)">AI Behavior</div>
+  <div class="nav-item" onclick="showTab('faq', this)">FAQ Cards</div>
+  <div class="nav-item" onclick="showTab('logs', this)">System Logs</div>
+  <div style="margin-top:auto; padding:10px"><a href="index.html" style="color:#94a3b8; text-decoration:none; font-size:12px">← View Chat</a></div>
 </aside>
 
 <main>
   <div class="card">
-    <div style="display:flex; gap:10px; align-items:flex-end">
-      <div style="flex:1">
-        <label style="font-size:11px; font-weight:bold; color:var(--muted)">ADMIN PASSWORD</label>
-        <input id="token" type="password" placeholder="Enter Admin Token">
-      </div>
-      <div style="flex:1">
-        <label style="font-size:11px; font-weight:bold; color:var(--muted)">BRAND ID</label>
-        <input id="brand" value="demo">
-      </div>
-      <button class="btn" style="background:var(--border)" onclick="load()">Connect & Sync</button>
+    <div style="display:flex; gap:10px">
+      <input id="token" type="password" placeholder="Admin Token" style="max-width:200px">
+      <input id="brand" value="demo" style="max-width:150px">
+      <button class="btn btn-primary" onclick="load()">Sync Data</button>
     </div>
-    <div id="identity" style="margin-top:10px; font-size:12px; font-weight:bold">Status: Ready</div>
+    <div id="status" style="font-size:12px; margin-top:10px; color:#64748b">Status: Ready</div>
   </div>
 
-  <div id="dashboard" class="tab-content">
+  <div id="rules" class="tab-content">
     <div class="card">
-      <h3>System Overview</h3>
-      <pre id="versions">History will appear here...</pre>
-    </div>
-  </div>
-
-  <div id="rules" class="tab-content hidden">
-    <div class="card">
-      <h3>AI Behavioral Rules</h3>
-      <p style="font-size:12px; color:var(--muted)">Example: "Always respond in English", "Be professional".</p>
-      <textarea id="rulesBox" style="min-height:250px" placeholder="One rule per line..."></textarea>
-      <div style="margin-top:10px; display:flex; gap:10px">
-        <button class="btn save" onclick="save(false)">Save Draft</button>
-        <button class="btn publish" onclick="save(true)">Publish to Live</button>
+      <h3>AI Behavior Guidelines</h3>
+      <textarea id="rulesBox" style="height:300px" placeholder="Example: Be helpful and polite."></textarea>
+      <div style="margin-top:15px; display:flex; gap:10px">
+        <button class="btn btn-save" onclick="save(false)">Save Draft</button>
+        <button class="btn btn-primary" onclick="save(true)">🚀 Publish Live</button>
       </div>
     </div>
   </div>
 
   <div id="faq" class="tab-content hidden">
-    <div style="display:flex; justify-content:space-between; align-items:center">
-      <h3>FAQ Knowledge Base</h3>
-      <button class="btn add" onclick="addFAQCard()">+ Add Card</button>
+    <div style="display:flex; justify-content:space-between; margin-bottom:15px">
+      <h3>Visual Knowledge Base</h3>
+      <button class="btn btn-primary" onclick="addFAQ()">+ Add Card</button>
     </div>
-    <div id="faqContainer" class="faq-grid"></div>
+    <div id="faqGrid" class="faq-grid"></div>
   </div>
 
-  <div id="analytics" class="tab-content hidden">
-    <div class="card"><h3>Analytics</h3><pre id="analyticsBox">{}</pre></div>
-  </div>
   <div id="logs" class="tab-content hidden">
-    <div class="card"><h3>Logs</h3><pre id="logsBox">No logs available.</pre></div>
+    <div class="card">
+      <h3>Activity Logs</h3>
+      <pre id="logsBox" style="font-size:12px; background:#f1f5f9; padding:15px; border-radius:8px">No logs.</pre>
+    </div>
   </div>
 </main>
 
 <script>
-const API_BASE = "https://ai-chat-backend.marketing-696.workers.dev";
+const API = "https://ai-chat-backend.marketing-696.workers.dev";
 const $ = (id) => document.getElementById(id);
 
-// --- FAQ UI 管理 ---
-function addFAQCard(q = "", a = "", cat = "General") {
-    const id = Date.now() + Math.random();
-    const html = `
-        <div class="faq-card" id="card-${id}">
-            <button class="faq-delete" onclick="document.getElementById('card-${id}').remove()">×</button>
-            <input class="faq-cat q-cat" value="${cat}" placeholder="Category">
-            <div style="font-size:11px; color:var(--muted); margin-bottom:5px">USER TRIGGER:</div>
-            <input class="q-val" value="${q}" placeholder="Question..." style="margin-bottom:10px">
-            <div style="font-size:11px; color:var(--muted); margin-bottom:5px">AI RESPONSE:</div>
-            <textarea class="a-val" style="min-height:80px; font-size:13px" placeholder="Answer...">${a}</textarea>
-        </div>
-    `;
-    $("faqContainer").insertAdjacentHTML('beforeend', html);
+function showTab(tabId, el) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    $(tabId).classList.remove('hidden');
+    el.classList.add('active');
 }
 
-// --- API 调用 ---
-async function api(path, opts = {}) {
-    const r = await fetch(`${API_BASE}${path}?brand=${encodeURIComponent($("brand").value)}`, {
-        ...opts,
-        headers: { "Content-Type": "application/json", "X-Admin-Token": $("token").value, ...opts.headers }
-    });
-    if (!r.ok) throw new Error(await r.text());
-    return r.json();
+function addFAQ(q="", a="") {
+    const div = document.createElement('div');
+    div.className = 'faq-card';
+    div.innerHTML = `
+        <button style="float:right; border:0; background:none; cursor:pointer" onclick="this.parentElement.remove()">✕</button>
+        <div style="font-size:11px; color:#64748b">USER ASKS</div>
+        <input class="q-val" value="${q}">
+        <div style="font-size:11px; color:#64748b; margin-top:10px">AI REPLIES</div>
+        <textarea class="a-val">${a}</textarea>
+    `;
+    $('faqGrid').appendChild(div);
 }
 
 async function load() {
+    const brand = $('brand').value;
+    const token = $('token').value;
+    $('status').innerText = "Syncing...";
     try {
-        $("identity").textContent = "Syncing...";
-        const data = await api("/api/admin/get");
-        $("rulesBox").value = (data.draft?.rules || []).join("\n");
-        $("faqContainer").innerHTML = "";
-        (data.draft?.faq || []).forEach(f => addFAQCard(f.q, f.a, f.cat));
-
-        const v = await api("/api/admin/versions");
-        $("versions").textContent = v.versions.map(x => `${x.time} • ${x.id}`).join("\n");
-        $("identity").textContent = "Connected ✅";
-    } catch (e) { alert(e.message); $("identity").textContent = "Auth Failed ❌"; }
+        const r = await fetch(`${API}/api/admin/get?brand=${brand}`, {
+            headers: { "X-Admin-Token": token }
+        });
+        const data = await r.json();
+        $('rulesBox').value = (data.draft?.rules || []).join('\n');
+        $('faqGrid').innerHTML = "";
+        (data.draft?.faq || []).forEach(f => addFAQ(f.q, f.a));
+        $('status').innerText = "Connected ✅";
+    } catch(e) { $('status').innerText = "Failed ❌ Check Token"; }
 }
 
-async function save(isPublish = false) {
-    const rules = $("rulesBox").value.split("\n").filter(r => r.trim());
-    const faq = Array.from(document.querySelectorAll(".faq-card")).map(c => ({
-        q: c.querySelector(".q-val").value,
-        a: c.querySelector(".a-val").value,
-        cat: c.querySelector(".q-cat").value
+async function save(isPub) {
+    const rules = $('rulesBox').value.split('\n').filter(r => r.trim());
+    const faq = Array.from(document.querySelectorAll('.faq-card')).map(c => ({
+        q: c.querySelector('.q-val').value,
+        a: c.querySelector('.a-val').value
     }));
-
+    const path = isPub ? "/api/admin/publish" : "/api/admin/save";
     try {
-        const path = isPublish ? "/api/admin/publish" : "/api/admin/save";
-        await api(path, { method: "POST", body: JSON.stringify({ rules, faq }) });
-        alert(isPublish ? "LIVE!" : "Draft Saved!");
+        await fetch(`${API}${path}?brand=${$('brand').value}`, {
+            method: 'POST',
+            headers: { "Content-Type": "application/json", "X-Admin-Token": $('token').value },
+            body: JSON.stringify({ rules, faq })
+        });
+        alert(isPub ? "Published!" : "Saved!");
         load();
-    } catch (e) { alert(e.message); }
+    } catch(e) { alert("Error saving"); }
 }
-
-// 导航逻辑
-document.querySelectorAll(".navbtn").forEach(btn => {
-    btn.onclick = () => {
-        document.querySelectorAll(".navbtn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        document.querySelectorAll(".tab-content").forEach(t => t.classList.add("hidden"));
-        $(btn.dataset.tab).classList.remove("hidden");
-    };
-});
 </script>
 </body>
 </html>
