@@ -3,102 +3,104 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>AI Support OS • Secure Admin</title>
+<title>AI Support OS • Pro Admin</title>
 <style>
-:root{--nav:#0f172a;--nav2:#111827;--card:#fff;--bg:#f3f4f6;--muted:#64748b;--ok:#22c55e;--danger:#ef4444;--border:#e5e7eb}
+:root{--nav:#0f172a;--nav2:#111827;--card:#fff;--bg:#f3f4f6;--muted:#64748b;--ok:#22c55e;--danger:#ef4444;--border:#e5e7eb;--accent:#3b82f6}
 *{box-sizing:border-box}
 body{margin:0;font-family:system-ui;background:var(--bg);display:flex;min-height:100vh}
-aside{width:240px;background:linear-gradient(180deg,var(--nav),var(--nav2));color:#fff;padding:18px}
-.brand{font-weight:900;font-size:18px;margin-bottom:14px;color:var(--ok)}
-.navbtn{width:100%;text-align:left;border:0;border-radius:8px;padding:12px;margin:4px 0;background:transparent;color:#94a3b8;cursor:pointer;font-weight:600}
+/* Sidebar Styles */
+aside{width:240px;background:linear-gradient(180deg,var(--nav),var(--nav2));color:#fff;padding:18px;display:flex;flex-direction:column}
+.brand{font-weight:900;font-size:18px;margin-bottom:14px;color:var(--ok);display:flex;align-items:center;gap:8px}
+.navbtn{width:100%;text-align:left;border:0;border-radius:8px;padding:12px;margin:4px 0;background:transparent;color:#94a3b8;cursor:pointer;font-weight:600;transition:0.2s}
 .navbtn:hover{background:#1f2937;color:#fff}
 .navbtn.active{background:var(--ok);color:#052e16}
-main{flex:1;padding:22px;max-width:1200px}
-h1{margin:0 0 14px 0;letter-spacing:-1px}
+/* Main Content */
+main{flex:1;padding:22px;max-width:1200px;overflow-y:auto}
 .card{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 10px 25px rgba(2,6,23,.06);padding:20px;margin-bottom:14px}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-input,textarea{border:1px solid var(--border);border-radius:10px;padding:10px;font:inherit;outline:none}
-input:focus,textarea:focus{border-color:var(--ok)}
-textarea{width:100%;min-height:300px;font-family:monospace;font-size:13px}
-.small{font-size:12px;color:var(--muted)}
-.actions{display:flex;gap:10px;margin-top:10px}
-.btn{border:0;border-radius:10px;padding:10px 18px;cursor:pointer;font-weight:800;font-size:13px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+input,textarea{border:1px solid var(--border);border-radius:10px;padding:10px;font:inherit;outline:none;width:100%}
+input:focus,textarea:focus{border-color:var(--accent)}
+/* FAQ Visual Cards */
+.faq-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(300px, 1fr));gap:15px;margin-top:15px}
+.faq-card{background:#fff;border:2px solid var(--border);border-radius:12px;padding:15px;position:relative;transition:0.2s}
+.faq-card:hover{border-color:var(--accent);box-shadow:0 5px 15px rgba(0,0,0,.05)}
+.faq-delete{position:absolute;top:10px;right:10px;background:none;border:0;color:var(--danger);cursor:pointer;font-weight:bold}
+.cat-pill{background:var(--bg);font-size:11px;padding:4px 8px;border-radius:6px;font-weight:bold;color:var(--muted);border:1px solid var(--border);margin-bottom:8px;display:inline-block}
+/* Buttons */
+.btn{border:0;border-radius:10px;padding:10px 18px;cursor:pointer;font-weight:800;font-size:13px;transition:0.2s}
 .save{background:var(--ok);color:#052e16}
 .publish{background:var(--danger);color:#fff}
+.add{background:var(--accent);color:#fff;margin-bottom:15px}
 .gray{background:#e5e7eb;color:#4b5563}
-pre{background:#0b1220;color:#e5e7eb;border-radius:10px;padding:12px;overflow:auto;max-height:260px;font-size:12px}
-.pill{display:inline-block;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:800;border:1px solid var(--border)}
-.pill.ok{background:#dcfce7;border-color:#bbf7d0;color:#166534}
-.pill.bad{background:#f1f5f9;color:var(--muted)}
+pre{background:#0b1220;color:#e5e7eb;border-radius:10px;padding:12px;overflow:auto;max-height:300px;font-size:12px;line-height:1.5}
 .hidden{display:none}
+.pill{border-radius:999px;padding:4px 12px;font-size:12px;font-weight:800;border:1px solid var(--border)}
+.pill.ok{background:#dcfce7;color:#166534;border-color:#bbf7d0}
 </style>
 </head>
 <body>
 
 <aside>
   <div class="brand">⚡ AI Support OS</div>
-  <p class="small" style="padding:0 10px; opacity:0.6">Control Panel</p>
+  <p style="font-size:11px; color:var(--muted); margin:0 0 15px 10px">MANAGEMENT PANEL</p>
   <button class="navbtn active" data-tab="dashboard">Dashboard</button>
   <button class="navbtn" data-tab="rules">AI Behavior</button>
-  <button class="navbtn" data-tab="faq">FAQ Library</button>
+  <button class="navbtn" data-tab="faq">FAQ Library (Visual)</button>
   <button class="navbtn" data-tab="analytics">Analytics</button>
   <button class="navbtn" data-tab="logs">System Logs</button>
   
-  <div style="margin-top:auto; padding:10px;">
-     <a href="./index.html" style="color:var(--ok); text-decoration:none; font-size:12px;">← Open Chat UI</a>
+  <div style="margin-top:auto; padding:10px; border-top:1px solid #1f2937">
+     <a href="./index.html" style="color:var(--ok); text-decoration:none; font-size:12px; font-weight:bold">← Open Chat UI</a>
   </div>
 </aside>
 
 <main>
   <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-    <h1>Management Console</h1>
-    <div class="row">
-      <span id="modePill" class="pill bad">Connecting...</span>
-    </div>
+    <h1 style="margin:0; letter-spacing:-1px">Console</h1>
+    <div id="modePill" class="pill ok">Secure Connection</div>
   </header>
 
   <div class="card">
     <div class="row">
       <div style="flex:1">
-        <label class="small">Brand Context</label><br>
-        <input id="brand" value="demo" style="width:100%; max-width:200px" />
+        <label style="font-size:11px; color:var(--muted); font-weight:bold">BRAND ID</label>
+        <input id="brand" value="demo" />
       </div>
-      <div>
-        <label class="small">Zero Trust Identity</label><br>
-        <div id="identity" class="small" style="font-weight:bold; margin-top:8px">Checking Access...</div>
+      <div style="flex:1">
+        <label style="font-size:11px; color:var(--muted); font-weight:bold">ADMIN TOKEN</label>
+        <input id="token" type="password" placeholder="Enter Password" />
       </div>
-      <button class="btn gray" id="reload" style="margin-top:15px">Refresh Data</button>
+      <button class="btn gray" id="reload" style="margin-top:18px">Refresh Data</button>
     </div>
+    <div id="identity" style="margin-top:10px; font-size:12px; font-weight:bold; color:var(--muted)">Status: Ready</div>
   </div>
 
   <div id="dashboard" class="tab-content">
     <div class="card">
-      <h3 style="margin-top:0">Deployment History</h3>
-      <pre id="versions">Loading versions...</pre>
+      <h3>Deployment History</h3>
+      <pre id="versions">Click Refresh to see history...</pre>
     </div>
   </div>
 
   <div id="rules" class="tab-content hidden">
     <div class="card">
       <h3>AI Behavioral Rules</h3>
-      <p class="small">These instructions guide the AI's personality and boundaries.</p>
-      <textarea id="rulesBox" placeholder="Enter rules, one per line..."></textarea>
-      <div class="actions">
-        <button class="btn save" id="saveRulesDraft">Save to Draft</button>
-        <button class="btn publish" id="publishRules">Publish to Live</button>
+      <p style="font-size:12px; color:var(--muted)">Guide the AI's personality (e.g., "Always be polite", "Don't mention competitors").</p>
+      <textarea id="rulesBox" style="min-height:300px" placeholder="Enter rules, one per line..."></textarea>
+      <div class="row" style="margin-top:15px">
+        <button class="btn save" id="saveRulesDraft">Save Draft</button>
+        <button class="btn publish" id="publishRules">Publish Live</button>
       </div>
     </div>
   </div>
 
   <div id="faq" class="tab-content hidden">
-    <div class="card">
-      <h3>Static FAQ Knowledge</h3>
-      <p class="small">JSON Array format: [{"q":"question", "a":"answer"}]</p>
-      <textarea id="faqBox" placeholder='[{"q":"Hi", "a":"Hello!"}]'></textarea>
-      <div class="actions">
-        <button class="btn save" id="saveFAQDraft">Save FAQ Draft</button>
-      </div>
+    <div style="display:flex; justify-content:space-between; align-items:center">
+        <h3>Knowledge Base</h3>
+        <button class="btn add" onclick="addFAQCard()">+ Add Interaction</button>
     </div>
+    <div id="faqContainer" class="faq-grid">
+        </div>
   </div>
 
   <div id="analytics" class="tab-content hidden">
@@ -117,50 +119,51 @@ pre{background:#0b1220;color:#e5e7eb;border-radius:10px;padding:12px;overflow:au
 </main>
 
 <script>
-// --- Configuration ---
-const API_BASE = "https://ai-chat-backend.marketing-696.workers.dev"; //
+const API_BASE = "https://ai-chat-backend.marketing-696.workers.dev";
 const $ = (id) => document.getElementById(id);
 
-// --- State Management ---
-function isLiveMode() {
-    // If not on localhost, assume Cloudflare Zero Trust is handling auth
-    return window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1";
-}
-
-function updateUI() {
-    const pill = $("modePill");
-    if (isLiveMode()) {
-        pill.className = "pill ok";
-        pill.textContent = "LIVE: Zero Trust Secure";
-    } else {
-        pill.className = "pill bad";
-        pill.textContent = "DEV: Local Browser Storage";
-    }
+// --- FAQ Visual UI ---
+function addFAQCard(q = "", a = "", cat = "General") {
+    const id = Date.now() + Math.random();
+    const html = `
+        <div class="faq-card" id="card-${id}">
+            <button class="faq-delete" onclick="document.getElementById('card-${id}').remove()">×</button>
+            <input class="cat-pill q-cat" value="${cat}" style="width:80px; border:none; padding:2px">
+            <div style="font-size:11px; color:var(--muted); margin-bottom:4px">IF USER ASKS:</div>
+            <input class="q-val" value="${q}" placeholder="e.g. Withdrawal time?" style="margin-bottom:10px">
+            <div style="font-size:11px; color:var(--muted); margin-bottom:4px">AI RESPONDS:</div>
+            <textarea class="a-val" style="min-height:60px; font-size:13px" placeholder="e.g. It takes 5 mins...">${a}</textarea>
+        </div>
+    `;
+    $("faqContainer").insertAdjacentHTML('beforeend', html);
 }
 
 // --- API Wrapper ---
 async function api(path, opts = {}) {
     const brandId = ($("brand").value || "demo").trim();
+    const token = ($("token").value || "").trim();
     const url = `${API_BASE}${path}?brand=${encodeURIComponent(brandId)}`;
     
-    // In Zero Trust, we don't need to manually send the token if the Worker 
-    // is configured to trust the Access headers
     const r = await fetch(url, {
         ...opts,
-        headers: { "Content-Type": "application/json", ...opts.headers }
+        headers: { 
+            "Content-Type": "application/json", 
+            "X-Admin-Token": token,
+            ...opts.headers 
+        }
     });
     
     if (!r.ok) {
-        if(r.status === 401 || r.status === 403) {
-            $("identity").textContent = "Access Denied ❌";
-            throw new Error("Unauthorized by Zero Trust");
+        if(r.status === 401) {
+            $("identity").textContent = "Status: Invalid Token ❌";
+            throw new Error("Wrong password.");
         }
         throw new Error(await r.text());
     }
     return r.json();
 }
 
-// --- Tab Logic ---
+// --- Navigation ---
 document.querySelectorAll(".navbtn").forEach(btn => {
     btn.onclick = () => {
         document.querySelectorAll(".navbtn").forEach(b => b.classList.remove("active"));
@@ -170,76 +173,59 @@ document.querySelectorAll(".navbtn").forEach(btn => {
     };
 });
 
-// --- Data Loading ---
+// --- Data Management ---
 async function load() {
-    updateUI();
-    if (!isLiveMode()) {
-        const rules = localStorage.getItem("dev_rules") || "";
-        const faq = localStorage.getItem("dev_faq") || "[]";
-        $("rulesBox").value = rules;
-        $("faqBox").value = faq;
-        $("identity").textContent = "Local Developer";
-        return;
-    }
-
+    if (!$("token").value) return alert("Please enter Admin Token first.");
+    
     try {
-        $("identity").textContent = "Verifying Identity...";
+        $("identity").textContent = "Status: Syncing...";
         const data = await api("/api/admin/get");
+        
+        // Load Rules
         $("rulesBox").value = (data.draft?.rules || []).join("\n");
-        $("faqBox").value = JSON.stringify(data.draft?.faq || [], null, 2);
-        $("identity").textContent = "Authenticated ✅";
+        
+        // Load FAQ Cards
+        $("faqContainer").innerHTML = "";
+        (data.draft?.faq || []).forEach(item => addFAQCard(item.q, item.a, item.cat));
 
-        const v = await api("/api/admin/versions");
-        $("versions").textContent = (v.versions || []).map(x => `${x.time} • ${x.id}`).join("\n") || "No versions yet";
-
-        const a = await api("/api/admin/analytics");
-        $("analyticsBox").textContent = JSON.stringify(a.metrics || {}, null, 2);
-
-        const l = await api("/api/admin/logs");
-        $("logsBox").textContent = (l.logs || []).map(x => `${x.time} • ${x.action}`).join("\n");
-
+        // Load Dash/Logs/Analytics
+        const [v, a, l] = await Promise.all([
+            api("/api/admin/versions").catch(()=>({versions:[]})),
+            api("/api/admin/analytics").catch(()=>({metrics:{}})),
+            api("/api/admin/logs").catch(()=>({logs:[]}))
+        ]);
+        
+        $("versions").textContent = v.versions.map(x => `${x.time} • ${x.id}`).join("\n") || "No history.";
+        $("analyticsBox").textContent = JSON.stringify(a.metrics, null, 2);
+        $("logsBox").textContent = l.logs.map(x => `${x.time} • ${x.action}`).join("\n");
+        
+        $("identity").textContent = "Status: Connected ✅";
     } catch (e) {
-        console.error(e);
-        $("identity").textContent = "Error: " + e.message;
+        alert(e.message);
+        $("identity").textContent = "Status: Error";
     }
 }
 
-// --- Save Logic ---
 async function save(isPublish = false) {
     const rules = $("rulesBox").value.split("\n").map(s => s.trim()).filter(Boolean);
-    let faq = [];
-    try { faq = JSON.parse($("faqBox").value || "[]"); } catch (e) { return alert("Invalid FAQ JSON"); }
-
-    if (!isLiveMode()) {
-        localStorage.setItem("dev_rules", $("rulesBox").value);
-        localStorage.setItem("dev_faq", $("faqBox").value);
-        alert("Saved to local browser storage.");
-        return;
-    }
+    const faq = Array.from(document.querySelectorAll(".faq-card")).map(card => ({
+        q: card.querySelector(".q-val").value,
+        a: card.querySelector(".a-val").value,
+        cat: card.querySelector(".q-cat").value
+    }));
 
     try {
         const path = isPublish ? "/api/admin/publish" : "/api/admin/save";
-        await api(path, {
-            method: "POST",
-            body: JSON.stringify({ rules, faq })
-        });
-        alert(isPublish ? "Published LIVE successfully!" : "Draft saved to KV.");
+        await api(path, { method: "POST", body: JSON.stringify({ rules, faq }) });
+        alert(isPublish ? "🚀 Published Live!" : "💾 Draft Saved!");
         load();
-    } catch (e) {
-        alert("Action failed: " + e.message);
-    }
+    } catch (e) { alert(e.message); }
 }
 
-// --- Init ---
+// Init
 $("reload").onclick = load;
 $("saveRulesDraft").onclick = () => save(false);
-$("saveFAQDraft").onclick = () => save(false);
-$("publishRules").onclick = () => {
-    if(confirm("This will make all changes live. Continue?")) save(true);
-};
-
-// Initial Load
-load();
+$("publishRules").onclick = () => { if(confirm("Publish all changes now?")) save(true); };
 </script>
 </body>
 </html>
