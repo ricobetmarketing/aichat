@@ -97,9 +97,10 @@ poll();
 async function send(){
   const text=input.value.trim();
   if(!text) return;
+  
   add(text,"user");
   input.value="";
-  badge.textContent="Thinking...";
+  badge.textContent="Thinking..."; // 状态栏切换
 
   try{
     const r=await fetch(API_BASE+"/api/chat?brand="+encodeURIComponent(BRAND),{
@@ -107,20 +108,25 @@ async function send(){
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({message:text})
     });
-    const data=await r.json();
+    
+    const data = await r.json();
     badge.textContent="AI Ready";
 
-    if(data.action==="escalate"){
-      add(data.reply,"bot");
-      sys("We are connecting you to an agent...");
-    } else if(data.action==="agent_live"){
-      sys("Agent is active in chat.");
+    // 逻辑分支处理
+    if(data.action === "escalate"){
+      add(data.reply, "bot");
+      sys("Connecting to a live agent...");
+    } else if(data.source === "faq") {
+      // 如果是 FAQ 命中的，可以加个小动画感
+      setTimeout(() => add(data.reply, "bot"), 300);
     } else {
-      add(data.reply||"Okay.","bot");
+      // 如果 AI (OpenAI) 报错或未连接，显示保底回复
+      const finalReply = data.reply || "I'm sorry, I don't have an answer for that yet. Would you like to speak to an agent?";
+      add(finalReply, "bot");
     }
-  }catch(e){
+  } catch(e){
     badge.textContent="AI Ready";
-    sys("Connection error. Please try again.");
+    sys("Oops! Connection lost. Please try again.");
   }
 }
 
