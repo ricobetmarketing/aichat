@@ -3,137 +3,169 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Customer Support • AI</title>
+<title>Live Support • AI Assistant</title>
 <style>
-:root{--primary:#16a34a;--primary2:#15803d;--bg:#f4f6f9;--panel:#fff;--text:#0f172a;--muted:#64748b;--border:#e5e7eb}
+:root{--primary:#16a34a;--primary2:#15803d;--bg:#f8fafc;--panel:#fff;--text:#0f172a;--muted:#64748b;--border:#e2e8f0}
 *{box-sizing:border-box}
 body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);display:grid;place-items:center;min-height:100vh}
-.wrap{width:100%;max-width:460px;height:92vh;background:var(--panel);border-radius:18px;box-shadow:0 15px 40px rgba(0,0,0,.08);display:flex;flex-direction:column;overflow:hidden}
-.hd{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;padding:16px;display:flex;gap:12px;align-items:center}
-.av{width:42px;height:42px;border-radius:999px;background:#fff;color:var(--primary);display:grid;place-items:center;font-weight:900}
+.wrap{width:100%;max-width:460px;height:94vh;background:var(--panel);border-radius:24px;box-shadow:0 20px 50px rgba(0,0,0,.1);display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--border)}
+/* Header */
+.hd{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;padding:20px;display:flex;gap:12px;align-items:center}
+.av{width:45px;height:45px;border-radius:50%;background:#fff;color:var(--primary);display:grid;place-items:center;font-weight:900;font-size:18px;box-shadow:0 4px 10px rgba(0,0,0,0.1)}
 .hdt{flex:1}
-.hdt h3{margin:0;font-size:15px;font-weight:900}
-.hdt span{font-size:12px;opacity:.9}
-.badge{font-size:11px;background:rgba(255,255,255,.18);padding:6px 10px;border-radius:999px}
-.bd{flex:1;padding:16px;overflow:auto;display:flex;flex-direction:column;gap:10px;background:#fafafa}
-.msg{max-width:84%;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.4;white-space:pre-wrap}
-.user{align-self:flex-end;background:var(--primary);color:#fff;border-bottom-right-radius:6px}
-.bot{align-self:flex-start;background:#fff;border:1px solid var(--border);border-bottom-left-radius:6px}
-.sys{align-self:center;background:#fff7ed;border:1px solid #fde68a;font-size:12px;color:#92400e;padding:6px 12px;border-radius:999px}
-.ft{border-top:1px solid var(--border);padding:12px;display:flex;gap:8px;background:#fff}
-.ta{flex:1;resize:none;border:1px solid var(--border);border-radius:14px;padding:10px;font-size:14px;outline:none}
-.ta:focus{border-color:var(--primary)}
-.btn{background:var(--primary);border:0;color:#fff;padding:10px 16px;border-radius:14px;cursor:pointer;font-weight:800}
-.btn:hover{background:var(--primary2)}
-.small{font-size:12px;color:var(--muted);padding:0 16px 12px}
-a{color:inherit}
+.hdt h3{margin:0;font-size:16px;font-weight:900}
+.hdt span{font-size:12px;opacity:.9;display:flex;align-items:center;gap:4px}
+.hdt span::before{content:'';width:8px;height:8px;background:#4ade80;border-radius:50%;display:inline-block}
+.badge{font-size:11px;background:rgba(255,255,255,.2);padding:6px 12px;border-radius:999px;font-weight:600}
+
+/* Chat Body */
+.bd{flex:1;padding:20px;overflow:auto;display:flex;flex-direction:column;gap:12px;background:#fcfcfc}
+.msg{max-width:85%;padding:12px 16px;border-radius:18px;font-size:14px;line-height:1.5;white-space:pre-wrap;animation:fadeIn 0.3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.user{align-self:flex-end;background:var(--primary);color:#fff;border-bottom-right-radius:4px}
+.bot{align-self:flex-start;background:#fff;border:1px solid var(--border);border-bottom-left-radius:4px;color:var(--text);box-shadow:0 2px 5px rgba(0,0,0,0.02)}
+.sys{align-self:center;background:#fff7ed;border:1px solid #fde68a;font-size:12px;color:#9a3412;padding:6px 14px;border-radius:999px;margin:10px 0}
+
+/* Quick Replies */
+.quick-tags{padding:10px 15px;display:flex;gap:8px;overflow-x:auto;background:#fff;border-top:1px solid var(--border)}
+.quick-tags::-webkit-scrollbar{display:none}
+.tag{padding:8px 16px;background:#f1f5f9;border:1px solid var(--border);border-radius:20px;font-size:12px;color:var(--text);cursor:pointer;white-space:nowrap;font-weight:600;transition:0.2s}
+.tag:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+/* Footer */
+.ft{border-top:1px solid var(--border);padding:15px;display:flex;gap:10px;background:#fff;align-items:center}
+.ta{flex:1;resize:none;border:1px solid var(--border);border-radius:15px;padding:12px;font-size:14px;outline:none;background:#f8fafc;transition:0.2s}
+.ta:focus{border-color:var(--primary);background:#fff}
+.btn-send{background:var(--primary);border:0;color:#fff;width:42px;height:42px;border-radius:50%;cursor:pointer;display:grid;place-items:center;transition:0.2s}
+.btn-send:hover{background:var(--primary2);transform:scale(1.05)}
+.small-links{font-size:11px;color:var(--muted);padding:0 20px 15px;background:#fff;text-align:center}
+.small-links a{color:var(--primary);text-decoration:none;font-weight:600}
 </style>
 </head>
 <body>
+
 <div class="wrap">
   <div class="hd">
-    <div class="av">CS</div>
+    <div class="av">AI</div>
     <div class="hdt">
       <h3>Customer Support</h3>
-      <span>Online • Reply within minutes</span>
+      <span id="status-text">Online • AI Assistant</span>
     </div>
-    <div class="badge" id="badge">AI Ready</div>
+    <div class="badge" id="badge">Smart Match</div>
   </div>
 
   <div class="bd" id="chat">
-    <div class="msg bot">Hello 👋 How can we help you today?</div>
+    <div class="msg bot">Hello! 👋 I am your AI assistant. How can I help you today?</div>
   </div>
 
-  <div class="small">
-    Admin: <a href="./admin.html">admin</a> • Analytics: <a href="./analytics.html">analytics</a> • Agent: <a href="./agent.html">agent</a>
+  <div class="quick-tags">
+    <div class="tag" onclick="quickAsk('Deposit')">💰 Deposit</div>
+    <div class="tag" onclick="quickAsk('Withdrawal')">🏧 Withdrawal</div>
+    <div class="tag" onclick="quickAsk('Agent')">👤 Talk to Agent</div>
+    <div class="tag" onclick="quickAsk('Promotions')">🎁 Promotions</div>
   </div>
 
   <div class="ft">
-    <textarea class="ta" id="input" rows="1" placeholder="Type your message..."></textarea>
-    <button class="btn" id="send">Send</button>
+    <textarea class="ta" id="input" rows="1" placeholder="Type your question here..."></textarea>
+    <button class="btn-send" id="send">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+    </button>
+  </div>
+
+  <div class="small-links">
+    Admin Console: <a href="./admin.html">Manage Knowledge</a>
   </div>
 </div>
 
 <script>
 const API_BASE = "https://ai-chat-backend.marketing-696.workers.dev";
-const BRAND = "demo";
+const BRAND = "demo"; // Make sure this matches your Admin Panel Brand ID
 
-const chat=document.getElementById("chat");
-const input=document.getElementById("input");
-const badge=document.getElementById("badge");
+const chat = document.getElementById("chat");
+const input = document.getElementById("input");
+const badge = document.getElementById("badge");
 
-let since=0;
+let since = 0;
 
-function add(text, cls){
-  const d=document.createElement("div");
-  d.className="msg "+cls;
-  d.textContent=text||"";
+function add(text, cls) {
+  const d = document.createElement("div");
+  d.className = "msg " + cls;
+  d.textContent = text || "";
   chat.appendChild(d);
-  chat.scrollTop=chat.scrollHeight;
+  chat.scrollTop = chat.scrollHeight;
 }
-function sys(text){
-  const d=document.createElement("div");
-  d.className="sys";
+
+function sys(text) {
+  const d = document.createElement("div");
+  d.className = "sys";
   d.innerHTML = text;
   chat.appendChild(d);
-  chat.scrollTop=chat.scrollHeight;
+  chat.scrollTop = chat.scrollHeight;
 }
 
-async function poll(){
-  try{
-    const r=await fetch(API_BASE+"/api/events?brand="+encodeURIComponent(BRAND)+"&since="+since);
-    const data=await r.json();
-    const events=data.events||[];
-    for(const e of events){
-      since=e.id;
-      if(e.type==="system") sys(e.text);
-      if(e.type==="agent") add("Agent: "+e.text,"bot");
+// Quick Reply Function
+function quickAsk(text) {
+  input.value = text;
+  send();
+}
+
+// Background polling for agent messages
+async function poll() {
+  try {
+    const r = await fetch(`${API_BASE}/api/events?brand=${encodeURIComponent(BRAND)}&since=${since}`);
+    const data = await r.json();
+    const events = data.events || [];
+    for (const e of events) {
+      since = e.id;
+      if (e.type === "system") sys(e.text);
+      if (e.type === "agent") add("Agent: " + e.text, "bot");
     }
-  }catch(e){}
-  setTimeout(poll, 1500);
+  } catch (e) {}
+  setTimeout(poll, 2000);
 }
 poll();
 
-async function send(){
-  const text=input.value.trim();
-  if(!text) return;
-  
-  add(text,"user");
-  input.value="";
-  badge.textContent="Thinking..."; // 状态栏切换
+async function send() {
+  const text = input.value.trim();
+  if (!text) return;
 
-  try{
-    const r=await fetch(API_BASE+"/api/chat?brand="+encodeURIComponent(BRAND),{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({message:text})
+  add(text, "user");
+  input.value = "";
+  badge.textContent = "Thinking...";
+
+  try {
+    const r = await fetch(`${API_BASE}/api/chat?brand=${encodeURIComponent(BRAND)}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text })
     });
-    
-    const data = await r.json();
-    badge.textContent="AI Ready";
 
-    // 逻辑分支处理
-    if(data.action === "escalate"){
+    const data = await r.json();
+    badge.textContent = "Smart Match";
+
+    if (data.action === "escalate") {
       add(data.reply, "bot");
-      sys("Connecting to a live agent...");
-    } else if(data.source === "faq") {
-      // 如果是 FAQ 命中的，可以加个小动画感
-      setTimeout(() => add(data.reply, "bot"), 300);
+      sys("Connecting you to a human agent...");
     } else {
-      // 如果 AI (OpenAI) 报错或未连接，显示保底回复
-      const finalReply = data.reply || "I'm sorry, I don't have an answer for that yet. Would you like to speak to an agent?";
-      add(finalReply, "bot");
+      // Logic for FAQ or AI reply
+      const reply = data.reply || "I'm sorry, I don't have information on that yet. Try asking for an agent.";
+      // Small delay for natural feel
+      setTimeout(() => add(reply, "bot"), 400);
     }
-  } catch(e){
-    badge.textContent="AI Ready";
-    sys("Oops! Connection lost. Please try again.");
+  } catch (e) {
+    badge.textContent = "Error";
+    sys("Network error. Please try again later.");
   }
 }
 
-document.getElementById("send").onclick=send;
-input.addEventListener("keydown",(e)=>{
-  if(e.key==="Enter" && !e.shiftKey){e.preventDefault();send();}
+document.getElementById("send").onclick = send;
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    send();
+  }
 });
 </script>
+
 </body>
 </html>
