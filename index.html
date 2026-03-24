@@ -3,13 +3,14 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Smart Support</title>
+<title>Smart Support • Category Menu</title>
 
 <style>
-:root{--primary:#16a34a;--bg:#f8fafc;--panel:#fff;--border:#e2e8f0}
-body{margin:0;font-family:system-ui;background:var(--bg);display:grid;place-items:center;height:100vh}
+:root{--primary:#16a34a;--primary2:#15803d;--bg:#f8fafc;--panel:#fff;--text:#0f172a;--muted:#64748b;--border:#e2e8f0}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui;background:var(--bg);display:grid;place-items:center;min-height:100vh}
 
-/* 🔔 TOP POPUP */
+/* 🔔 TOP BANNER */
 .push-banner{
   position:fixed;
   top:0;
@@ -21,39 +22,34 @@ body{margin:0;font-family:system-ui;background:var(--bg);display:grid;place-item
   text-align:center;
   font-weight:600;
   z-index:9999;
-  display:flex;
-  justify-content:center;
-  gap:10px;
 }
-
 .push-banner button{
+  margin-left:10px;
   background:#fff;
-  color:#0ea5e9;
   border:0;
-  padding:6px 12px;
+  padding:5px 10px;
   border-radius:6px;
   cursor:pointer;
-  font-weight:600;
 }
 
-/* CHAT UI */
-.wrap{width:100%;max-width:460px;height:94vh;background:#fff;border-radius:24px;display:flex;flex-direction:column;overflow:hidden;margin-top:60px}
-
-.hd{background:#16a34a;color:#fff;padding:16px}
-.bd{flex:1;padding:20px;overflow:auto}
-.msg{background:#fff;border:1px solid var(--border);padding:12px;border-radius:12px;margin-bottom:10px}
-.ft{padding:15px;border-top:1px solid var(--border);display:flex;gap:10px}
-.ta{flex:1;padding:10px;border-radius:10px;border:1px solid var(--border)}
+/* ORIGINAL UI */
+.wrap{width:100%;max-width:460px;height:94vh;background:#fff;border-radius:24px;box-shadow:0 20px 50px rgba(0,0,0,.1);display:flex;flex-direction:column;overflow:hidden;margin-top:50px}
+.hd{background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;padding:20px}
+.bd{flex:1;padding:20px;overflow:auto;display:flex;flex-direction:column;gap:12px;background:#fcfcfc}
+.msg{max-width:85%;padding:12px 16px;border-radius:18px;background:#fff;border:1px solid #e2e8f0}
+.menu-box{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.menu-btn{background:#fff;border:1px solid #16a34a;color:#16a34a;padding:10px;border-radius:12px;cursor:pointer}
+.ft{border-top:1px solid #e2e8f0;padding:15px;display:flex;gap:10px}
+.ta{flex:1;border:1px solid #e2e8f0;border-radius:15px;padding:12px}
 </style>
 </head>
 
 <body>
 
-<!-- 🔔 TOP BANNER -->
+<!-- 🔔 CLEAN TOP BANNER -->
 <div class="push-banner" id="pushBanner">
-  🔔 Enable notifications to get updates
+  🔔 Enable notifications for updates
   <button onclick="initPush()">Enable</button>
-  <button onclick="closeBanner()">X</button>
 </div>
 
 <div class="wrap">
@@ -61,13 +57,19 @@ body{margin:0;font-family:system-ui;background:var(--bg);display:grid;place-item
 
   <div class="bd" id="chat">
     <div class="msg">
-      Hello! 👋 Welcome to our support.<br><br>
-      Please select a category to get started:
+      Hello! 👋 Welcome to our support. 
+      <br>Please select a category to get started:
+      <div class="menu-box">
+        <div class="menu-btn" onclick="quickAsk('Deposit')">💰 Deposit Issue</div>
+        <div class="menu-btn" onclick="quickAsk('Withdrawal')">🏧 Withdrawal Issue</div>
+        <div class="menu-btn" onclick="quickAsk('Bonus')">🎁 Bonus & Promotions</div>
+        <div class="menu-btn" onclick="quickAsk('Agent')">👤 Talk to Real Agent</div>
+      </div>
     </div>
   </div>
 
   <div class="ft">
-    <input class="ta" placeholder="Type a message..."/>
+    <textarea class="ta" id="input" rows="1" placeholder="Type a message..."></textarea>
   </div>
 </div>
 
@@ -86,16 +88,8 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-function closeBanner(){
-  document.getElementById("pushBanner").style.display = "none";
-}
-
 function initPush() {
-  console.log("Clicked Enable Push");
-
   Notification.requestPermission().then(permission => {
-    console.log("Permission:", permission);
-
     if (permission === "granted") {
 
       navigator.serviceWorker.register('/aichat/firebase-messaging-sw.js')
@@ -109,28 +103,48 @@ function initPush() {
             serviceWorkerRegistration: registration
           }).then((token) => {
             console.log("TOKEN:", token);
-            alert("✅ Push enabled successfully!");
-            closeBanner();
+            alert("✅ Notifications enabled!");
+            document.getElementById("pushBanner").style.display = "none";
           });
 
           messaging.onMessage((payload) => {
-            console.log("Message:", payload);
-
             const chat = document.getElementById("chat");
             const d = document.createElement("div");
             d.className = "msg";
-            d.innerText = "🔔 " + payload.notification.title + "\n" + payload.notification.body;
+            d.innerText = "🔔 " + payload.notification.title;
             chat.appendChild(d);
           });
 
-        }).catch(err => {
-          console.error("SW error:", err);
         });
 
-    } else {
-      alert("❌ Permission denied");
     }
   });
+}
+</script>
+
+<script>
+const API_BASE = "https://ai-chat-backend.marketing-696.workers.dev";
+const BRAND = "demo";
+
+const chat = document.getElementById("chat");
+const input = document.getElementById("input");
+
+function add(text, cls) {
+  const d = document.createElement("div");
+  d.className = "msg " + cls;
+  d.textContent = text;
+  chat.appendChild(d);
+}
+
+function quickAsk(text) {
+  send(text);
+}
+
+async function send(overrideText) {
+  const text = overrideText || input.value.trim();
+  if (!text) return;
+
+  add(text, "user");
 }
 </script>
 
