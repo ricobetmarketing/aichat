@@ -27,22 +27,26 @@ const firebaseConfig = {
   Notification.requestPermission().then(permission => {
     if (permission === "granted") {
 
-      navigator.serviceWorker.register('/aichat/firebase-messaging-sw.js')
-        .then((registration) => {
+     navigator.serviceWorker.register('/aichat/firebase-messaging-sw.js')
+  .then((registration) => {
 
-          const messaging = firebase.messaging();
+    navigator.serviceWorker.ready.then(() => {
 
-          messaging.getToken({
-            vapidKey: "BPylpOKbD8Ij5e4pUmIXxNiqY6jl0Rw8PL7Fa6Z2KInayHuBCTNZqtgzUAGff8PNXnMqou61vziBfWYerMnSmFU",
-            serviceWorkerRegistration: registration
-          }).then((token) => {
-            console.log("TOKEN:", token);
-            document.body.innerHTML += "<p>" + token + "</p>";
-          });
+      const messaging = firebase.messaging();
 
-        }).catch(err => {
-          console.error("SW registration failed:", err);
-        });
+      messaging.getToken({
+        vapidKey: "YOUR_REAL_VAPID_KEY",
+        serviceWorkerRegistration: registration
+      }).then((token) => {
+        console.log("TOKEN:", token);
+        document.body.innerHTML += "<p>" + token + "</p>";
+      });
+
+    });
+
+  }).catch(err => {
+    console.error("SW registration failed:", err);
+  });
 
     }
   });
