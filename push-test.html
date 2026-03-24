@@ -29,7 +29,7 @@ const firebaseConfig = {
       Notification.requestPermission().then(permission => {
         if (permission === "granted") {
           messaging.getToken({
-            vapidKey: "YOUR_VAPID_KEY"
+            vapidKey: "BPylpOKbD8Ij5e4pUmIXxNiqY6jl0Rw8PL7Fa6Z2KInayHuBCTNZqtgzUAGff8PNXnMqou61vziBfWYerMnSmFU"
           }).then((token) => {
             console.log("TOKEN:", token);
             alert("Token generated! Check console.");
