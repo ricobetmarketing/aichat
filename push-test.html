@@ -41,7 +41,10 @@ const firebaseConfig = {
         console.log("TOKEN:", token);
         document.body.innerHTML += "<p>" + token + "</p>";
       });
-
+messaging.onMessage((payload) => {
+  console.log("Foreground message:", payload);
+  alert(payload.notification.title);
+});
     });
 
   }).catch(err => {
