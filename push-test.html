@@ -23,24 +23,30 @@ const firebaseConfig = {
 };
 
     firebase.initializeApp(firebaseConfig);
-    const messaging = firebase.messaging();
+   function initPush() {
+  Notification.requestPermission().then(permission => {
+    if (permission === "granted") {
 
-    function initPush() {
-      Notification.requestPermission().then(permission => {
-        if (permission === "granted") {
+      navigator.serviceWorker.register('/aichat/firebase-messaging-sw.js')
+        .then((registration) => {
+
+          const messaging = firebase.messaging();
+
           messaging.getToken({
-            vapidKey: "BPylpOKbD8Ij5e4pUmIXxNiqY6jl0Rw8PL7Fa6Z2KInayHuBCTNZqtgzUAGff8PNXnMqou61vziBfWYerMnSmFU"
+            vapidKey: "YOUR_VAPID_KEY",
+            serviceWorkerRegistration: registration
           }).then((token) => {
             console.log("TOKEN:", token);
-            alert("Token generated! Check console.");
-          }).catch(err => {
-            console.error(err);
+            document.body.innerHTML += "<p>" + token + "</p>";
           });
-        } else {
-          alert("Permission denied");
-        }
-      });
+
+        }).catch(err => {
+          console.error("SW registration failed:", err);
+        });
+
     }
+  });
+}
   </script>
 
 </body>
