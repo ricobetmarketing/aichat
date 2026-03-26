@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>AI Console • CRM Admin</title>
+<title>AI Console • Unified Admin</title>
 
 <style>
 :root{
   --nav:#0f172a;
-  --nav-2:#111827;
+  --nav2:#111827;
   --bg:#f1f5f9;
   --card:#ffffff;
   --accent:#2563eb;
@@ -23,35 +23,32 @@
   --bubble-agent:#dcfce7;
   --bubble-system:#fef3c7;
 }
-
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
   margin:0;
-  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  font-family:system-ui,-apple-system,Segoe UI,sans-serif;
   background:var(--bg);
   color:var(--text);
   display:flex;
-  height:100vh;
+  min-height:100vh;
   overflow:hidden;
 }
-
-/* Sidebar */
 aside{
-  width:260px;
-  background:linear-gradient(180deg,var(--nav),var(--nav-2));
+  width:250px;
+  background:linear-gradient(180deg,var(--nav),var(--nav2));
   color:#fff;
+  padding:18px 14px;
   display:flex;
   flex-direction:column;
-  padding:18px 14px;
-  border-right:1px solid rgba(255,255,255,0.06);
+  border-right:1px solid rgba(255,255,255,.06);
 }
 .logo{
-  font-weight:900;
   font-size:18px;
+  font-weight:900;
   color:#22c55e;
-  margin-bottom:20px;
   padding:8px 10px;
+  margin-bottom:14px;
 }
 .nav-item{
   padding:12px 14px;
@@ -59,23 +56,14 @@ aside{
   margin-bottom:8px;
   cursor:pointer;
   color:#cbd5e1;
+  transition:.2s;
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:10px;
-  transition:.2s;
 }
 .nav-item:hover{background:rgba(255,255,255,.06);color:#fff}
-.nav-item.active{
-  background:var(--accent);
-  color:#fff;
-  box-shadow:0 8px 24px rgba(37,99,235,.25);
-}
-.nav-left{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
+.nav-item.active{background:var(--accent);color:#fff}
 .badge{
   min-width:20px;
   height:20px;
@@ -89,176 +77,177 @@ aside{
   align-items:center;
   justify-content:center;
 }
-.hidden{display:none!important}
+.hidden{display:none !important}
 
-/* Main */
 main{
   flex:1;
   overflow:auto;
-  padding:22px;
-  display:flex;
-  flex-direction:column;
-  gap:18px;
+  padding:18px;
 }
-
 .card{
   background:var(--card);
   border:1px solid var(--border);
   border-radius:16px;
-  padding:20px;
+  padding:18px;
+  margin-bottom:18px;
   box-shadow:0 4px 20px rgba(15,23,42,.04);
 }
-
-.top-config{
-  display:grid;
-  grid-template-columns:1fr 220px auto auto;
-  gap:12px;
-  align-items:end;
-}
-.top-config .field label{
-  display:block;
-  font-size:11px;
-  text-transform:uppercase;
-  letter-spacing:.04em;
-  color:var(--muted);
-  font-weight:800;
-  margin-bottom:6px;
-}
-
-input, textarea, select, button{
+input,textarea,button{
   font:inherit;
 }
-input, textarea, select{
+input,textarea{
   width:100%;
-  padding:11px 12px;
+  padding:10px 12px;
   border:1px solid var(--border);
   border-radius:10px;
   outline:none;
   background:#fff;
 }
-input:focus, textarea:focus, select:focus{
+input:focus,textarea:focus{
   border-color:var(--accent);
-  box-shadow:0 0 0 3px rgba(37,99,235,.1);
+  box-shadow:0 0 0 3px rgba(37,99,235,.08);
 }
 textarea{resize:vertical}
-
-.btn{
-  padding:11px 16px;
+button{
   border:0;
   border-radius:10px;
+  padding:10px 14px;
   font-weight:800;
   cursor:pointer;
-  transition:.2s;
 }
-.btn:hover{transform:translateY(-1px)}
 .btn-primary{background:var(--accent);color:#fff}
 .btn-save{background:var(--ok);color:#fff}
 .btn-pub{background:var(--danger);color:#fff}
 .btn-soft{background:#e2e8f0;color:#0f172a}
 .btn-warn{background:var(--warn);color:#fff}
 
+.top-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.row{
+  display:grid;
+  grid-template-columns:1fr 220px auto auto;
+  gap:10px;
+  align-items:end;
+}
+.label{
+  font-size:11px;
+  color:var(--muted);
+  font-weight:800;
+  margin-bottom:6px;
+  text-transform:uppercase;
+}
 .section-title{
   margin:0 0 8px;
   font-size:28px;
   font-weight:900;
 }
 .section-sub{
-  margin:0;
+  margin:0 0 16px;
   color:var(--muted);
   font-size:13px;
 }
+.grid-2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+.field-card{
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:14px;
+  background:#fff;
+}
+.field-card h3{
+  margin:0 0 8px;
+  font-size:16px;
+}
+.field-card p{
+  margin:0 0 12px;
+  color:var(--muted);
+  font-size:12px;
+}
 
-.tab-content{display:block}
-
-/* Forms */
-.form-stack{display:flex;flex-direction:column;gap:14px}
-.btn-group{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
-.label-hint{
-  display:block;
-  font-size:11px;
-  text-transform:uppercase;
-  letter-spacing:.04em;
-  color:var(--accent);
+/* Knowledge */
+.topic{
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:12px;
+  background:#fff;
+}
+.topic-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.topic-title{
   font-weight:800;
-  margin-bottom:6px;
-}
-
-/* Knowledge cards */
-.topic-list{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
-  gap:16px;
-}
-.topic-card{
+  padding:10px 12px;
   border:1px solid var(--border);
-  border-radius:14px;
-  padding:16px;
-  background:#fff;
-  position:relative;
+  border-radius:10px;
+  flex:1;
 }
-.topic-card .delete{
-  position:absolute;
-  top:12px;
-  right:12px;
-  width:28px;
-  height:28px;
-  border:0;
-  border-radius:8px;
+.topic-delete{
   background:#fee2e2;
   color:#b91c1c;
-  font-weight:900;
-  cursor:pointer;
+  width:32px;
+  height:32px;
+  padding:0;
 }
-.topic-card textarea{min-height:140px}
+.topic-detail{
+  display:none;
+  margin-top:12px;
+}
+.topic-detail.open{display:block}
+.topic-preview{
+  margin-top:10px;
+  color:var(--muted);
+  font-size:12px;
+}
 
-/* Button cards */
-.button-list{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
-  gap:14px;
-}
-.button-card{
+/* Buttons */
+.button-item{
   border:1px solid var(--border);
   border-radius:14px;
-  padding:16px;
+  padding:14px;
+  margin-bottom:12px;
   background:#fff;
-  position:relative;
 }
-.button-card .delete{
-  position:absolute;
-  top:12px;
-  right:12px;
-  width:28px;
-  height:28px;
-  border:0;
-  border-radius:8px;
+.button-top{
+  display:flex;
+  justify-content:flex-end;
+  margin-bottom:8px;
+}
+.button-delete{
   background:#fee2e2;
   color:#b91c1c;
-  font-weight:900;
-  cursor:pointer;
+  width:32px;
+  height:32px;
+  padding:0;
 }
 
-/* CRM layout */
-.crm-wrap{
+/* CRM */
+.crm{
   display:grid;
-  grid-template-columns:320px 1fr 300px;
+  grid-template-columns:320px 1fr 280px;
   gap:16px;
-  height:calc(100vh - 210px);
-  min-height:640px;
+  min-height:680px;
 }
-.crm-panel{
+.crm-left,.crm-right,.crm-side{
   background:#fff;
   border:1px solid var(--border);
   border-radius:16px;
   overflow:hidden;
   display:flex;
   flex-direction:column;
-  min-height:0;
 }
 .crm-head{
   padding:14px 16px;
   border-bottom:1px solid var(--border);
-  background:#fff;
 }
 .crm-head h3{
   margin:0;
@@ -275,95 +264,50 @@ textarea{resize:vertical}
   background:#f8fafc;
 }
 .chat-list{
-  flex:1;
   overflow:auto;
-  background:#fff;
+  flex:1;
 }
 .chat-item{
-  padding:14px 14px;
+  padding:14px;
   border-bottom:1px solid var(--border);
   cursor:pointer;
-  transition:.2s;
 }
 .chat-item:hover{background:#f8fafc}
 .chat-item.active{background:#eef2ff}
-.chat-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  margin-bottom:4px;
-}
-.chat-id{
-  font-weight:800;
+.chat-item-id{
   font-size:13px;
+  font-weight:800;
 }
-.chat-time{
-  font-size:11px;
-  color:var(--muted);
-}
-.chat-preview{
+.chat-item-last{
+  margin-top:4px;
   font-size:12px;
   color:var(--muted);
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
 }
-.chat-chip{
-  font-size:10px;
-  font-weight:800;
-  padding:2px 7px;
-  border-radius:999px;
-  background:#e2e8f0;
-  color:#334155;
-}
-.unread-dot{
-  width:9px;
-  height:9px;
-  border-radius:999px;
-  background:var(--danger);
-  display:inline-block;
-  margin-left:8px;
-}
-
-.messages-head{
+.chat-view-top{
   padding:14px 16px;
   border-bottom:1px solid var(--border);
-  background:#fff;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:12px;
+  gap:10px;
 }
-.messages-head-left{
-  min-width:0;
-}
-.messages-head-title{
-  font-weight:900;
-  font-size:15px;
-}
-.messages-head-sub{
+.chat-meta{
   font-size:12px;
   color:var(--muted);
-  margin-top:2px;
 }
-.messages-toolbar{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-.messages{
+.chat-messages{
   flex:1;
   overflow:auto;
-  padding:16px;
   background:#f8fafc;
+  padding:16px;
   display:flex;
   flex-direction:column;
   gap:10px;
 }
-.msg-row{
-  display:flex;
-}
+.msg-row{display:flex}
 .msg-row.user{justify-content:flex-start}
 .msg-row.ai,.msg-row.agent{justify-content:flex-end}
 .msg-row.system{justify-content:center}
@@ -375,7 +319,6 @@ textarea{resize:vertical}
   line-height:1.45;
   white-space:pre-wrap;
   word-break:break-word;
-  box-shadow:0 2px 8px rgba(15,23,42,.05);
 }
 .msg.user{background:var(--bubble-user)}
 .msg.ai{background:var(--bubble-ai)}
@@ -385,47 +328,39 @@ textarea{resize:vertical}
   margin-top:6px;
   font-size:10px;
   color:#475569;
-  opacity:.85;
 }
-.chat-input{
+.chat-compose{
   border-top:1px solid var(--border);
-  background:#fff;
   padding:12px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
+  background:#fff;
 }
-.chat-input textarea{
-  min-height:84px;
-  max-height:180px;
+.chat-compose textarea{
+  min-height:90px;
 }
-.chat-input-actions{
+.chat-actions{
   display:flex;
   justify-content:space-between;
   align-items:center;
   gap:10px;
-  flex-wrap:wrap;
+  margin-top:10px;
 }
-.chat-status{
+.status-note{
   font-size:12px;
   color:var(--muted);
 }
-.side-body{
-  flex:1;
-  overflow:auto;
-  padding:16px;
+.detail-wrap{
+  padding:14px;
 }
 .detail-card{
   border:1px solid var(--border);
   border-radius:14px;
-  padding:14px;
+  padding:12px;
   margin-bottom:12px;
-  background:#fff;
 }
 .detail-label{
   font-size:11px;
-  font-weight:800;
   color:var(--muted);
+  font-weight:800;
   text-transform:uppercase;
   margin-bottom:6px;
 }
@@ -436,10 +371,10 @@ textarea{resize:vertical}
 .status-pill{
   display:inline-flex;
   align-items:center;
-  gap:6px;
+  justify-content:center;
   padding:6px 10px;
   border-radius:999px;
-  font-size:12px;
+  font-size:11px;
   font-weight:800;
 }
 .status-ai{background:#dbeafe;color:#1d4ed8}
@@ -447,22 +382,21 @@ textarea{resize:vertical}
 .status-idle{background:#e2e8f0;color:#334155}
 
 .empty{
+  padding:40px 16px;
+  text-align:center;
   color:var(--muted);
   font-size:13px;
-  text-align:center;
-  padding:40px 16px;
 }
 
-@media (max-width: 1200px){
-  .crm-wrap{grid-template-columns:280px 1fr}
+@media (max-width:1200px){
+  .crm{grid-template-columns:300px 1fr}
   .crm-side{display:none}
 }
-@media (max-width: 880px){
-  aside{display:none}
-  .top-config{grid-template-columns:1fr}
-  .crm-wrap{grid-template-columns:1fr;height:auto}
-  .chat-list-panel{display:none}
-  main{padding:12px}
+@media (max-width:960px){
+  body{display:block;height:auto}
+  aside{width:auto}
+  .crm{grid-template-columns:1fr}
+  .row,.grid-2{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -470,231 +404,161 @@ textarea{resize:vertical}
 
 <aside>
   <div class="logo">⚡ AI CONSOLE</div>
-
-  <div class="nav-item active" onclick="showTab('rules', this)">
-    <div class="nav-left">🤖 <span>Behavior</span></div>
-  </div>
-
-  <div class="nav-item" onclick="showTab('faq', this)">
-    <div class="nav-left">📚 <span>Knowledge Hub</span></div>
-  </div>
-
-  <div class="nav-item" onclick="showTab('persona', this)">
-    <div class="nav-left">🧠 <span>Personas</span></div>
-  </div>
-
-  <div class="nav-item" onclick="showTab('buttons', this)">
-    <div class="nav-left">🔘 <span>Buttons</span></div>
-  </div>
-
-  <div class="nav-item" onclick="showTab('inboxTelegram', this)">
-    <div class="nav-left">📩 <span>Telegram</span></div>
+  <div class="nav-item active" onclick="switchTab('brain',this)">🧠 Agent Brain</div>
+  <div class="nav-item" onclick="switchTab('knowledge',this)">📚 Knowledge Hub</div>
+  <div class="nav-item" onclick="switchTab('buttons',this)">🔘 Buttons</div>
+  <div class="nav-item" onclick="switchTab('crm',this); loadCRM()">
+    <span>📩 Telegram CRM</span>
     <span id="tgBadge" class="badge hidden">0</span>
-  </div>
-
-  <div class="nav-item" onclick="showTab('inboxWeb', this)">
-    <div class="nav-left">💬 <span>Live Chat</span></div>
-    <span id="webBadge" class="badge hidden">0</span>
   </div>
 </aside>
 
 <main>
   <div class="card">
-    <div class="top-config">
-      <div class="field">
-        <label>Admin Token</label>
+    <div class="row">
+      <div>
+        <div class="label">Admin Token</div>
         <input id="token" type="password" placeholder="Enter admin token">
       </div>
-      <div class="field">
-        <label>Brand ID</label>
+      <div>
+        <div class="label">Brand ID</div>
         <input id="brand" value="demo">
       </div>
-      <button class="btn btn-primary" onclick="loadAll()">Sync All</button>
-      <button class="btn btn-soft" onclick="clearStatus()">Clear Status</button>
+      <div class="top-actions">
+        <button class="btn-primary" onclick="load()">Sync</button>
+      </div>
+      <div class="top-actions">
+        <button class="btn-soft" onclick="clearStatus()">Clear Status</button>
+      </div>
     </div>
     <div id="statusBar" style="margin-top:12px;font-size:12px;color:#64748b;font-weight:700;">Status: Ready</div>
   </div>
 
-  <!-- Behavior -->
-  <div id="rules" class="tab-content">
+  <!-- Agent Brain -->
+  <div id="brain" class="tab">
     <div class="card">
-      <h2 class="section-title">Agent Behavior</h2>
-      <p class="section-sub">Rules and instruction lines shared with the agent knowledge bundle.</p>
-      <div class="form-stack" style="margin-top:14px">
-        <textarea id="rulesBox" style="min-height:320px" placeholder="One instruction per line..."></textarea>
+      <h2 class="section-title">Agent Brain</h2>
+      <p class="section-sub">Behavior and persona are merged here into one working tab only.</p>
+
+      <div class="field-card">
+        <h3>Core Behavior Rules</h3>
+        <p>Main shared instructions for the AI across all channels.</p>
+        <textarea id="rules" style="min-height:240px" placeholder="One instruction per line..."></textarea>
       </div>
-      <div class="btn-group">
-        <button class="btn btn-save" onclick="saveAll(false)">💾 Save Draft</button>
-        <button class="btn btn-pub" onclick="saveAll(true)">🚀 Publish Live</button>
+
+      <div class="grid-2" style="margin-top:16px">
+        <div class="field-card">
+          <h3>Telegram Persona</h3>
+          <p>How the AI should sound and behave in Telegram.</p>
+          <textarea id="personaTelegram" style="min-height:220px" placeholder="Telegram tone, style, personality..."></textarea>
+        </div>
+        <div class="field-card">
+          <h3>Web Persona</h3>
+          <p>How the AI should sound and behave in web/live chat.</p>
+          <textarea id="personaWeb" style="min-height:220px" placeholder="Web chat tone, style, personality..."></textarea>
+        </div>
+      </div>
+
+      <div class="top-actions" style="margin-top:16px">
+        <button class="btn-save" onclick="save(false)">💾 Save Draft</button>
+        <button class="btn-pub" onclick="save(true)">🚀 Publish Live</button>
       </div>
     </div>
   </div>
 
   <!-- Knowledge -->
-  <div id="faq" class="tab-content hidden">
+  <div id="knowledge" class="tab hidden">
     <div class="card">
       <h2 class="section-title">Knowledge Hub</h2>
-      <p class="section-sub">Create topic-style knowledge entries like Deposit Policy, Withdrawal Guide, Bonus Terms, Support Email and more.</p>
-      <div id="faqGrid" class="topic-list" style="margin-top:16px"></div>
-      <div class="btn-group">
-        <button class="btn btn-primary" onclick="addFAQ()">＋ Add Topic</button>
-        <button class="btn btn-save" onclick="saveAll(false)">💾 Save Draft</button>
-        <button class="btn btn-pub" onclick="saveAll(true)">🚀 Publish Live</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Personas -->
-  <div id="persona" class="tab-content hidden">
-    <div class="card">
-      <h2 class="section-title">AI Personas</h2>
-      <p class="section-sub">Give different behavior to Telegram and Web Chat agents without changing the worker.</p>
-      <div class="form-stack" style="margin-top:16px">
-        <div>
-          <label class="label-hint">Telegram Persona</label>
-          <textarea id="personaTelegram" style="min-height:220px" placeholder="Telegram persona..."></textarea>
-        </div>
-        <div>
-          <label class="label-hint">Web Chat Persona</label>
-          <textarea id="personaWeb" style="min-height:220px" placeholder="Web persona..."></textarea>
-        </div>
-      </div>
-      <div class="btn-group">
-        <button class="btn btn-save" onclick="saveAll(false)">💾 Save Draft</button>
-        <button class="btn btn-pub" onclick="saveAll(true)">🚀 Publish Live</button>
+      <p class="section-sub">Only the main title shows first. Click open details to manage the full content.</p>
+      <div id="topics"></div>
+      <div class="top-actions" style="margin-top:12px">
+        <button class="btn-primary" onclick="addTopic()">＋ Add Topic</button>
+        <button class="btn-save" onclick="save(false)">💾 Save Draft</button>
+        <button class="btn-pub" onclick="save(true)">🚀 Publish Live</button>
       </div>
     </div>
   </div>
 
   <!-- Buttons -->
-  <div id="buttons" class="tab-content hidden">
+  <div id="buttons" class="tab hidden">
     <div class="card">
       <h2 class="section-title">Telegram Buttons</h2>
-      <p class="section-sub">Manage Telegram inline buttons from the admin without editing the worker.</p>
-      <div id="btnList" class="button-list" style="margin-top:16px"></div>
-      <div class="btn-group">
-        <button class="btn btn-primary" onclick="addBtn()">＋ Add Button</button>
-        <button class="btn btn-save" onclick="saveAll(false)">💾 Save Draft</button>
-        <button class="btn btn-pub" onclick="saveAll(true)">🚀 Publish Live</button>
+      <p class="section-sub">Manage Telegram inline buttons from admin.</p>
+      <div id="btnList"></div>
+      <div class="top-actions" style="margin-top:12px">
+        <button class="btn-primary" onclick="addBtn()">＋ Add Button</button>
+        <button class="btn-save" onclick="save(false)">💾 Save Draft</button>
+        <button class="btn-pub" onclick="save(true)">🚀 Publish Live</button>
       </div>
     </div>
   </div>
 
-  <!-- Telegram CRM -->
-  <div id="inboxTelegram" class="tab-content hidden">
-    <div class="crm-wrap">
-      <div class="crm-panel chat-list-panel">
+  <!-- CRM -->
+  <div id="crm" class="tab hidden">
+    <div class="crm">
+      <div class="crm-left">
         <div class="crm-head">
           <h3>Telegram Inbox</h3>
-          <p>Live conversations from bot users</p>
+          <p>Live conversations from your bot</p>
         </div>
         <div class="chat-search">
-          <input id="tgSearch" placeholder="Search chat ID or message..." oninput="renderTelegramChatList()">
+          <input id="chatSearch" placeholder="Search chat id or message..." oninput="renderChatList()">
         </div>
-        <div id="tgChatList" class="chat-list"></div>
+        <div id="chatList" class="chat-list"></div>
       </div>
 
-      <div class="crm-panel">
-        <div class="messages-head">
-          <div class="messages-head-left">
-            <div class="messages-head-title" id="tgActiveTitle">No chat selected</div>
-            <div class="messages-head-sub" id="tgActiveSub">Choose a conversation from the left</div>
+      <div class="crm-right">
+        <div class="chat-view-top">
+          <div>
+            <div style="font-weight:900" id="activeChatTitle">No chat selected</div>
+            <div class="chat-meta" id="activeChatMeta">Choose a conversation from the left</div>
           </div>
-          <div class="messages-toolbar">
-            <span id="tgModePill" class="status-pill status-idle">Idle</span>
-            <button class="btn btn-soft" onclick="refreshTelegramInbox()">Refresh</button>
-            <button class="btn btn-warn" onclick="takeOverTelegram()">Take Over</button>
+          <div class="top-actions">
+            <span id="modePill" class="status-pill status-idle">Idle</span>
+            <button class="btn-soft" onclick="loadCRM()">Refresh</button>
+            <button class="btn-warn" onclick="takeOver()">Take Over</button>
           </div>
         </div>
 
-        <div id="tgMessages" class="messages">
+        <div id="chatBox" class="chat-messages">
           <div class="empty">No conversation selected yet.</div>
         </div>
 
-        <div class="chat-input">
-          <textarea id="tgReplyBox" placeholder="Type agent reply..."></textarea>
-          <div class="chat-input-actions">
-            <div id="tgReplyStatus" class="chat-status">Agent standby.</div>
-            <div class="btn-group" style="margin:0">
-              <button class="btn btn-soft" onclick="clearReplyBox('tgReplyBox')">Clear</button>
-              <button class="btn btn-primary" onclick="sendTelegramReply()">Send Reply</button>
+        <div class="chat-compose">
+          <textarea id="replyBox" placeholder="Type your agent reply..."></textarea>
+          <div class="chat-actions">
+            <div id="replyStatus" class="status-note">Agent standby.</div>
+            <div class="top-actions">
+              <button class="btn-soft" onclick="document.getElementById('replyBox').value=''">Clear</button>
+              <button class="btn-primary" onclick="sendReply()">Send Reply</button>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="crm-panel crm-side">
+      <div class="crm-side">
         <div class="crm-head">
-          <h3>Customer Details</h3>
-          <p>Quick view for the active chat</p>
+          <h3>Chat Details</h3>
+          <p>Quick view of selected Telegram conversation</p>
         </div>
-        <div class="side-body">
+        <div class="detail-wrap">
           <div class="detail-card">
             <div class="detail-label">Chat ID</div>
-            <div id="tgDetailId" class="detail-value">—</div>
+            <div id="detailChatId" class="detail-value">—</div>
           </div>
           <div class="detail-card">
             <div class="detail-label">Current Mode</div>
-            <div id="tgDetailMode" class="detail-value">AI / Idle</div>
+            <div id="detailMode" class="detail-value">AI / Idle</div>
           </div>
           <div class="detail-card">
             <div class="detail-label">Last Message</div>
-            <div id="tgDetailLast" class="detail-value">—</div>
+            <div id="detailLast" class="detail-value">—</div>
           </div>
           <div class="detail-card">
             <div class="detail-label">Total Messages</div>
-            <div id="tgDetailCount" class="detail-value">0</div>
+            <div id="detailCount" class="detail-value">0</div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Web CRM -->
-  <div id="inboxWeb" class="tab-content hidden">
-    <div class="crm-wrap">
-      <div class="crm-panel chat-list-panel">
-        <div class="crm-head">
-          <h3>Live Chat Inbox</h3>
-          <p>Web channel panel is ready for backend connection</p>
-        </div>
-        <div class="chat-search">
-          <input id="webSearch" placeholder="Search future live chat conversations..." oninput="renderWebChatList()">
-        </div>
-        <div id="webChatList" class="chat-list">
-          <div class="empty">No web inbox endpoint connected yet.</div>
-        </div>
-      </div>
-
-      <div class="crm-panel">
-        <div class="messages-head">
-          <div class="messages-head-left">
-            <div class="messages-head-title">Live Chat</div>
-            <div class="messages-head-sub">UI is prepared. Connect web inbox endpoints later.</div>
-          </div>
-          <div class="messages-toolbar">
-            <span class="status-pill status-idle">Pending Backend</span>
-          </div>
-        </div>
-        <div class="messages">
-          <div class="empty">Once your worker exposes web inbox data, this panel can use the same CRM pattern as Telegram.</div>
-        </div>
-        <div class="chat-input">
-          <textarea placeholder="Web live chat reply box will be enabled after backend connection..." disabled></textarea>
-          <div class="chat-input-actions">
-            <div class="chat-status">Waiting for web inbox API.</div>
-            <button class="btn btn-soft" disabled>Send Reply</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="crm-panel crm-side">
-        <div class="crm-head">
-          <h3>Web User Details</h3>
-          <p>Reserved for later</p>
-        </div>
-        <div class="side-body">
-          <div class="empty">No live chat profile loaded.</div>
         </div>
       </div>
     </div>
@@ -703,311 +567,342 @@ textarea{resize:vertical}
 
 <script>
 const API = "https://ai-chat-backend.marketing-696.workers.dev";
-const $ = (id) => document.getElementById(id);
 
-let telegramMessages = [];
-let telegramChats = {};
-let currentTelegramChat = null;
-let telegramKnownCounts = {};
-let telegramKnownLatest = {};
+let currentChat = null;
+let allMessages = [];
+let groupedChats = {};
+let knownCounts = {};
 
-function setStatus(text, isError=false){
-  const el = $("statusBar");
-  el.textContent = text;
-  el.style.color = isError ? "#b91c1c" : "#64748b";
+function getToken(){
+  return document.getElementById("token").value.trim();
+}
+function getBrand(){
+  return document.getElementById("brand").value.trim();
+}
+function adminHeaders(extra = {}){
+  const token = getToken();
+  return {
+    "Content-Type": "application/json",
+    "X-Admin-Token": token,
+    ...extra
+  };
 }
 
+/* Tabs */
+function switchTab(id, el){
+  document.querySelectorAll(".tab").forEach(t => t.classList.add("hidden"));
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  document.getElementById(id).classList.remove("hidden");
+  if (el) el.classList.add("active");
+}
+
+/* Status */
+function setStatus(text, error=false){
+  const el = document.getElementById("statusBar");
+  el.textContent = text;
+  el.style.color = error ? "#b91c1c" : "#64748b";
+}
 function clearStatus(){
   setStatus("Status: Ready");
 }
 
-function showTab(tabId, el){
-  document.querySelectorAll(".tab-content").forEach(t => t.classList.add("hidden"));
-  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
-  $(tabId).classList.remove("hidden");
-  if(el) el.classList.add("active");
-
-  if(tabId === "inboxTelegram"){
-    refreshTelegramInbox();
-  }
-}
-
-/* ---------- Knowledge Hub ---------- */
-function addFAQ(q="", a=""){
-  const id = "topic-" + Date.now() + Math.random().toString(36).slice(2,6);
-  const div = document.createElement("div");
-  div.className = "topic-card";
-  div.id = id;
-  div.innerHTML = `
-    <button class="delete" onclick="document.getElementById('${id}').remove()">✕</button>
-
-    <label class="label-hint">Topic Title</label>
-    <input class="q" value="${escapeHtmlAttr(q)}" placeholder="e.g. Deposit Policy">
-
-    <label class="label-hint">Full Knowledge Content</label>
-    <textarea class="a" placeholder="Long-form knowledge content...">${escapeHtmlText(a)}</textarea>
+/* Knowledge */
+function addTopic(q="", a=""){
+  const wrap = document.createElement("div");
+  wrap.className = "topic";
+  wrap.innerHTML = `
+    <div class="topic-head">
+      <input class="topic-title" value="${escapeAttr(q)}" placeholder="Main topic title">
+      <div class="top-actions">
+        <button class="btn-soft topic-toggle" type="button">Open Details</button>
+        <button class="topic-delete" type="button">✕</button>
+      </div>
+    </div>
+    <div class="topic-preview">${escapeHtml((a || "").slice(0, 120))}${(a || "").length > 120 ? "..." : ""}</div>
+    <div class="topic-detail">
+      <div class="label">Full Knowledge Content</div>
+      <textarea class="topic-content" style="min-height:180px" placeholder="Full content...">${escapeHtml(a)}</textarea>
+    </div>
   `;
-  $("faqGrid").appendChild(div);
+
+  const toggleBtn = wrap.querySelector(".topic-toggle");
+  const deleteBtn = wrap.querySelector(".topic-delete");
+  const detail = wrap.querySelector(".topic-detail");
+  const content = wrap.querySelector(".topic-content");
+  const preview = wrap.querySelector(".topic-preview");
+
+  toggleBtn.onclick = () => {
+    detail.classList.toggle("open");
+    toggleBtn.textContent = detail.classList.contains("open") ? "Hide Details" : "Open Details";
+  };
+
+  deleteBtn.onclick = () => wrap.remove();
+
+  content.addEventListener("input", () => {
+    const v = content.value || "";
+    preview.textContent = v.slice(0, 120) + (v.length > 120 ? "..." : "");
+  });
+
+  document.getElementById("topics").appendChild(wrap);
 }
 
-/* ---------- Button Manager ---------- */
+/* Buttons */
 function addBtn(text="", url=""){
-  const id = "btn-" + Date.now() + Math.random().toString(36).slice(2,6);
   const div = document.createElement("div");
-  div.className = "button-card";
-  div.id = id;
+  div.className = "button-item";
   div.innerHTML = `
-    <button class="delete" onclick="document.getElementById('${id}').remove()">✕</button>
-
-    <label class="label-hint">Button Text</label>
-    <input class="btnText" value="${escapeHtmlAttr(text)}" placeholder="e.g. 💰 Deposit">
-
-    <label class="label-hint">Button URL</label>
-    <input class="btnUrl" value="${escapeHtmlAttr(url)}" placeholder="https://...">
+    <div class="button-top">
+      <button class="button-delete" type="button">✕</button>
+    </div>
+    <div class="label">Button Text</div>
+    <input class="btext" placeholder="Text" value="${escapeAttr(text)}">
+    <div class="label">Button URL</div>
+    <input class="burl" placeholder="URL" value="${escapeAttr(url)}">
   `;
-  $("btnList").appendChild(div);
+  div.querySelector(".button-delete").onclick = () => div.remove();
+  document.getElementById("btnList").appendChild(div);
 }
 
-/* ---------- Load/Save ---------- */
-async function loadAll(){
-  const token = $("token").value.trim();
-  const brand = $("brand").value.trim();
-
+/* Load admin data */
+async function load(){
+  const token = getToken();
   if(!token){
     alert("Please enter Admin Token");
     return;
   }
 
-  setStatus("Status: Syncing admin data...");
-
   try{
-    const r = await fetch(`${API}/api/admin/get?brand=${encodeURIComponent(brand)}`, {
-      headers: { "X-Admin-Token": token }
+    setStatus("Status: Syncing...");
+    const brand = getBrand();
+
+    const r = await fetch(API + "/api/admin/get?brand=" + encodeURIComponent(brand), {
+      headers: {
+        "X-Admin-Token": token
+      }
     });
 
-    const d = await r.json();
+    const d = await r.json().catch(() => ({}));
 
     if(!r.ok){
-      throw new Error(d?.error || "Failed to load admin data");
+      throw new Error(d.error || "Load failed");
     }
 
     const draft = d.draft || {};
 
-    $("rulesBox").value = (draft.rules || []).join("\n");
+    document.getElementById("rules").value = (draft.rules || []).join("\n");
+    document.getElementById("personaTelegram").value = draft.personaTelegram || "";
+    document.getElementById("personaWeb").value = draft.personaWeb || "";
 
-    $("faqGrid").innerHTML = "";
-    (draft.faq || []).forEach(f => addFAQ(f.q || "", f.a || ""));
+    document.getElementById("topics").innerHTML = "";
+    (draft.faq || []).forEach(f => addTopic(f.q || "", f.a || ""));
 
-    $("personaTelegram").value = draft.personaTelegram || "";
-    $("personaWeb").value = draft.personaWeb || "";
-
-    $("btnList").innerHTML = "";
+    document.getElementById("btnList").innerHTML = "";
     (draft.telegramButtons || []).forEach(b => addBtn(b.text || "", b.url || ""));
 
-    setStatus(`Status: Synced successfully • ${ (draft.faq || []).length } knowledge topics loaded`);
-    refreshTelegramInbox();
+    setStatus("Status: Synced successfully");
   }catch(e){
     console.error(e);
     setStatus("Status: Sync failed", true);
-    alert(e.message || "Failed to load admin data");
+    alert(e.message || "Load failed");
   }
 }
 
-async function saveAll(isPublish){
-  const token = $("token").value.trim();
-  const brand = $("brand").value.trim();
-
+/* Save admin data */
+async function save(pub){
+  const token = getToken();
   if(!token){
     alert("Please enter Admin Token");
     return;
   }
 
-  const body = {
-    rules: $("rulesBox").value.split("\n").map(x=>x.trim()).filter(Boolean),
-    faq: [...document.querySelectorAll("#faqGrid .topic-card")].map(card => ({
-      q: card.querySelector(".q").value.trim(),
-      a: card.querySelector(".a").value.trim()
-    })).filter(x => x.q || x.a),
-    personaTelegram: $("personaTelegram").value,
-    personaWeb: $("personaWeb").value,
-    telegramButtons: [...document.querySelectorAll("#btnList .button-card")].map(card => ({
-      text: card.querySelector(".btnText").value.trim(),
-      url: card.querySelector(".btnUrl").value.trim()
-    })).filter(x => x.text && x.url)
-  };
-
-  const path = isPublish ? "/api/admin/publish" : "/api/admin/save";
-  setStatus(`Status: ${isPublish ? "Publishing" : "Saving"}...`);
-
   try{
-    const r = await fetch(`${API}${path}?brand=${encodeURIComponent(brand)}`, {
+    const brand = getBrand();
+
+    const topics = [...document.querySelectorAll(".topic")].map(t => ({
+      q: t.querySelector(".topic-title").value.trim(),
+      a: t.querySelector(".topic-content").value.trim()
+    })).filter(x => x.q || x.a);
+
+    const buttons = [...document.querySelectorAll(".button-item")].map(x => ({
+      text: x.querySelector(".btext").value.trim(),
+      url: x.querySelector(".burl").value.trim()
+    })).filter(x => x.text && x.url);
+
+    const body = {
+      rules: document.getElementById("rules").value.split("\n").map(x => x.trim()).filter(Boolean),
+      faq: topics,
+      personaTelegram: document.getElementById("personaTelegram").value.trim(),
+      personaWeb: document.getElementById("personaWeb").value.trim(),
+      telegramButtons: buttons
+    };
+
+    const path = pub ? "/api/admin/publish" : "/api/admin/save";
+
+    setStatus(pub ? "Status: Publishing..." : "Status: Saving...");
+
+    const r = await fetch(API + path + "?brand=" + encodeURIComponent(brand), {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Admin-Token": token
-      },
+      headers: adminHeaders(),
       body: JSON.stringify(body)
     });
 
-    const d = await r.json().catch(()=>({}));
-
+    const d = await r.json().catch(() => ({}));
     if(!r.ok){
-      throw new Error(d?.error || "Save failed");
+      throw new Error(d.error || "Save failed");
     }
 
-    setStatus(`Status: ${isPublish ? "Published live successfully" : "Draft saved successfully"}`);
-    alert(isPublish ? "🚀 Live published successfully" : "💾 Draft saved successfully");
+    alert(pub ? "Published successfully" : "Saved successfully");
+    setStatus(pub ? "Status: Published successfully" : "Status: Draft saved successfully");
   }catch(e){
     console.error(e);
     setStatus("Status: Save failed", true);
-    alert(e.message || "Error saving data");
+    alert(e.message || "Save failed");
   }
 }
 
-/* ---------- Telegram CRM ---------- */
-async function refreshTelegramInbox(){
+/* CRM */
+async function loadCRM(){
+  const token = getToken();
+  if(!token){
+    setStatus("Status: Enter admin token before opening CRM", true);
+    return;
+  }
+
   try{
-    const r = await fetch(`${API}/api/admin/inbox`);
-    const data = await r.json();
+    const r = await fetch(API + "/api/admin/inbox?brand=" + encodeURIComponent(getBrand()), {
+      headers: {
+        "X-Admin-Token": token
+      }
+    });
+
+    const data = await r.json().catch(() => ([]));
 
     if(!r.ok){
-      throw new Error(data?.error || "Failed to load Telegram inbox");
+      throw new Error(data.error || "Failed to load inbox");
     }
 
-    telegramMessages = Array.isArray(data) ? data : [];
-    buildTelegramChats();
-    renderTelegramChatList();
-    updateTelegramBadge();
+    allMessages = Array.isArray(data) ? data : [];
+    groupedChats = {};
 
-    if(currentTelegramChat && telegramChats[currentTelegramChat]){
-      renderTelegramConversation(currentTelegramChat);
-    }else if(!currentTelegramChat){
-      const first = Object.keys(telegramChats)[0];
-      if(first) openTelegramChat(first);
+    allMessages.forEach(m => {
+      const id = String(m.chatId || "");
+      if(!id) return;
+      if(!groupedChats[id]) groupedChats[id] = [];
+      groupedChats[id].push(m);
+    });
+
+    Object.keys(groupedChats).forEach(id => {
+      groupedChats[id].sort((a,b) => (a.time || 0) - (b.time || 0));
+    });
+
+    renderChatList();
+    updateBadge();
+
+    if(currentChat && groupedChats[currentChat]){
+      openChat(currentChat);
+    } else {
+      const first = Object.keys(groupedChats)[0];
+      if(first) openChat(first);
+      else document.getElementById("chatBox").innerHTML = '<div class="empty">No Telegram messages found yet.</div>';
     }
   }catch(e){
     console.error(e);
+    setStatus("Status: CRM load failed", true);
   }
 }
 
-function buildTelegramChats(){
-  telegramChats = {};
+function renderChatList(){
+  const search = document.getElementById("chatSearch").value.trim().toLowerCase();
+  const list = document.getElementById("chatList");
+  list.innerHTML = "";
 
-  for(const m of telegramMessages){
-    const id = String(m.chatId || "");
-    if(!id) continue;
-    if(!telegramChats[id]) telegramChats[id] = [];
-    telegramChats[id].push(m);
-  }
-
-  Object.keys(telegramChats).forEach(id => {
-    telegramChats[id].sort((a,b)=> (a.time || 0) - (b.time || 0));
+  const ids = Object.keys(groupedChats).sort((a,b) => {
+    const at = groupedChats[a][groupedChats[a].length - 1]?.time || 0;
+    const bt = groupedChats[b][groupedChats[b].length - 1]?.time || 0;
+    return bt - at;
   });
-}
 
-function renderTelegramChatList(){
-  const box = $("tgChatList");
-  const search = $("tgSearch").value.trim().toLowerCase();
-  box.innerHTML = "";
-
-  const entries = Object.entries(telegramChats)
-    .sort((a,b)=>{
-      const ta = a[1][a[1].length-1]?.time || 0;
-      const tb = b[1][b[1].length-1]?.time || 0;
-      return tb - ta;
-    });
-
-  const filtered = entries.filter(([chatId, arr])=>{
-    if(!search) return true;
-    const last = arr[arr.length-1]?.text || "";
-    return chatId.toLowerCase().includes(search) || last.toLowerCase().includes(search);
+  const filtered = ids.filter(id => {
+    const last = groupedChats[id][groupedChats[id].length - 1]?.text || "";
+    return !search || id.toLowerCase().includes(search) || last.toLowerCase().includes(search);
   });
 
   if(!filtered.length){
-    box.innerHTML = `<div class="empty">No Telegram chats found.</div>`;
+    list.innerHTML = '<div class="empty">No chats found.</div>';
     return;
   }
 
-  for(const [chatId, arr] of filtered){
-    const last = arr[arr.length-1] || {};
-    const unread = (telegramKnownCounts[chatId] || 0) < arr.length;
+  filtered.forEach(id => {
+    const arr = groupedChats[id];
+    const last = arr[arr.length - 1] || {};
+    const unread = (knownCounts[id] || 0) < arr.length;
+
     const div = document.createElement("div");
-    div.className = "chat-item" + (String(currentTelegramChat) === String(chatId) ? " active" : "");
-
+    div.className = "chat-item" + (String(currentChat) === String(id) ? " active" : "");
     div.innerHTML = `
-      <div class="chat-top">
-        <div class="chat-id">${escapeHtmlText(chatId)} ${unread ? '<span class="unread-dot"></span>' : ''}</div>
-        <div class="chat-time">${formatTime(last.time)}</div>
-      </div>
-      <div class="chat-preview">${escapeHtmlText(last.text || "")}</div>
+      <div class="chat-item-id">Chat ${escapeHtml(id)} ${unread ? "🔴" : ""}</div>
+      <div class="chat-item-last">${escapeHtml(last.text || "")}</div>
     `;
-
-    div.onclick = () => openTelegramChat(chatId);
-    box.appendChild(div);
-  }
+    div.onclick = () => openChat(id);
+    list.appendChild(div);
+  });
 }
 
-function openTelegramChat(chatId){
-  currentTelegramChat = String(chatId);
-  telegramKnownCounts[currentTelegramChat] = (telegramChats[currentTelegramChat] || []).length;
-  telegramKnownLatest[currentTelegramChat] = Date.now();
-  renderTelegramChatList();
-  renderTelegramConversation(currentTelegramChat);
-  updateTelegramBadge();
-}
+function openChat(id){
+  currentChat = String(id);
+  knownCounts[currentChat] = (groupedChats[currentChat] || []).length;
+  renderChatList();
+  updateBadge();
 
-function renderTelegramConversation(chatId){
-  const arr = telegramChats[chatId] || [];
-  const box = $("tgMessages");
+  const msgs = groupedChats[currentChat] || [];
+  const box = document.getElementById("chatBox");
   box.innerHTML = "";
 
-  if(!arr.length){
-    box.innerHTML = `<div class="empty">No messages in this chat yet.</div>`;
+  document.getElementById("activeChatTitle").textContent = "Chat " + currentChat;
+  document.getElementById("activeChatMeta").textContent = msgs.length ? ("Messages: " + msgs.length) : "No messages";
+
+  if(!msgs.length){
+    box.innerHTML = '<div class="empty">No messages in this conversation.</div>';
     return;
   }
 
-  for(const m of arr){
+  msgs.forEach(m => {
+    const type = normalizeType(m.type);
     const row = document.createElement("div");
-    row.className = "msg-row " + normalizeMsgType(m.type);
+    row.className = "msg-row " + type;
 
     const bubble = document.createElement("div");
-    bubble.className = "msg " + normalizeMsgType(m.type);
-
+    bubble.className = "msg " + type;
     bubble.innerHTML = `
-      ${escapeHtmlText(m.text || "")}
-      <div class="msg-meta">${escapeHtmlText((m.type || "message").toUpperCase())} • ${formatDateTime(m.time)}</div>
+      ${escapeHtml(m.text || "")}
+      <div class="msg-meta">${escapeHtml(String(m.type || "").toUpperCase())} • ${formatTime(m.time)}</div>
     `;
 
     row.appendChild(bubble);
     box.appendChild(row);
-  }
+  });
 
   box.scrollTop = box.scrollHeight;
 
-  const last = arr[arr.length-1] || {};
-  $("tgActiveTitle").textContent = "Chat " + chatId;
-  $("tgActiveSub").textContent = `Last activity: ${formatDateTime(last.time)}`;
+  const last = msgs[msgs.length - 1] || {};
+  const humanMode = String(last.type || "").toLowerCase() === "agent";
+  const modePill = document.getElementById("modePill");
+  modePill.className = "status-pill " + (humanMode ? "status-human" : "status-ai");
+  modePill.textContent = humanMode ? "Human Mode" : "AI Mode";
 
-  $("tgDetailId").textContent = chatId;
-  $("tgDetailLast").textContent = last.text || "—";
-  $("tgDetailCount").textContent = String(arr.length);
-
-  const lastType = String(last.type || "").toLowerCase();
-  const humanMode = lastType === "agent";
-  $("tgDetailMode").textContent = humanMode ? "Human takeover active / last reply by agent" : "AI mode / standard flow";
-
-  const pill = $("tgModePill");
-  pill.className = "status-pill " + (humanMode ? "status-human" : "status-ai");
-  pill.textContent = humanMode ? "Human Mode" : "AI Mode";
+  document.getElementById("detailChatId").textContent = currentChat;
+  document.getElementById("detailMode").textContent = humanMode ? "Human takeover active" : "AI mode active";
+  document.getElementById("detailLast").textContent = last.text || "—";
+  document.getElementById("detailCount").textContent = String(msgs.length);
 }
 
-function updateTelegramBadge(){
+function updateBadge(){
   let unread = 0;
-  for(const [chatId, arr] of Object.entries(telegramChats)){
-    if((telegramKnownCounts[chatId] || 0) < arr.length) unread++;
-  }
+  Object.keys(groupedChats).forEach(id => {
+    if((knownCounts[id] || 0) < groupedChats[id].length) unread++;
+  });
 
-  const badge = $("tgBadge");
+  const badge = document.getElementById("tgBadge");
   if(unread > 0){
     badge.classList.remove("hidden");
     badge.textContent = unread > 99 ? "99+" : String(unread);
@@ -1016,126 +911,116 @@ function updateTelegramBadge(){
   }
 }
 
-async function sendTelegramReply(){
-  if(!currentTelegramChat){
-    alert("Please select a chat first.");
+async function sendReply(){
+  const token = getToken();
+  if(!token){
+    alert("Please enter Admin Token");
     return;
   }
 
-  const message = $("tgReplyBox").value.trim();
+  if(!currentChat){
+    alert("Select a chat first.");
+    return;
+  }
+
+  const message = document.getElementById("replyBox").value.trim();
   if(!message){
-    alert("Please type a reply first.");
+    alert("Type a reply first.");
     return;
   }
 
-  $("tgReplyStatus").textContent = "Sending reply...";
+  const status = document.getElementById("replyStatus");
+  status.textContent = "Sending reply...";
 
   try{
-    const r = await fetch(`${API}/api/admin/reply`, {
+    const r = await fetch(API + "/api/admin/reply?brand=" + encodeURIComponent(getBrand()), {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: adminHeaders(),
       body: JSON.stringify({
-        chatId: currentTelegramChat,
+        chatId: currentChat,
         message
       })
     });
 
-    const d = await r.json().catch(()=>({}));
-
+    const d = await r.json().catch(() => ({}));
     if(!r.ok){
-      throw new Error(d?.error || "Failed to send reply");
+      throw new Error(d.error || "Reply failed");
     }
 
-    $("tgReplyBox").value = "";
-    $("tgReplyStatus").textContent = "Reply sent successfully.";
-    await refreshTelegramInbox();
+    document.getElementById("replyBox").value = "";
+    status.textContent = "Reply sent.";
+    await loadCRM();
   }catch(e){
     console.error(e);
-    $("tgReplyStatus").textContent = "Failed to send reply.";
-    alert(e.message || "Failed to send reply");
+    status.textContent = "Reply failed.";
+    alert(e.message || "Reply failed");
   }
 }
 
-async function takeOverTelegram(){
-  if(!currentTelegramChat){
-    alert("Please select a chat first.");
+async function takeOver(){
+  const token = getToken();
+  if(!token){
+    alert("Please enter Admin Token");
+    return;
+  }
+
+  if(!currentChat){
+    alert("Select a chat first.");
     return;
   }
 
   try{
-    const r = await fetch(`${API}/api/admin/escalate`, {
+    const r = await fetch(API + "/api/admin/escalate?brand=" + encodeURIComponent(getBrand()), {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chatId: currentTelegramChat })
+      headers: adminHeaders(),
+      body: JSON.stringify({ chatId: currentChat })
     });
 
-    const d = await r.json().catch(()=>({}));
-
+    const d = await r.json().catch(() => ({}));
     if(!r.ok){
-      throw new Error(d?.error || "Failed to activate human takeover");
+      throw new Error(d.error || "Take over failed");
     }
 
-    $("tgReplyStatus").textContent = "Human takeover activated.";
-    const box = $("tgMessages");
-    const row = document.createElement("div");
-    row.className = "msg-row system";
-    row.innerHTML = `<div class="msg system">Human takeover activated for this chat.<div class="msg-meta">SYSTEM • ${formatDateTime(Date.now())}</div></div>`;
-    box.appendChild(row);
-    box.scrollTop = box.scrollHeight;
+    document.getElementById("replyStatus").textContent = "Human takeover activated.";
+    await loadCRM();
   }catch(e){
     console.error(e);
-    alert(e.message || "Failed to activate takeover");
+    alert(e.message || "Take over failed");
   }
 }
 
-/* ---------- Web placeholder ---------- */
-function renderWebChatList(){
-  // Reserved for future web live chat inbox endpoint.
+/* Helpers */
+function escapeHtml(str){
+  return String(str ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 }
-
-/* ---------- Helpers ---------- */
-function normalizeMsgType(type){
+function escapeAttr(str){
+  return String(str ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+function normalizeType(type){
   const t = String(type || "").toLowerCase();
   if(t === "user") return "user";
   if(t === "ai") return "ai";
   if(t === "agent") return "agent";
-  return "system";
+  if(t === "system") return "system";
+  return "user";
 }
-
-function clearReplyBox(id){
-  $(id).value = "";
-}
-
-function escapeHtmlText(str){
-  return String(str ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;");
-}
-
-function escapeHtmlAttr(str){
-  return String(str ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/"/g,"&quot;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;");
-}
-
 function formatTime(ts){
   if(!ts) return "—";
-  const d = new Date(ts);
-  return d.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+  return new Date(ts).toLocaleString();
 }
 
-function formatDateTime(ts){
-  if(!ts) return "—";
-  const d = new Date(ts);
-  return d.toLocaleString();
-}
-
-/* ---------- Auto refresh ---------- */
+/* Auto refresh CRM */
 setInterval(() => {
-  refreshTelegramInbox();
+  if(!document.getElementById("crm").classList.contains("hidden") && getToken()){
+    loadCRM();
+  }
 }, 3000);
 </script>
 </body>
