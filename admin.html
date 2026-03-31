@@ -239,15 +239,15 @@ button{
   overflow:hidden; /* ✅ prevent page scroll */
 }
 
-.crm-left,.crm-right,.crm-side{
-background:#fff;
-  border:1px solid var(--border);
-  border-radius:16px;
+.crm-right, .crm-left, .crm-side {
   display:flex;
   flex-direction:column;
-  height:100%; /* ✅ lock */
+  height:100%;
+  min-height:0; /* ✅ add this */
 }
-
+.crm-right {
+  min-height: 0;
+}
 .crm-head{
   padding:14px 16px;
   border-bottom:1px solid var(--border);
@@ -303,6 +303,7 @@ background:#fff;
 }
 .chat-messages{
   flex:1;
+  min-height:0; 
   overflow-y:auto; /* ✅ only this scrolls */
   background:#f8fafc;
   padding:16px;
