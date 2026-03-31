@@ -664,8 +664,11 @@ async function returnToAI(){
 
     if(!r.ok) throw new Error("Failed");
 
-    document.getElementById("replyStatus").textContent = "AI resumed.";
-    await loadCRM();
+   document.getElementById("replyStatus").textContent = "AI resumed.";
+document.getElementById("modePill").textContent = "AI Mode";
+document.getElementById("modePill").className = "status-pill status-ai";
+
+await loadCRM();
 
   }catch(e){
     alert("Failed to return AI");
