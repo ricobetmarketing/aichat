@@ -980,7 +980,7 @@ function openChat(id, preserveScroll = false){
 
 
   const last = msgs[msgs.length - 1] || {};
-  const humanMode = String(last.type || "").toLowerCase() === "agent";
+  const humanMode = last.mode === "human";
   const modePill = document.getElementById("modePill");
   modePill.className = "status-pill " + (humanMode ? "status-human" : "status-ai");
   modePill.textContent = humanMode ? "Human Mode" : "AI Mode";
