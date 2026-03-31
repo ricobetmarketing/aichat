@@ -235,16 +235,19 @@ button{
   display:grid;
   grid-template-columns:320px 1fr 280px;
   gap:16px;
-  min-height:680px;
+  height:calc(100vh - 140px); /* ✅ lock height */
+  overflow:hidden; /* ✅ prevent page scroll */
 }
+
 .crm-left,.crm-right,.crm-side{
-  background:#fff;
+background:#fff;
   border:1px solid var(--border);
   border-radius:16px;
-  overflow:hidden;
   display:flex;
   flex-direction:column;
+  height:100%; /* ✅ lock */
 }
+
 .crm-head{
   padding:14px 16px;
   border-bottom:1px solid var(--border);
@@ -300,7 +303,7 @@ button{
 }
 .chat-messages{
   flex:1;
-  overflow:auto;
+  overflow-y:auto; /* ✅ only this scrolls */
   background:#f8fafc;
   padding:16px;
   display:flex;
@@ -518,6 +521,7 @@ button{
             <span id="modePill" class="status-pill status-idle">Idle</span>
             <button class="btn-soft" onclick="loadCRM()">Refresh</button>
             <button class="btn-warn" onclick="takeOver()">Take Over</button>
+<button class="btn-soft" onclick="returnToAI()">Return AI</button>
           </div>
         </div>
 
@@ -644,6 +648,26 @@ function addTopic(q="", a=""){
   });
 
   document.getElementById("topics").appendChild(wrap);
+}
+
+async function returnToAI(){
+  if(!currentChat) return alert("Select chat first");
+
+  try{
+    const r = await fetch(API + "/api/admin/deescalate?brand=" + encodeURIComponent(getBrand()), {
+      method:"POST",
+      headers: adminHeaders(),
+      body: JSON.stringify({ chatId: currentChat })
+    });
+
+    if(!r.ok) throw new Error("Failed");
+
+    document.getElementById("replyStatus").textContent = "AI resumed.";
+    await loadCRM();
+
+  }catch(e){
+    alert("Failed to return AI");
+  }
 }
 
 /* Buttons */
@@ -782,6 +806,7 @@ async function loadCRM(){
     }
 
     allMessages = Array.isArray(data) ? data : [];
+lastMessageCount = allMessages.length;
     groupedChats = {};
 
     allMessages.forEach(m => {
@@ -837,18 +862,27 @@ function renderChatList(){
     const last = arr[arr.length - 1] || {};
     const unread = (knownCounts[id] || 0) < arr.length;
 
+    const username = last.username || last.first_name || "User";
+    const type = last.chatType || "private";
+
     const div = document.createElement("div");
     div.className = "chat-item" + (String(currentChat) === String(id) ? " active" : "");
+
     div.innerHTML = `
-      <div class="chat-item-id">Chat ${escapeHtml(id)} ${unread ? "🔴" : ""}</div>
+      <div class="chat-item-id">
+        ${escapeHtml(username)} 
+        <span style="font-size:10px;color:#64748b">(${type})</span>
+        ${unread ? " 🔴" : ""}
+      </div>
       <div class="chat-item-last">${escapeHtml(last.text || "")}</div>
     `;
+
     div.onclick = () => openChat(id);
     list.appendChild(div);
   });
 }
 
-function openChat(id){
+function openChat(id, preserveScroll = false){
   currentChat = String(id);
   knownCounts[currentChat] = (groupedChats[currentChat] || []).length;
   renderChatList();
@@ -856,10 +890,17 @@ function openChat(id){
 
   const msgs = groupedChats[currentChat] || [];
   const box = document.getElementById("chatBox");
+
+  // 🧠 detect if user is near bottom
+  const isNearBottom =
+    box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+
   box.innerHTML = "";
 
-  document.getElementById("activeChatTitle").textContent = "Chat " + currentChat;
-  document.getElementById("activeChatMeta").textContent = msgs.length ? ("Messages: " + msgs.length) : "No messages";
+  document.getElementById("activeChatTitle").textContent =
+    (msgs[0]?.username || msgs[0]?.first_name || "Chat") + " (" + currentChat + ")";
+  document.getElementById("activeChatMeta").textContent =
+    msgs.length ? ("Messages: " + msgs.length) : "No messages";
 
   if(!msgs.length){
     box.innerHTML = '<div class="empty">No messages in this conversation.</div>';
@@ -875,14 +916,20 @@ function openChat(id){
     bubble.className = "msg " + type;
     bubble.innerHTML = `
       ${escapeHtml(m.text || "")}
-      <div class="msg-meta">${escapeHtml(String(m.type || "").toUpperCase())} • ${formatTime(m.time)}</div>
+      <div class="msg-meta">
+  ${escapeHtml(m.username || m.first_name || m.type || "USER")} • ${formatTime(m.time)}
+</div>
     `;
 
     row.appendChild(bubble);
     box.appendChild(row);
   });
 
-  box.scrollTop = box.scrollHeight;
+  // ✅ only scroll if user already near bottom
+  if(!preserveScroll || isNearBottom){
+    box.scrollTop = box.scrollHeight;
+  }
+
 
   const last = msgs[msgs.length - 1] || {};
   const humanMode = String(last.type || "").toLowerCase() === "agent";
@@ -1011,17 +1058,59 @@ function normalizeType(type){
   if(t === "system") return "system";
   return "user";
 }
+
+function processMessages(){
+  groupedChats = {};
+
+  allMessages.forEach(m => {
+    const id = String(m.chatId || "");
+    if(!id) return;
+
+    if(!groupedChats[id]) groupedChats[id] = [];
+    groupedChats[id].push(m);
+  });
+
+  Object.keys(groupedChats).forEach(id => {
+    groupedChats[id].sort((a,b) => (a.time || 0) - (b.time || 0));
+  });
+
+  renderChatList();
+
+  if(currentChat && groupedChats[currentChat]){
+    openChat(currentChat, true); // preserve scroll
+  }
+}
+
 function formatTime(ts){
   if(!ts) return "—";
   return new Date(ts).toLocaleString();
 }
 
-/* Auto refresh CRM */
-setInterval(() => {
-  if(!document.getElementById("crm").classList.contains("hidden") && getToken()){
-    loadCRM();
+let lastMessageCount = 0;
+
+setInterval(async () => {
+  if(document.getElementById("crm").classList.contains("hidden")) return;
+  if(!getToken()) return;
+
+  try{
+    const r = await fetch(API + "/api/admin/inbox?brand=" + encodeURIComponent(getBrand()), {
+      headers: { "X-Admin-Token": getToken() }
+    });
+
+    const data = await r.json().catch(()=>[]);
+    if(!Array.isArray(data)) return;
+
+    if(data.length !== lastMessageCount){
+      lastMessageCount = data.length;
+      allMessages = data;
+      processMessages();
+    }
+
+  }catch(e){
+    console.log("Auto refresh fail");
   }
-}, 3000);
+
+}, 1000);
 </script>
 </body>
 </html>
