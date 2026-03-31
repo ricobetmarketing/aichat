@@ -535,7 +535,8 @@ background:#fff;
             <div id="replyStatus" class="status-note">Agent standby.</div>
             <div class="top-actions">
               <button class="btn-soft" onclick="document.getElementById('replyBox').value=''">Clear</button>
-              <button class="btn-primary" onclick="sendReply()">Send Reply</button>
+              <button class="btn-soft" onclick="suggestReply()">Suggest</button>
+<button class="btn-primary" onclick="sendReply()">Send Reply</button>
             </div>
           </div>
         </div>
@@ -836,16 +837,55 @@ lastMessageCount = allMessages.length;
   }
 }
 
+function suggestReply(){
+  if(!currentChat) return alert("Select chat first");
+
+  const msgs = groupedChats[currentChat] || [];
+  const last = msgs[msgs.length - 1];
+
+  if(!last) return;
+
+  const text = (last.text || "").toLowerCase();
+
+  let reply = "Hi! Let me check for you.";
+
+  if(text.includes("deposit")){
+    reply = "Hi! Please share your deposit screenshot and UID, I’ll check for you now.";
+  }
+  else if(text.includes("bonus")){
+    reply = "Hi! Bonus is based on current promotion. Let me guide you.";
+  }
+  else if(/problem|issue|error|not working|fail/.test(text)){
+  reply = "Sorry for the inconvenience 🙏 Please provide more details and I’ll assist you immediately.";
+}
+
+  document.getElementById("replyBox").value = reply;
+}
+
 function renderChatList(){
   const search = document.getElementById("chatSearch").value.trim().toLowerCase();
   const list = document.getElementById("chatList");
   list.innerHTML = "";
 
-  const ids = Object.keys(groupedChats).sort((a,b) => {
-    const at = groupedChats[a][groupedChats[a].length - 1]?.time || 0;
-    const bt = groupedChats[b][groupedChats[b].length - 1]?.time || 0;
-    return bt - at;
-  });
+ const ids = Object.keys(groupedChats).sort((a,b) => {
+  const aLast = groupedChats[a][groupedChats[a].length - 1];
+  const bLast = groupedChats[b][groupedChats[b].length - 1];
+
+  const aTags = detectTags(aLast?.text);
+  const bTags = detectTags(bLast?.text);
+
+  const priority = tag => 
+    tag.includes("complaint") ? 3 :
+    tag.includes("deposit") ? 2 :
+    tag.includes("vip") ? 1 : 0;
+
+  const pa = priority(aTags);
+  const pb = priority(bTags);
+
+  if(pb !== pa) return pb - pa;
+
+  return (bLast?.time || 0) - (aLast?.time || 0);
+});
 
   const filtered = ids.filter(id => {
     const last = groupedChats[id][groupedChats[id].length - 1]?.text || "";
@@ -860,6 +900,7 @@ function renderChatList(){
   filtered.forEach(id => {
     const arr = groupedChats[id];
     const last = arr[arr.length - 1] || {};
+const tags = detectTags(last.text);
     const unread = (knownCounts[id] || 0) < arr.length;
 
     const username = last.username || last.first_name || "User";
@@ -868,14 +909,20 @@ function renderChatList(){
     const div = document.createElement("div");
     div.className = "chat-item" + (String(currentChat) === String(id) ? " active" : "");
 
-    div.innerHTML = `
-      <div class="chat-item-id">
-        ${escapeHtml(username)} 
-        <span style="font-size:10px;color:#64748b">(${type})</span>
-        ${unread ? " 🔴" : ""}
-      </div>
-      <div class="chat-item-last">${escapeHtml(last.text || "")}</div>
-    `;
+  const tagColor =
+  tags.includes("complaint") ? "#ef4444" :
+  tags.includes("deposit") ? "#f59e0b" :
+  tags.includes("vip") ? "#8b5cf6" :
+  "#64748b";
+
+div.innerHTML = `
+  <div class="chat-item-id">
+    ${escapeHtml(username)} 
+    <span style="font-size:10px;color:${tagColor}">(${type}${tags.length ? " • " + tags.join(",") : ""})</span>
+    ${unread ? " 🔴" : ""}
+  </div>
+  <div class="chat-item-last">${escapeHtml(last.text || "")}</div>
+`;
 
     div.onclick = () => openChat(id);
     list.appendChild(div);
@@ -1079,6 +1126,26 @@ function processMessages(){
   if(currentChat && groupedChats[currentChat]){
     openChat(currentChat, true); // preserve scroll
   }
+}
+
+function detectTags(text){
+  const t = (text || "").toLowerCase();
+
+  const tags = [];
+
+  if(/deposit|payment|bank|transfer|reload/.test(t)){
+    tags.push("deposit");
+  }
+
+  if(/scam|bad|angry|wtf|fuck|problem|issue/.test(t)){
+    tags.push("complaint");
+  }
+
+  if(/vip|high roller|big player/.test(t)){
+    tags.push("vip");
+  }
+
+  return tags;
 }
 
 function formatTime(ts){
