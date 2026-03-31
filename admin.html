@@ -1077,6 +1077,8 @@ async function takeOver(){
     }
 
     document.getElementById("replyStatus").textContent = "Human takeover activated.";
+   document.getElementById("modePill").textContent = "Human Mode";
+document.getElementById("modePill").className = "status-pill status-human";
     await loadCRM();
   }catch(e){
     console.error(e);
